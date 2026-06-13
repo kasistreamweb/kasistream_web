@@ -476,7 +476,7 @@ footer{
 </head>
 
 <!-- NAVBAR -->
-''''''
+
 <nav class="navbar navbar-expand-lg fixed-top">
 
     <div class="container">
@@ -602,7 +602,7 @@ footer{
 
                 <p class="hero-subtitle">
 
-                    KAsistream membantu penonton
+                     membantu penonton
                     memberikan dukungan kepada streamer
                     favorit melalui sistem donasi yang
                     cepat, aman, dan transparan.
