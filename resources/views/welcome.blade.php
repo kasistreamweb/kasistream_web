@@ -602,7 +602,7 @@ footer{
 
                 <p class="hero-subtitle">
 
-                     membantu penonton
+                    KAsistream membantu penonton
                     memberikan dukungan kepada streamer
                     favorit melalui sistem donasi yang
                     cepat, aman, dan transparan.
