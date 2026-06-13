@@ -1,3 +1,21 @@
+@php
+
+$fiturTotal = array_sum($fitur ?? []);
+
+$adminFee = 1500;
+
+$grandTotal =
+    $nominal +
+    $fiturTotal +
+    $adminFee;
+
+$walletCukup =
+    auth()->check()
+    &&
+    auth()->user()->balance >= $grandTotal;
+
+@endphp
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -105,16 +123,26 @@
                                 type="radio"
                                 name="metode"
                                 value="Wallet"
-                                checked
+                                {{ $walletCukup ? 'checked' : 'disabled' }}
                             >
 
                             <div>
 
                                 <h5>💰 Wallet KAsistream</h5>
 
-                                <small>
-                                    Gunakan saldo wallet
-                                </small>
+                                @if(!$walletCukup)
+
+                                    <small class="text-danger">
+                                        Saldo wallet tidak mencukupi
+                                    </small>
+
+                                @else
+
+                                    <small>
+                                        Gunakan saldo wallet
+                                    </small>
+
+                                @endif
 
                             </div>
 

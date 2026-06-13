@@ -6,36 +6,33 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::table('donasis', function (Blueprint $table) {
 
-            $table->string('invoice_id')->nullable();
+            $table->string('qr_code')
+                ->nullable()
+                ->after('qris_content');
 
-            $table->longText('qris_content')->nullable();
+            $table->longText('qr_image')
+                ->nullable()
+                ->after('qr_code');
 
-            $table->string('qris_status')
-                  ->default('pending');
-
+            $table->string('onopay_receiver')
+                ->nullable()
+                ->after('qr_image');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::table('donasis', function (Blueprint $table) {
 
             $table->dropColumn([
-                'invoice_id',
-                'qris_content',
-                'qris_status'
+                'qr_code',
+                'qr_image',
+                'onopay_receiver'
             ]);
-
         });
     }
 };

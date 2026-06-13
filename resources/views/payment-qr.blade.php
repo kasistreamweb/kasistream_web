@@ -67,37 +67,15 @@
 
                         </div>
 
-                        <div class="countdown-wrapper">
-
-                            <small>
-                                Batas Waktu Pembayaran
-                            </small>
-
-                            <div id="countdown">
-
-                                24:00:00
-
-                            </div>
-
-                        </div>
-
                         <div class="qr-wrapper">
 
-                            @if(!empty($qrImage))
+                            @if($donasi->qr_image)
 
-                                <img
-                                    src="{{ $qrImage }}"
-                                    class="qr-image"
-                                    alt="QRIS"
-                                >
-
-                            @else
-
-                                <img
-                                    src="{{ asset('images/qris-dummy.png') }}"
-                                    class="qr-image"
-                                    alt="QRIS"
-                                >
+                            <img
+                                src="{{ $donasi->qr_image }}"
+                                class="img-fluid rounded shadow"
+                                alt="QR OnoPay"
+                            >
 
                             @endif
 
@@ -254,16 +232,20 @@
 
                         <div class="mt-4">
 
-                            <a
-                                href="{{ route('payment.check',$donasi->id) }}"
-                                class="btn btn-primary w-100 mb-2"
+                            <form
+                                action="{{ route('payment.onopay',$donasi->id) }}"
+                                method="POST"
                             >
+                                @csrf
 
-                                <i class="fa-solid fa-rotate me-2"></i>
-
-                                Cek Status Pembayaran
-
-                            </a>
+                                <button
+                                    type="submit"
+                                    class="btn btn-primary w-100 mb-2"
+                                >
+                                    <i class="fa-solid fa-wallet me-2"></i>
+                                    Cek Pembayaran
+                                </button>
+                            </form>
 
                             <a
                                 href="/riwayat-donasi"
@@ -287,50 +269,6 @@
     </div>
 
 </div>
-
-<script>
-
-let duration = 24 * 60 * 60;
-
-const countdown = document.getElementById('countdown');
-
-
-setInterval(() => {
-
-    fetch(
-        '/payment/check/{{ $donasi->id }}'
-    )
-    .then(
-        () => location.reload()
-    );
-
-},10000);
-
-
-setInterval(() => {
-
-    let hours = Math.floor(duration / 3600);
-
-    let minutes = Math.floor(
-        (duration % 3600) / 60
-    );
-
-    let seconds = duration % 60;
-
-    countdown.innerHTML =
-        String(hours).padStart(2,'0')
-        + ':'
-        + String(minutes).padStart(2,'0')
-        + ':'
-        + String(seconds).padStart(2,'0');
-
-    if(duration > 0){
-        duration--;
-    }
-
-},1000);
-
-</script>
 
 </body>
 </html>

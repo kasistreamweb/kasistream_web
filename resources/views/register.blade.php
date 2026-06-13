@@ -563,6 +563,20 @@ body{
 
             <div class="form-group">
 
+                <label>Nomor Telepon</label>
+
+                <input
+                    type="text"
+                    name="onopay_phone"
+                    class="form-control"
+                    placeholder="08xxxxxxxxxx"
+                    required
+                >
+
+            </div>
+
+            <div class="form-group">
+
                 <label>Password</label>
 
                 <input

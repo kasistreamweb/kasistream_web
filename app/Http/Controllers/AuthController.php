@@ -15,6 +15,7 @@ class AuthController extends Controller
         $request->validate([
             'name' => 'required|max:100',
             'email' => 'required|email|unique:users,email',
+            'onopay_phone' => 'required|max:20|unique:users,onopay_phone',
             'password' => 'required|min:8',
             'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:4096'
         ]);
@@ -27,12 +28,16 @@ class AuthController extends Controller
 
             $namaFoto = time() . '_' . $file->getClientOriginalName();
 
-            $file->move(public_path('uploads/profile'), $namaFoto);
+            $file->move(
+                public_path('uploads/profile'),
+                $namaFoto
+            );
         }
 
         User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'onopay_phone' => $request->onopay_phone,
             'password' => Hash::make($request->password),
             'role' => 'user',
             'is_streamer' => 0,
@@ -40,7 +45,10 @@ class AuthController extends Controller
         ]);
 
         return redirect('/login')
-            ->with('success', 'Registrasi berhasil, silakan login');
+            ->with(
+                'success',
+                'Registrasi berhasil, silakan login'
+            );
     }
 
     public function login(Request $request)
@@ -55,10 +63,10 @@ class AuthController extends Controller
             $request->session()->regenerate();
 
             if (Auth::user()->role == 'admin') {
-            return redirect('/admin-dashboard');
-        }
+                return redirect('/admin-dashboard');
+            }
 
-        return redirect('/user-dashboard');
+            return redirect('/user-dashboard');
         }
 
         return "Email atau Password Salah";
@@ -84,15 +92,16 @@ class AuthController extends Controller
     {
         $request->validate([
             'name' => 'required|max:100',
+            'onopay_phone' => 'nullable|max:20|unique:users,onopay_phone,' . Auth::id(),
             'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:4096'
         ]);
 
         $user = Auth::user();
 
         $user->name = $request->name;
+        $user->onopay_phone = $request->onopay_phone;
 
         $user->{'jadwal_Live'} = $request->jadwal_Live;
-
 
         if ($request->hasFile('foto')) {
 
@@ -115,5 +124,4 @@ class AuthController extends Controller
             'Profil berhasil diperbarui.'
         );
     }
-
 }

@@ -516,6 +516,11 @@ Route::get(
     [DonasiController::class, 'qrPayment']
 )->name('payment.qr');
 
+Route::post(
+    '/payment-onopay/{id}',
+    [DonasiController::class, 'payOnopay']
+)->name('payment.onopay');
+
 Route::get(
     '/payment-check/{id}',
     [DonasiController::class,'checkPayment']

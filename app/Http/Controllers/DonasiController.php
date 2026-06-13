@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Donasi;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 class DonasiController extends Controller
 {
@@ -20,46 +21,39 @@ class DonasiController extends Controller
         );
     }
 
-    public function store(Request $request)
-    {
-        $request->validate([
+public function store(Request $request)
+{
+    $request->validate([
+        'streamer_id' => 'required|exists:users,id',
+        'nominal' => 'required|numeric|min:1000',
+        'pesan' => 'nullable|max:150',
+        'guest_name' => 'nullable|max:100'
+    ]);
 
-            'streamer_id' => 'required|exists:users,id',
+    $fiturTotal = array_sum(
+        $request->fitur ?? []
+    );
 
-            'nominal' => 'required|numeric|min:1000',
+    $adminFee = (int) (
+        $request->admin_fee ?? 1500
+    );
 
-            'pesan' => 'nullable|max:150',
+    $grandTotal = (int) (
+        $request->grand_total ??
+        (
+            $request->nominal +
+            $fiturTotal +
+            $adminFee
+        )
+    );
 
-            'guest_name' => 'nullable|max:100'
+    /*
+    |--------------------------------------------------------------------------
+    | CEK SALDO WALLET
+    |--------------------------------------------------------------------------
+    */
 
-        ]);
-
-        /*
-        |--------------------------------------------------------------------------
-        | HITUNG FITUR & TOTAL
-        |--------------------------------------------------------------------------
-        */
-
-        $fiturTotal = array_sum(
-    $request->fitur ?? []
-);
-
-$adminFee = (int)
-    ($request->admin_fee ?? 1500);
-
-$grandTotal = (int)
-    ($request->grand_total ?? (
-        $request->nominal +
-        $fiturTotal +
-        $adminFee
-    ));
-        /*
-        |--------------------------------------------------------------------------
-        | CEK SALDO USER LOGIN
-        |--------------------------------------------------------------------------
-        */
-
-        if (
+    if (
         Auth::check() &&
         strtolower($request->metode) != 'qris'
     ) {
@@ -77,190 +71,217 @@ $grandTotal = (int)
         }
     }
 
-        $donasi = null;
+    try {
 
-        try {
+        DB::beginTransaction();
 
-            DB::transaction(function () use (
-                $request,
-                &$donasi,
-                $fiturTotal,
-                $adminFee,
-                $grandTotal
-            ) {
+        /*
+        |--------------------------------------------------------------------------
+        | SIMPAN DONASI
+        |--------------------------------------------------------------------------
+        */
 
-                /*
-                |--------------------------------------------------------------------------
-                | SIMPAN DONASI
-                |--------------------------------------------------------------------------
-                */
+        $donasi = Donasi::create([
 
-                $donasi = Donasi::create([
+            'user_id' => Auth::check()
+                ? Auth::id()
+                : null,
 
-                    'user_id' => Auth::check()
-                        ? Auth::id()
-                        : null,
+            'guest_name' => $request->guest_name,
 
-                    'guest_name' => $request->guest_name,
+            'streamer_id' => $request->streamer_id,
 
-                    'streamer_id' => $request->streamer_id,
+            'nominal' => $request->nominal,
 
-                    'nominal' => $request->nominal,
+            'fitur_total' => $fiturTotal,
 
-                    'fitur_total' => $fiturTotal,
+            'admin_fee' => $adminFee,
 
-                    'admin_fee' => $adminFee,
+            'grand_total' => $grandTotal,
 
-                    'grand_total' => $grandTotal,
+            'payment_method' => strtolower(
+                $request->metode
+            ),
 
-                    'payment_method' => 'wallet',
+            'pesan' => $request->pesan,
 
-                    'pesan' => $request->pesan,
+            'status' => strtolower($request->metode) == 'qris'
+                ? 'pending'
+                : 'success',
 
-                    'status' => strtolower($request->metode) == 'qris'
-                    ? 'pending'
-                    : 'success'
+            'qris_status' => 'pending'
+        ]);
 
-                ]);
+        /*
+        |--------------------------------------------------------------------------
+        | WALLET
+        |--------------------------------------------------------------------------
+        */
 
-                /*
-                |--------------------------------------------------------------------------
-                | KURANGI SALDO DONATUR
-                |--------------------------------------------------------------------------
-                */
+        if (
+            Auth::check() &&
+            strtolower($request->metode) != 'qris'
+        ) {
 
-                if (
-                    Auth::check() &&
-                    strtolower($request->metode) != 'qris'
-                ) {
+            $user = User::findOrFail(
+                Auth::id()
+            );
 
-                    $user = User::find(Auth::id());
+            $user->balance -= $grandTotal;
 
-                    $user->balance -= $grandTotal;
-
-                    $user->save();
-                }
-
-                /*
-                |--------------------------------------------------------------------------
-                | TAMBAH SALDO STREAMER
-                |--------------------------------------------------------------------------
-                */
-
-                $streamer = User::findOrFail(
-                    $request->streamer_id
-                );
-
-                if(
-                    strtolower($request->metode)
-                    != 'qris'
-                )
-                {
-                    $streamer->balance += $request->nominal;
-
-                    $streamer->total_donasi += $request->nominal;
-
-                    $streamer->save();
-}
-            });
-
-        } catch (\Exception $e) {
-
-            return back()
-                ->withInput()
-                ->with(
-                    'error',
-                    'Terjadi kesalahan saat memproses donasi.'
-                );
+            $user->save();
         }
 
         /*
         |--------------------------------------------------------------------------
-        | REDIRECT KE HALAMAN SUKSES
+        | TAMBAH SALDO STREAMER
         |--------------------------------------------------------------------------
         */
 
-if(strtolower($request->metode) == 'qris')
-{
-    $invoice = 'DONASI-' . $donasi->id . '-' . time();
+        if (
+            strtolower($request->metode) != 'qris'
+        ) {
 
-    $amount = $grandTotal;
+            $streamer = User::findOrFail(
+                $request->streamer_id
+            );
 
-    $url =
-        "https://qris.interactive.co.id/restapi/qris/show_qris.php" .
-        "?do=create-invoice" .
-        "&apikey=" . env('ONOPAY_API_KEY') .
-        "&mID=" . env('ONOPAY_MID') .
-        "&cliTrxNumber=" . $invoice .
-        "&cliTrxAmount=" . $amount .
-        "&useTip=no";
+            $streamer->balance +=
+                $request->nominal;
 
-    $response =
-        file_get_contents($url);
+            $streamer->total_donasi +=
+                $request->nominal;
 
-    $result =
-        json_decode(
-            $response,
-            true
-        );
+            $streamer->save();
+        }
 
-    if(
-        isset(
-            $result['qris_content']
-        )
-    )
-    {
-        $donasi->update([
+        DB::commit();
 
-            'invoice_id' =>
-                $result['qris_invoiceid'],
+    } catch (\Exception $e) {
 
-            'qris_content' =>
-                $result['qris_content']
+        DB::rollBack();
 
-        ]);
+        return back()
+            ->withInput()
+            ->with(
+                'error',
+                $e->getMessage()
+            );
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | ONOPAY QR
+    |--------------------------------------------------------------------------
+    */
+
+    if (
+    strtolower($request->metode) == 'qris'
+) {
+
+    $streamer = User::findOrFail(
+        $request->streamer_id
+    );
+
+    if (!$streamer->onopay_phone) {
+
+        return back()->with(
+            'error',
+            'Nomor OnoPay streamer belum diatur.'
+        );
+    }
+
+    $response = Http::post(
+        'http://www.onopay.web.id/api/v1/payment/qr/generate',
+        [
+            'phone_number' =>
+                $streamer->onopay_phone,
+
+            'amount' =>
+                $grandTotal,
+
+            'description' =>
+                'Donasi KAistream #' .
+                $donasi->id,
+
+            'qr_mode' =>
+                'single_use'
+        ]
+    );
+
+    if (!$response->successful()) {
+
+        return back()->with(
+            'error',
+            'Gagal membuat QR OnoPay.'
+        );
+    }
+
+    $result = $response->json();
+
+    if (
+        !isset($result['success']) ||
+        !$result['success']
+    ) {
+
+        return back()->with(
+            'error',
+            $result['message']
+                ?? 'Generate QR gagal.'
+        );
+    }
+
+    $donasi->update([
+
+        'qr_code' =>
+            $result['data']['qr_code'],
+
+        'qr_image' =>
+            $result['data']['qr_image'],
+
+        'onopay_receiver' =>
+            $streamer->onopay_phone,
+
+        'status' =>
+            'pending'
+    ]);
 
     return redirect()->route(
         'payment.qr',
         $donasi->id
     );
 }
-
 return redirect()->route(
     'payment.success',
     $donasi->id
 );
-    }
+}
 
-    public function history()
-    {
-        $donasi = Donasi::with('streamer')
-            ->where(
-                'user_id',
-                auth()->id()
-            )
-            ->latest()
-            ->paginate(10);
+public function history()
+{
+    $donasi = Donasi::with('streamer')
+        ->where('user_id', auth()->id())
+        ->latest()
+        ->paginate(10);
 
-        return view(
-            'riwayat-donasi',
-            compact('donasi')
-        );
-    }
+    return view(
+        'riwayat-donasi',
+        compact('donasi')
+    );
+}
 
-    public function paymentSuccess($id)
-    {
-        $donasi = Donasi::with([
-            'streamer',
-            'user'
-        ])->findOrFail($id);
+public function paymentSuccess($id)
+{
+    $donasi = Donasi::with([
+        'streamer',
+        'user'
+    ])->findOrFail($id);
 
-        return view(
-            'payment-success',
-            compact('donasi')
-        );
-    }
+    return view(
+        'payment-success',
+        compact('donasi')
+    );
+}
 
 public function qrPayment($id)
 {
@@ -269,88 +290,27 @@ public function qrPayment($id)
         'user'
     ])->findOrFail($id);
 
-    $qrImage = null;
-
-    if($donasi->qris_content)
-    {
-        $qrImage =
-            "https://quickchart.io/qr?text="
-            . urlencode(
-                $donasi->qris_content
-            );
-    }
-
     return view(
         'payment-qr',
-        compact(
-            'donasi',
-            'qrImage'
-        )
+        compact('donasi')
     );
 }
 
 public function checkPayment($id)
 {
-    $donasi =
-        Donasi::findOrFail($id);
+    $donasi = Donasi::findOrFail($id);
 
-    if(!$donasi->invoice_id)
-    {
+    if ($donasi->status == 'pending') {
+
         return back()->with(
             'error',
-            'Invoice QRIS tidak ditemukan'
+            'Pembayaran belum diterima'
         );
     }
 
-    $url =
-        "https://qris.interactive.co.id/restapi/qris/checkpaid_qris.php" .
-        "?apikey=" . env('ONOPAY_API_KEY') .
-        "&mID=" . env('ONOPAY_MID') .
-        "&invoiceid=" .
-        $donasi->invoice_id;
-
-    $response =
-        file_get_contents($url);
-
-    $result =
-        json_decode(
-            $response,
-            true
-        );
-
-    if(
-        isset($result['status']) &&
-        strtolower(
-            $result['status']
-        ) == 'paid'
-    )
-    {
-        $donasi->update([
-            'status' => 'success'
-        ]);
-
-        $streamer =
-            User::find(
-                $donasi->streamer_id
-            );
-
-        $streamer->balance +=
-            $donasi->nominal;
-
-        $streamer->total_donasi +=
-            $donasi->nominal;
-
-        $streamer->save();
-
-        return redirect()->route(
-            'payment.success',
-            $donasi->id
-        );
-    }
-
-    return back()->with(
-        'error',
-        'Pembayaran belum diterima'
+    return redirect()->route(
+        'payment.success',
+        $donasi->id
     );
 }
 
@@ -358,13 +318,107 @@ public function simulateQris($id)
 {
     $donasi = Donasi::findOrFail($id);
 
-    if($donasi->status == 'pending')
-    {
+    if ($donasi->status == 'pending') {
+
         $donasi->update([
-            'status' => 'success'
+            'status' => 'success',
+            'qris_status' => 'paid'
         ]);
 
         $streamer = User::find(
+            $donasi->streamer_id
+        );
+
+        if ($streamer) {
+
+            $streamer->balance +=
+                $donasi->nominal;
+
+            $streamer->total_donasi +=
+                $donasi->nominal;
+
+            $streamer->save();
+        }
+    }
+
+    return redirect()->route(
+        'payment.success',
+        $donasi->id
+    );
+}
+
+public function payOnopay($id)
+{
+    $donasi = Donasi::findOrFail($id);
+
+    if ($donasi->status == 'success') {
+
+        return redirect()->route(
+            'payment.success',
+            $donasi->id
+        );
+    }
+
+    if (!Auth::check()) {
+
+        return back()->with(
+            'error',
+            'Silakan login terlebih dahulu.'
+        );
+    }
+
+    $payer = Auth::user();
+
+    if (!$payer->onopay_phone) {
+
+        return back()->with(
+            'error',
+            'Nomor OnoPay akun Anda belum diatur.'
+        );
+    }
+
+    if (!$donasi->qr_code) {
+
+        return back()->with(
+            'error',
+            'QR Code OnoPay tidak ditemukan.'
+        );
+    }
+
+    try {
+
+        $response = Http::post(
+            'http://www.onopay.web.id/api/v1/payment/qr/pay',
+            [
+                'qr_code'      => $donasi->qr_code,
+                'payer_phone'  => $payer->onopay_phone,
+            ]
+        );
+
+        $result = $response->json();
+
+
+        if (
+            !$response->successful() ||
+            !isset($result['success']) ||
+            !$result['success']
+        ) {
+
+            return back()->with(
+                'error',
+                $result['message']
+                    ?? 'Pembayaran OnoPay gagal.'
+            );
+        }
+
+        DB::beginTransaction();
+
+        $donasi->update([
+            'status'      => 'success',
+            'qris_status' => 'paid'
+        ]);
+
+        $streamer = User::findOrFail(
             $donasi->streamer_id
         );
 
@@ -375,11 +429,22 @@ public function simulateQris($id)
             $donasi->nominal;
 
         $streamer->save();
-    }
 
-    return redirect()->route(
-        'payment.success',
-        $donasi->id
-    );
+        DB::commit();
+
+        return redirect()->route(
+            'payment.success',
+            $donasi->id
+        );
+
+    } catch (\Exception $e) {
+
+        DB::rollBack();
+
+        return back()->with(
+            'error',
+            $e->getMessage()
+        );
+    }
 }
 }

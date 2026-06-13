@@ -253,22 +253,6 @@
 
 </div>
 
-<div
-    id="saldoError"
-    class="alert alert-danger mt-3"
-    style="display:none;"
->
-
-    <strong>
-        Saldo tidak mencukupi!
-    </strong>
-
-    <br>
-
-    Nominal donasi melebihi saldo wallet Anda.
-
-</div>
-
 @endauth
 
             </div>
@@ -447,9 +431,9 @@ function updateTotal()
         });
 
     let total =
-    nominal +
-    extra +
-    adminFee;
+        nominal +
+        extra +
+        adminFee;
 
     document.getElementById('totalText').innerHTML =
         'Rp ' +
@@ -457,32 +441,14 @@ function updateTotal()
 
     @auth
 
-    let error =
-        document.getElementById('saldoError');
+let btn =
+    document.getElementById('submitBtn');
 
-    let btn =
-        document.getElementById('submitBtn');
+btn.disabled = false;
 
-    if(total > userBalance)
-    {
-        error.style.display = 'block';
+btn.innerHTML = 'Lanjutkan';
 
-        btn.disabled = true;
-
-        btn.innerHTML =
-            'Saldo Tidak Cukup';
-    }
-    else
-    {
-        error.style.display = 'none';
-
-        btn.disabled = false;
-
-        btn.innerHTML =
-            'Lanjutkan';
-    }
-
-    @endauth
+@endauth
 }
 
 function countChar(el)
@@ -491,42 +457,6 @@ function countChar(el)
         el.value.length + '/150';
 }
 
-function cekSaldo()
-{
-    let nominal =
-        parseInt(
-            document.getElementById('nominal').value
-        ) || 0;
-
-    let extra = 0;
-
-    document
-        .querySelectorAll('.extra-feature:checked')
-        .forEach(item =>
-        {
-            extra += parseInt(item.value);
-        });
-
-    let total =
-    nominal +
-    extra +
-    adminFee;
-
-    @auth
-
-    if(total > userBalance)
-    {
-        alert(
-            'Saldo wallet tidak mencukupi.'
-        );
-
-        return false;
-    }
-
-    @endauth
-
-    return true;
-}
 
 function setNominal(value, btn)
 {

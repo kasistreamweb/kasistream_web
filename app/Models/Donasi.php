@@ -2,25 +2,39 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Donasi extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
+        'user_id',
+        'streamer_id',
 
-    'user_id',
-    'streamer_id',
-    'nominal',
-    'pesan',
-    'status',
-    'guest_name',
+        'nominal',
+        'pesan',
+        'status',
 
-    'fitur_total',
-    'admin_fee',
-    'grand_total',
-    'payment_method'
+        'guest_name',
 
-];
+        'fitur_total',
+        'admin_fee',
+        'grand_total',
+
+        'payment_method',
+
+        // QRIS / OnoPay
+        'invoice_id',
+        'qris_content',
+        'qris_status',
+
+        'qr_code',
+        'qr_image',
+        'onopay_receiver',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -30,11 +44,4 @@ class Donasi extends Model
     {
         return $this->belongsTo(User::class, 'streamer_id');
     }
-
-    public function getNamaDonaturAttribute()
-{
-    return optional($this->user)->name
-           ?? $this->guest_name
-           ?? 'Guest';
-}
 }

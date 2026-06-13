@@ -7,12 +7,12 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Auth;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -20,22 +20,23 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-    'name',
-    'email',
-    'password',
-    'role',
-    'foto',
-    'is_streamer',
-
-    'bio',
-    'game',
-    'instagram',
-    'youtube',
-    'tiktok',
-    'discord',
-    'followers',
-    'total_donasi'
-];
+        'name',
+        'email',
+        'password',
+        'onopay_phone',
+        'role',
+        'foto',
+        'is_streamer',
+        'bio',
+        'game',
+        'instagram',
+        'youtube',
+        'tiktok',
+        'discord',
+        'followers',
+        'total_donasi',
+        'balance',
+    ];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -57,6 +58,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_streamer' => 'boolean',
         ];
     }
 
