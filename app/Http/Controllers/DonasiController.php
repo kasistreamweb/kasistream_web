@@ -23,12 +23,13 @@ class DonasiController extends Controller
 
 public function store(Request $request)
 {
-    $request->validate([
-        'streamer_id' => 'required|exists:users,id',
-        'nominal' => 'required|numeric|min:1000',
-        'pesan' => 'nullable|max:150',
-        'guest_name' => 'nullable|max:100'
-    ]);
+   $request->validate([
+    'streamer_id' => 'required|exists:users,id',
+    'nominal' => 'required|numeric|min:1000',
+    'pesan' => 'nullable|max:150',
+    'guest_name' => 'nullable|max:100',
+    'guest_phone' => 'nullable|max:20'
+]);
 
     $fiturTotal = array_sum(
         $request->fitur ?? []
@@ -88,6 +89,7 @@ public function store(Request $request)
                 : null,
 
             'guest_name' => $request->guest_name,
+            'guest_phone' => $request->guest_phone,
 
             'streamer_id' => $request->streamer_id,
 
@@ -192,22 +194,26 @@ public function store(Request $request)
     }
 
     $response = Http::post(
-        'http://www.onopay.web.id/api/v1/payment/qr/generate',
-        [
-            'phone_number' =>
-                $streamer->onopay_phone,
+    'http://www.onopay.web.id/api/v1/payment/qr/generate',
+    [
+        'phone_number' => $streamer->onopay_phone,
 
-            'amount' =>
-                $grandTotal,
+        'amount' => $grandTotal,
 
-            'description' =>
-                'Donasi KAistream #' .
-                $donasi->id,
+        'description' =>
+            'Donasi KAistream #' .
+            $donasi->id,
 
-            'qr_mode' =>
-                'single_use'
-        ]
-    );
+        'customer_name' =>
+            $request->guest_name
+            ?? 'Guest',
+
+        'customer_phone' =>
+            $request->guest_phone,
+
+        'qr_mode' => 'single_use'
+    ]
+);
 
     if (!$response->successful()) {
 

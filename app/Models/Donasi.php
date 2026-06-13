@@ -18,6 +18,7 @@ class Donasi extends Model
         'status',
 
         'guest_name',
+        'guest_phone',
 
         'fitur_total',
         'admin_fee',

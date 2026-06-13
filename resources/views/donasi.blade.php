@@ -89,6 +89,14 @@
     >
 
 </div>
+<div class="mb-3">
+    <label class="form-label">Nomor Telepon</label>
+<input type="text"
+       name="guest_phone"
+       class="form-control"
+       placeholder="08xxxxxxxxxx"
+       required>
+</div>
 
 @endguest
 
