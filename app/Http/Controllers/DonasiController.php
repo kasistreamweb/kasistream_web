@@ -23,6 +23,7 @@ class DonasiController extends Controller
 
 public function store(Request $request)
 {
+   
    $request->validate([
     'streamer_id' => 'required|exists:users,id',
     'nominal' => 'required|numeric|min:1000',
@@ -140,6 +141,8 @@ public function store(Request $request)
         |--------------------------------------------------------------------------
         */
 
+
+
         if (
             strtolower($request->metode) != 'qris'
         ) {
@@ -171,15 +174,13 @@ public function store(Request $request)
             );
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | ONOPAY QR
-    |--------------------------------------------------------------------------
-    */
+/*
+|--------------------------------------------------------------------------
+| ONOPAY QR
+|--------------------------------------------------------------------------
+*/
 
-    if (
-    strtolower($request->metode) == 'qris'
-) {
+if (strtolower($request->metode) == 'qris') {
 
     $streamer = User::findOrFail(
         $request->streamer_id
@@ -194,26 +195,21 @@ public function store(Request $request)
     }
 
     $response = Http::post(
-    'http://www.onopay.web.id/api/v1/payment/qr/generate',
-    [
-        'phone_number' => $streamer->onopay_phone,
+        'https://www.onopay.web.id/api/v1/payment/qr/generate',
+        [
+            'phone_number' => $streamer->onopay_phone,
+            'amount' => $grandTotal,
+            'description' => 'Donasi KAistream #' . $donasi->id,
+            'customer_name' => $request->guest_name ?? 'Guest',
+            'customer_phone' => $request->guest_phone,
+            'qr_mode' => 'single_use'
+        ]
+    );
 
-        'amount' => $grandTotal,
-
-        'description' =>
-            'Donasi KAistream #' .
-            $donasi->id,
-
-        'customer_name' =>
-            $request->guest_name
-            ?? 'Guest',
-
-        'customer_phone' =>
-            $request->guest_phone,
-
-        'qr_mode' => 'single_use'
-    ]
-);
+    \Log::info('ONOPAY GENERATE', [
+        'status' => $response->status(),
+        'body' => $response->body(),
+    ]);
 
     if (!$response->successful()) {
 
@@ -240,10 +236,10 @@ public function store(Request $request)
     $donasi->update([
 
         'qr_code' =>
-            $result['data']['qr_code'],
+            $result['data']['qr_code'] ?? null,
 
         'qr_image' =>
-            $result['data']['qr_image'],
+            $result['data']['qr_image'] ?? null,
 
         'onopay_receiver' =>
             $streamer->onopay_phone,
@@ -257,6 +253,7 @@ public function store(Request $request)
         $donasi->id
     );
 }
+
 return redirect()->route(
     'payment.success',
     $donasi->id
@@ -355,7 +352,6 @@ public function simulateQris($id)
 
 public function payOnopay($id)
 {
-    dd('MASUK PAYONOPAY');
     $donasi = Donasi::findOrFail($id);
 
     if ($donasi->status == 'success') {
@@ -395,15 +391,19 @@ public function payOnopay($id)
     try {
 
         $response = Http::post(
-            'http://www.onopay.web.id/api/v1/payment/qr/pay',
+            'https://www.onopay.web.id/api/v1/payment/qr/pay',
             [
-                'qr_code'      => $donasi->qr_code,
-                'payer_phone'  => $payer->onopay_phone,
+                'qr_code'     => $donasi->qr_code,
+                'payer_phone' => $payer->onopay_phone,
             ]
         );
 
-        $result = $response->json();
+        \Log::info('ONOPAY PAY', [
+            'status' => $response->status(),
+            'body' => $response->body(),
+        ]);
 
+        $result = $response->json();
 
         if (
             !$response->successful() ||
@@ -447,6 +447,10 @@ public function payOnopay($id)
     } catch (\Exception $e) {
 
         DB::rollBack();
+
+        \Log::error('ONOPAY ERROR', [
+            'message' => $e->getMessage()
+        ]);
 
         return back()->with(
             'error',
