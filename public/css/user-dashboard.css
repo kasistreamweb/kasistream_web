@@ -788,9 +788,10 @@ img{
 }
 
 .search-flex{
-    flex:1 1 auto;
-    min-width:250px;
-    max-width:700px;
+
+    flex:1;
+
+    min-width:300px;
 }
 
 /* TRENDING */
@@ -857,22 +858,28 @@ img{
 /* USER */
 
 .user-mini{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    white-space:nowrap;
-}
 
-.user-mini .top-avatar{
-    width:40px !important;
-    height:40px !important;
-    min-width:40px !important;
-    max-width:40px !important;
-    min-height:40px !important;
-    max-height:40px !important;
-    border-radius:50%;
-    object-fit:cover;
-    flex-shrink:0;
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    padding:8px 12px;
+
+    border-radius:14px;
+
+    background:
+    rgba(255,255,255,.05);
+
+    border:
+    1px solid rgba(255,255,255,.08);
+
+    color:white;
+
+    cursor:pointer;
+
+    transition:.3s;
 }
 
 .user-mini:hover{
