@@ -266,16 +266,6 @@ body{
 
                             <td>
 
-                                <a
-                                    href="/admin-withdraws/{{ $withdraw->id }}"
-                                    class="btn btn-info btn-sm"
-                                >
-
-                                    <i class="fa-solid fa-eye"></i>
-
-                                    Detail
-
-                                </a>
 
                                 @if($withdraw->status == 'pending')
 
