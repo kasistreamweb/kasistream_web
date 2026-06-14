@@ -57,7 +57,7 @@
 
 <div class="topbar mb-4">
 
-    <div class="d-flex align-items-center gap-3 flex-wrap">
+    <div class="topbar-actions">
 
         <div class="search-flex">
 
