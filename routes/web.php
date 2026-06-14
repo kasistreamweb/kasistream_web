@@ -490,16 +490,13 @@ Route::post('/become-streamer', function (Illuminate\Http\Request $request) {
    Route::post('/payment-method', function (Request $request) {
 
     return view('payment-method', [
-
-        'streamer_id' => $request->streamer_id,
-
-        'nominal' => $request->nominal,
-
-        'pesan' => $request->pesan,
-
-        'fitur' => $request->fitur ?? []
-
-    ]);
+    'streamer_id' => $request->streamer_id,
+    'nominal' => $request->nominal,
+    'pesan' => $request->pesan,
+    'fitur' => $request->fitur ?? [],
+    'guest_name' => $request->guest_name,
+    'guest_phone' => $request->guest_phone,
+]);
 
 });
 
@@ -525,26 +522,22 @@ Route::post('/payment-detail', function (Request $request) {
         $nominal +
         $fiturTotal +
         $adminFee;
+        
+return view('payment-detail', [
 
-    return view('payment-detail', [
+    'streamer'   => $streamer,
+    'nominal'    => $nominal,
+    'pesan'      => $request->pesan,
+    'metode'     => $request->metode,
+    'fitur'      => $request->fitur ?? [],
+    'fiturTotal' => $fiturTotal,
+    'adminFee'   => $adminFee,
+    'grandTotal' => $grandTotal,
 
-        'streamer'   => $streamer,
+    'guest_name'  => $request->guest_name,
+    'guest_phone' => $request->guest_phone
 
-        'nominal'    => $nominal,
-
-        'pesan'      => $request->pesan,
-
-        'metode'     => $request->metode,
-
-        'fitur'      => $request->fitur ?? [],
-
-        'fiturTotal' => $fiturTotal,
-
-        'adminFee'   => $adminFee,
-
-        'grandTotal' => $grandTotal
-
-    ]);
+]);
 
 });
 

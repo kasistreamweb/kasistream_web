@@ -155,34 +155,93 @@
     @endauth
 
     {{-- MENU GUEST --}}
-    @guest
+@guest
 
-        <a href="/streamers"
-           class="menu-item {{ request()->is('streamers') || request()->is('streamer/*') ? 'active-menu' : '' }}">
+    <a href="/streamers"
+   class="sidebar-streamer-btn">
 
-            <i class="fa-solid fa-users me-2"></i>
-            Streamer
+    <i class="fa-solid fa-users me-2"></i>
+    Streamer
 
-        </a>
+</a>
 
-        <div class="mt-4">
+<div class="auth-card">
 
-            <a
-                href="/login"
-                class="btn btn-primary w-100 mb-2"
-            >
-                Login
-            </a>
+    <h6>
+        <i class="fa-solid fa-user-circle me-2"></i>
+        Belum Punya Akun?
+    </h6>
 
-            <a
-                href="/register"
-                class="btn btn-outline-light w-100"
-            >
-                Daftar
-            </a>
+    <p>
+        Simpan riwayat donasi dan akses fitur lengkap KAsistream.
+    </p>
 
-        </div>
+    <a href="/login" class="sidebar-login-btn">
 
-    @endguest
+        <i class="fa-solid fa-right-to-bracket me-2"></i>
+        Masuk Akun
+
+    </a>
+
+    <a href="/register" class="sidebar-register-btn">
+
+        <i class="fa-solid fa-user-plus me-2"></i>
+        Buat Akun
+
+    </a>
+
+</div>
+
+@if(
+    request()->is('streamers') ||
+    request()->is('streamer/*') ||
+    request()->is('donasi/*') ||
+    request()->is('payment-method') ||
+    request()->is('payment-detail') ||
+    request()->is('payment-qr/*')
+)
+
+    <div class="sidebar-info-card">
+
+        <i class="fa-solid fa-shield-halved"></i>
+
+        <h6>Aman & Terpercaya</h6>
+
+        <p>
+            Transaksi donasi diproses aman
+            melalui sistem KAistream.
+        </p>
+
+    </div>
+
+    <div class="sidebar-info-card">
+
+        <i class="fa-solid fa-qrcode"></i>
+
+        <h6>Pembayaran QRIS</h6>
+
+        <p>
+            OnoPay, DANA, OVO,
+            GoPay dan Mobile Banking.
+        </p>
+
+    </div>
+
+    <div class="sidebar-info-card">
+
+        <i class="fa-solid fa-heart"></i>
+
+        <h6>Dukung Streamer</h6>
+
+        <p>
+            Setiap donasi membantu streamer
+            berkembang dan berkarya.
+        </p>
+
+    </div>
+
+    @endif
+
+@endguest
 
 </div>

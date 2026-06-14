@@ -140,38 +140,54 @@
 
         <div class="row mt-4">
 
-            <div class="col-md-6 mb-3">
+    <div class="col-md-6 mb-3">
 
-                <a
-                    href="/user-dashboard"
-                    class="btn btn-home text-white w-100"
-                >
+        <a
+            href="/streamers"
+            class="btn btn-home text-white w-100"
+        >
 
-                    <i class="fa-solid fa-house me-2"></i>
+            <i class="fa-solid fa-gift me-2"></i>
 
-                    Kembali ke Beranda
+            Donasi Lagi
 
-                </a>
+        </a>
 
-            </div>
+    </div>
 
-            <div class="col-md-6 mb-3">
+    <div class="col-md-6 mb-3">
 
-                <a
-                    href="/riwayat-donasi"
-                    class="btn btn-history text-white w-100"
-                >
+        @auth
 
-                    <i class="fa-solid fa-clock-rotate-left me-2"></i>
+            <a
+                href="/riwayat-donasi"
+                class="btn btn-history text-white w-100"
+            >
 
-                    Lihat Riwayat Donasi
+                <i class="fa-solid fa-clock-rotate-left me-2"></i>
 
-                </a>
+                Lihat Riwayat Donasi
 
-            </div>
+            </a>
 
-        </div>
+        @else
 
+            <a
+                href="/register"
+                class="btn btn-history text-white w-100"
+            >
+
+                <i class="fa-solid fa-user-plus me-2"></i>
+
+                Buat Akun & Simpan Riwayat
+
+            </a>
+
+        @endauth
+
+    </div>
+
+</div>
     </div>
 
 </div>

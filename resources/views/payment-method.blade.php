@@ -105,6 +105,18 @@ $walletCukup =
     value="{{ $pesan }}"
 >                    
 
+<input
+    type="hidden"
+    name="guest_name"
+    value="{{ $guest_name ?? '' }}"
+>
+
+<input
+    type="hidden"
+    name="guest_phone"
+    value="{{ $guest_phone ?? '' }}"
+>
+
 @foreach($fitur ?? [] as $item)
 
 <input

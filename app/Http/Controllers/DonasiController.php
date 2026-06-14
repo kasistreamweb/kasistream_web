@@ -362,23 +362,22 @@ public function payOnopay($id)
         );
     }
 
-    if (!Auth::check()) {
+if (Auth::check()) {
 
-        return back()->with(
-            'error',
-            'Silakan login terlebih dahulu.'
-        );
-    }
+    $payerPhone = Auth::user()->onopay_phone;
 
-    $payer = Auth::user();
+} else {
 
-    if (!$payer->onopay_phone) {
+    $payerPhone = $donasi->guest_phone;
+}
 
-        return back()->with(
-            'error',
-            'Nomor OnoPay akun Anda belum diatur.'
-        );
-    }
+if (!$payerPhone) {
+
+    return back()->with(
+        'error',
+        'Nomor OnoPay tidak ditemukan.'
+    );
+}
 
     if (!$donasi->qr_code) {
 
@@ -394,7 +393,7 @@ public function payOnopay($id)
             'https://www.onopay.web.id/api/v1/payment/qr/pay',
             [
                 'qr_code'     => $donasi->qr_code,
-                'payer_phone' => $payer->onopay_phone,
+                'payer_phone' => $payerPhone,
             ]
         );
 

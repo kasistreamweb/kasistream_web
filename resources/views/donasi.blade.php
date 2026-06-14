@@ -70,32 +70,80 @@
     >
 @guest
 
+<div class="guest-info-card">
 
+    <div class="guest-info-header">
 
-<div class="mb-3">
+        <h4>
+            <i class="fas fa-user-circle"></i>
+            Informasi Donatur
+        </h4>
 
-    <label class="form-label">
+        <p>
+            Lengkapi data Anda sebelum melakukan donasi.
+        </p>
 
-        Nama Donatur
+    </div>
 
-    </label>
+    <div class="row g-4 align-items-stretch">
 
-    <input
-        type="text"
-        name="guest_name"
-        class="form-control"
-        required
-        placeholder="Masukkan nama Anda"
-    >
+        <div class="col-lg-5">
 
-</div>
-<div class="mb-3">
-    <label class="form-label">Nomor Telepon</label>
-<input type="text"
-       name="guest_phone"
-       class="form-control"
-       placeholder="08xxxxxxxxxx"
-       required>
+            <label class="guest-label">
+
+                <i class="fas fa-user"></i>
+
+                Nama Donatur
+
+            </label>
+
+            <input
+                type="text"
+                name="guest_name"
+                class="form-control guest-input"
+                placeholder="Contoh: Kaisar Raja Agung"
+                required
+            >
+
+        </div>
+
+        <div class="col-lg-5">
+
+            <label class="guest-label">
+
+                <i class="fas fa-mobile-alt"></i>
+
+                Nomor OnoPay / WhatsApp
+
+            </label>
+
+            <input
+                type="text"
+                name="guest_phone"
+                class="form-control guest-input"
+                placeholder="Contoh: 085143078916"
+                required
+            >
+
+        </div>
+
+        <div class="col-lg-2">
+
+            <div class="guest-note">
+
+                <i class="fas fa-circle-info"></i>
+
+                <span>
+                    Nomor ini digunakan untuk
+                    verifikasi pembayaran QRIS OnoPay.
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
 </div>
 
 @endguest

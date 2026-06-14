@@ -23,6 +23,7 @@
     href="{{ asset('css/streamers-detail.css') }}"
 >
 
+
 </head>
 <body>
 

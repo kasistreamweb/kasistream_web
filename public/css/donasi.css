@@ -309,3 +309,375 @@ textarea.form-control{
     border-right:
     1px solid rgba(255,255,255,.08);
 }
+
+/* ==========================
+   GUEST PAYMENT CARD
+========================== */
+
+.guest-info-card{
+
+    margin:20px;
+
+    padding:20px;
+
+    border-radius:20px;
+
+    background:
+    linear-gradient(
+        135deg,
+        rgba(37,99,235,.08),
+        rgba(139,92,246,.08)
+    );
+
+    border:
+    1px solid rgba(139,92,246,.45);
+
+    box-shadow:
+    0 0 25px rgba(139,92,246,.15);
+}
+
+.guest-info-header h4{
+
+    color:white;
+
+    font-weight:700;
+
+    margin-bottom:5px;
+}
+
+.guest-info-header p{
+
+    color:#94a3b8;
+
+    margin-bottom:20px;
+}
+
+.guest-label{
+
+    display:block;
+
+    color:white;
+
+    font-weight:600;
+
+    margin-bottom:10px;
+}
+
+.guest-label i{
+
+    color:#8b5cf6;
+
+    margin-right:8px;
+}
+
+.guest-input{
+
+    height:52px;
+
+    border-radius:14px !important;
+
+    font-size:16px;
+}
+
+.guest-note{
+
+    height:100%;
+
+    padding:15px;
+
+    border-radius:15px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    gap:10px;
+
+    background:
+    rgba(139,92,246,.12);
+
+    border:
+    1px solid rgba(139,92,246,.25);
+}
+
+.guest-note i{
+
+    font-size:24px;
+
+    color:#8b5cf6;
+}
+
+.guest-note span{
+
+    color:#cbd5e1;
+
+    font-size:13px;
+
+    line-height:1.6;
+}
+
+.sidebar-info-card{
+
+    margin-top:15px;
+
+    padding:18px;
+
+    border-radius:16px;
+
+    background:
+    rgba(255,255,255,.04);
+
+    border:
+    1px solid rgba(255,255,255,.08);
+
+    transition:.3s;
+}
+
+.sidebar-info-card:hover{
+
+    border-color:#8b5cf6;
+
+    box-shadow:
+    0 0 20px rgba(139,92,246,.18);
+}
+
+.sidebar-info-card i{
+
+    display:block;
+
+    font-size:22px;
+
+    color:#8b5cf6;
+
+    margin-bottom:10px;
+}
+
+.sidebar-info-card h6{
+
+    color:white;
+
+    font-weight:700;
+
+    margin-bottom:8px;
+}
+
+.sidebar-info-card p{
+
+    color:#94a3b8;
+
+    font-size:13px;
+
+    line-height:1.6;
+
+    margin:0;
+}
+
+/* ==========================
+   SIDEBAR AUTH BUTTONS
+========================== */
+
+.sidebar-login-btn{
+
+    width:100%;
+
+    height:54px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border:none;
+
+    border-radius:14px;
+
+    text-decoration:none;
+
+    font-weight:700;
+
+    color:white;
+
+    background:
+    linear-gradient(
+        135deg,
+        #2563eb,
+        #8b5cf6
+    );
+
+    box-shadow:
+    0 8px 25px rgba(139,92,246,.25);
+
+    transition:.3s;
+}
+
+.sidebar-login-btn:hover{
+
+    color:white;
+
+    transform:translateY(-2px);
+
+    box-shadow:
+    0 12px 35px rgba(139,92,246,.4);
+}
+
+.sidebar-register-btn{
+
+    width:100%;
+
+    height:54px;
+
+    margin-top:10px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    text-decoration:none;
+
+    border-radius:14px;
+
+    border:1px solid rgba(139,92,246,.4);
+
+    background:
+    rgba(255,255,255,.03);
+
+    color:white;
+
+    font-weight:600;
+
+    transition:.3s;
+}
+
+.sidebar-register-btn:hover{
+
+    color:white;
+
+    background:
+    rgba(139,92,246,.12);
+
+    border-color:#8b5cf6;
+
+    transform:translateY(-2px);
+}
+
+/* =========================
+   AUTH CARD
+========================= */
+
+.auth-card{
+
+    margin:20px 0;
+
+    padding:18px;
+
+    border-radius:16px;
+
+    background:
+    rgba(255,255,255,.04);
+
+    border:
+    1px solid rgba(139,92,246,.18);
+}
+
+.auth-card h6{
+
+    color:#fff;
+
+    font-weight:700;
+
+    margin-bottom:8px;
+}
+
+.auth-card p{
+
+    color:#94a3b8;
+
+    font-size:13px;
+
+    line-height:1.6;
+
+    margin-bottom:15px;
+}
+
+.sidebar-login-btn{
+
+    width:100%;
+
+    height:48px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    text-decoration:none;
+
+    border-radius:12px;
+
+    font-weight:700;
+
+    color:#fff;
+
+    background:
+    linear-gradient(
+        135deg,
+        #2563eb,
+        #8b5cf6
+    );
+
+    transition:.3s;
+}
+
+.sidebar-login-btn:hover{
+
+    color:#fff;
+
+    transform:translateY(-2px);
+
+    box-shadow:
+    0 10px 25px rgba(139,92,246,.35);
+}
+
+.sidebar-register-btn{
+
+    width:100%;
+
+    height:48px;
+
+    margin-top:10px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    text-decoration:none;
+
+    border-radius:12px;
+
+    border:1px solid rgba(139,92,246,.35);
+
+    color:#fff;
+
+    background:
+    rgba(255,255,255,.03);
+
+    transition:.3s;
+}
+
+.sidebar-register-btn:hover{
+
+    color:#fff;
+
+    background:
+    rgba(139,92,246,.12);
+
+    border-color:#8b5cf6;
+}

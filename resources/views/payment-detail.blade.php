@@ -243,10 +243,16 @@
     >
 
     <input
-        type="hidden"
-        name="guest_name"
-        value="{{ auth()->check() ? auth()->user()->name : '' }}"
-    >
+    type="hidden"
+    name="guest_name"
+    value="{{ $guest_name ?? '' }}"
+>
+
+<input
+    type="hidden"
+    name="guest_phone"
+    value="{{ $guest_phone ?? '' }}"
+>
 
     <input
         type="hidden"
@@ -276,12 +282,29 @@
 
     @endforeach
 
-    <button
-        type="submit"
-        class="btn bayar-btn w-100"
-    >
+    @if(session('error'))
+    <div class="alert alert-danger">
+        {{ session('error') }}
+    </div>
+@endif
+
+@if($errors->any())
+    <div class="alert alert-danger">
+        @foreach($errors->all() as $error)
+            <div>{{ $error }}</div>
+        @endforeach
+    </div>
+@endif
+
+    <div class="payment-action">
+
+    <button class="bayar-btn w-100">
+
         🔒 Konfirmasi & Bayar
+
     </button>
+
+</div>
 
 </form>
 
