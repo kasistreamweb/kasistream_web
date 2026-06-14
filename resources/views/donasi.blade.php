@@ -407,20 +407,15 @@
 
 </div>
 
-@auth
 
 <script>
-
-const userBalance =
-    {{ auth()->user()->balance ?? 0 }};
 
 const adminFee = 1500;
 
-</script>
-
+@auth
+const userBalance =
+    {{ auth()->user()->balance ?? 0 }};
 @endauth
-
-<script>
 
 function updateTotal()
 {
@@ -445,18 +440,19 @@ function updateTotal()
 
     document.getElementById('totalText').innerHTML =
         'Rp ' +
-        total.toLocaleString('id-ID');
+        (isNaN(total) ? 0 : total)
+        .toLocaleString('id-ID');
 
     @auth
 
-let btn =
-    document.getElementById('submitBtn');
+    let btn =
+        document.getElementById('submitBtn');
 
-btn.disabled = false;
+    btn.disabled = false;
 
-btn.innerHTML = 'Lanjutkan';
+    btn.innerHTML = 'Lanjutkan';
 
-@endauth
+    @endauth
 }
 
 function countChar(el)
@@ -464,7 +460,6 @@ function countChar(el)
     document.getElementById('counter').innerHTML =
         el.value.length + '/150';
 }
-
 
 function setNominal(value, btn)
 {

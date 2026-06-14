@@ -393,6 +393,24 @@ body{
     margin-bottom:20px;
 }
 
+.alert-error{
+
+    background:#dc2626;
+
+    color:white;
+
+    padding:14px;
+
+    border-radius:12px;
+
+    margin-bottom:20px;
+
+    border:1px solid #ef4444;
+
+    box-shadow:
+        0 0 15px rgba(239,68,68,.3);
+}
+
 /* ANIMATION */
 
 @keyframes fadeIn{
@@ -494,6 +512,16 @@ body{
 
         @endif
 
+        @if(session('error'))
+
+            <div class="alert-error">
+
+                {{ session('error') }}
+
+            </div>
+
+        @endif
+
         <form action="/login" method="POST">
 
             @csrf
@@ -502,12 +530,13 @@ body{
 
                 <label>Email</label>
 
-                <input
-                    type="email"
-                    name="email"
-                    class="form-control"
-                    required
-                >
+            <input
+                type="email"
+                name="email"
+                class="form-control"
+                value="{{ old('email') }}"
+                required
+            >
 
             </div>
 

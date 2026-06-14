@@ -9,6 +9,7 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="{{ asset('css/admin.css') }}">
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -76,6 +77,10 @@ body{
     border-bottom:none;
 }
 
+#donasiChart{
+    height:320px !important;
+}
+
 </style>
 
 </head>
@@ -99,113 +104,29 @@ body{
 
     <!-- STAT CARD -->
 
-    <div class="row">
+<div class="row">
 
-        <div class="col-md-3 mb-4">
+    <div class="col-lg-4 col-md-6 mb-4">
 
-            <div class="card card-stat shadow-sm">
+        <div class="card card-stat shadow-sm">
 
-                <div class="card-body">
+            <div class="card-body">
 
-                    <div class="d-flex justify-content-between">
+                <div class="d-flex justify-content-between">
 
-                        <div>
+                    <div>
 
-                            <small>Total User</small>
+                        <small>Total User</small>
 
-                            <h2>
-                                {{ number_format($totalUser) }}
-                            </h2>
+                        <h2>
 
-                        </div>
+                            {{ number_format($totalUser) }}
 
-                        <i class="fa-regular fa-user icon"></i>
+                        </h2>
 
                     </div>
 
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="col-md-3 mb-4">
-
-            <div class="card card-stat shadow-sm">
-
-                <div class="card-body">
-
-                    <div class="d-flex justify-content-between">
-
-                        <div>
-
-                            <small>Total Streamer</small>
-
-                            <h2>
-                                {{ number_format($totalStreamer) }}
-                            </h2>
-
-                        </div>
-
-                        <i class="fa-solid fa-hourglass-half icon"></i>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="col-md-3 mb-4">
-
-            <div class="card card-stat shadow-sm">
-
-                <div class="card-body">
-
-                    <div class="d-flex justify-content-between">
-
-                        <div>
-
-                            <small>Total Donasi</small>
-
-                            <h3>
-                                Rp {{ number_format($totalDonasi) }}
-                            </h3>
-
-                        </div>
-
-                        <i class="fa-solid fa-sack-dollar icon"></i>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="col-md-3 mb-4">
-
-            <div class="card card-stat shadow-sm">
-
-                <div class="card-body">
-
-                    <div class="d-flex justify-content-between">
-
-                        <div>
-
-                            <small>Transaksi Hari Ini</small>
-
-                            <h2>
-                                {{ number_format($transaksiHariIni) }}
-                            </h2>
-
-                        </div>
-
-                        <i class="fa-solid fa-users icon"></i>
-
-                    </div>
+                    <i class="fa-regular fa-user icon"></i>
 
                 </div>
 
@@ -215,6 +136,157 @@ body{
 
     </div>
 
+    <div class="col-lg-4 col-md-6 mb-4">
+
+        <div class="card card-stat shadow-sm">
+
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between">
+
+                    <div>
+
+                        <small>Total Streamer</small>
+
+                        <h2>
+
+                            {{ number_format($totalStreamer) }}
+
+                        </h2>
+
+                    </div>
+
+                    <i class="fa-solid fa-video icon"></i>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-lg-4 col-md-6 mb-4">
+
+        <div class="card card-stat shadow-sm">
+
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between">
+
+                    <div>
+
+                        <small>Total Donasi</small>
+
+                        <h4>
+
+                            Rp {{ number_format($totalDonasi) }}
+
+                        </h4>
+
+                    </div>
+
+                    <i class="fa-solid fa-sack-dollar icon"></i>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-lg-4 col-md-6 mb-4">
+
+        <div class="card card-stat shadow-sm">
+
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between">
+
+                    <div>
+
+                        <small>Transaksi Hari Ini</small>
+
+                        <h2>
+
+                            {{ number_format($transaksiHariIni) }}
+
+                        </h2>
+
+                    </div>
+
+                    <i class="fa-solid fa-receipt icon"></i>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-lg-4 col-md-6 mb-4">
+
+        <div class="card card-stat shadow-sm">
+
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between">
+
+                    <div>
+
+                        <small>Pendapatan Platform</small>
+
+                        <h4>
+
+                            Rp {{ number_format($totalPendapatanPlatform ?? 0) }}
+
+                        </h4>
+
+                    </div>
+
+                    <i class="fa-solid fa-coins icon"></i>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-lg-4 col-md-6 mb-4">
+
+        <div class="card card-stat shadow-sm">
+
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between">
+
+                    <div>
+
+                        <small>Withdraw Pending</small>
+
+                        <h4>
+
+                            Rp {{ number_format($withdrawPending ?? 0) }}
+
+                        </h4>
+
+                    </div>
+
+                    <i class="fa-solid fa-wallet icon"></i>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
     <!-- GRAFIK + DONASI -->
 
     <div class="row">
@@ -308,37 +380,34 @@ body{
 <script>
 
 new Chart(
-document.getElementById('donasiChart'),
-{
-    type:'line',
+    document.getElementById('donasiChart'),
+    {
+        type:'line',
 
-    data:{
-        labels:[
-            'Sen',
-            'Sel',
-            'Rab',
-            'Kam',
-            'Jum',
-            'Sab',
-            'Min'
-        ],
+        data:{
 
-        datasets:[
-        {
-            label:'Donasi',
-            data:[
-                10,
-                20,
-                15,
-                35,
-                25,
-                40,
-                30
-            ],
-            tension:.4
-        }]
+            labels:@json($labels),
+
+            datasets:[
+            {
+                label:'Donasi 7 Hari Terakhir',
+
+                data:@json($donasiPerHari),
+
+                borderWidth:3,
+
+                tension:.4,
+
+                fill:false
+            }]
+        },
+
+        options:{
+            responsive:true,
+            maintainAspectRatio:false
+        }
     }
-});
+);
 
 </script>
 

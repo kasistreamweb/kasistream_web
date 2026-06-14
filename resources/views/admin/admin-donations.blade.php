@@ -9,7 +9,7 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
-
+<link rel="stylesheet" href="{{ asset('css/admin.css') }}">
 <style>
 
 body{
@@ -64,6 +64,14 @@ body{
     color:black;
 }
 
+.table td{
+    vertical-align:middle;
+}
+
+.badge.bg-info{
+    color:white;
+}
+
 </style>
 
 </head>
@@ -89,6 +97,171 @@ body{
 
         </h3>
 
+        <div class="row mb-4">
+
+    <div class="col-md-3">
+
+        <div class="card shadow-sm">
+
+            <div class="card-body">
+
+                <small>Total Donasi</small>
+
+                <h4>
+                    Rp {{ number_format($totalDonasi) }}
+                </h4>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-3">
+
+        <div class="card shadow-sm">
+
+            <div class="card-body">
+
+                <small>Total Transaksi</small>
+
+                <h4>
+                    {{ number_format($jumlahTransaksi) }}
+                </h4>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-3">
+
+        <div class="card shadow-sm">
+
+            <div class="card-body">
+
+                <small>Pendapatan Platform</small>
+
+                <h4>
+                    Rp {{ number_format($totalAdminFee) }}
+                </h4>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-3">
+
+        <div class="card shadow-sm">
+
+            <div class="card-body">
+
+                <small>Donasi Hari Ini</small>
+
+                <h4>
+                    Rp {{ number_format($donasiHariIni) }}
+                </h4>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<form method="GET" action="/admin-donations" class="row g-3 mb-4">
+
+    <div class="col-md-4">
+
+        <input
+            type="text"
+            name="search"
+            class="form-control"
+            placeholder="Cari donatur atau streamer..."
+            value="{{ request('search') }}"
+        >
+
+    </div>
+
+    <div class="col-md-2">
+
+        <select
+            name="status"
+            class="form-select"
+        >
+
+            <option value="">
+                Semua Status
+            </option>
+
+            <option
+                value="success"
+                {{ request('status') == 'success' ? 'selected' : '' }}
+            >
+                Success
+            </option>
+
+            <option
+                value="pending"
+                {{ request('status') == 'pending' ? 'selected' : '' }}
+            >
+                Pending
+            </option>
+
+            <option
+                value="failed"
+                {{ request('status') == 'failed' ? 'selected' : '' }}
+            >
+                Failed
+            </option>
+
+        </select>
+
+    </div>
+
+    <div class="col-md-2">
+
+        <input
+            type="date"
+            name="dari"
+            class="form-control"
+            value="{{ request('dari') }}"
+        >
+
+    </div>
+
+    <div class="col-md-2">
+
+        <input
+            type="date"
+            name="sampai"
+            class="form-control"
+            value="{{ request('sampai') }}"
+        >
+
+    </div>
+
+    <div class="col-md-2">
+
+        <button
+            type="submit"
+            class="btn btn-primary w-100"
+        >
+
+            <i class="fa-solid fa-magnifying-glass"></i>
+
+            Filter
+
+        </button>
+
+    </div>
+
+</form>
+
         <table class="table table-hover">
 
             <thead>
@@ -98,10 +271,14 @@ body{
                     <th>ID</th>
                     <th>Donatur</th>
                     <th>Streamer</th>
+                    <th>Tipe</th>
                     <th>Nominal</th>
-                    <th>Pesan</th>
+                    <th>Admin Fee</th>
+                    <th>Grand Total</th>
+                    <th>Metode</th>
                     <th>Status</th>
                     <th>Tanggal</th>
+                    <th>Aksi</th>
 
                 </tr>
 
@@ -117,31 +294,67 @@ body{
                             #{{ $item->id }}
                         </td>
 
-                        <td>
+
+    <td>
 
     {{ optional($item->user)->name ?? $item->guest_name }}
 
-    @if(!$item->user)
+</td>
+
+<td>
+
+    @if($item->user)
+
+        <span class="badge bg-primary">
+
+            Member
+
+        </span>
+
+    @else
 
         <span class="badge bg-secondary">
+
             Guest
+
         </span>
 
     @endif
 
 </td>
-
                         <td>
                             {{ $item->streamer->name }}
                         </td>
 
                         <td>
-                            Rp {{ number_format($item->nominal) }}
-                        </td>
+    Rp {{ number_format($item->nominal) }}
+</td>
 
-                        <td>
-                            {{ $item->pesan }}
-                        </td>
+<td>
+    Rp {{ number_format($item->admin_fee ?? 0) }}
+</td>
+
+<td>
+    Rp {{ number_format($item->grand_total ?? $item->nominal) }}
+</td>
+
+<td>
+
+    @if($item->payment_method)
+
+        <span class="badge bg-info">
+
+            {{ $item->payment_method }}
+
+        </span>
+
+    @else
+
+        -
+
+    @endif
+
+</td>
 
                         <td>
 
@@ -170,6 +383,17 @@ body{
                             {{ $item->created_at->format('d M Y H:i') }}
 
                         </td>
+
+                        <td>
+
+    <a
+        href="/admin-donations/{{ $item->id }}"
+        class="btn btn-sm btn-info"
+    >
+        <i class="fa-solid fa-eye"></i>
+    </a>
+
+</td>
 
                     </tr>
 

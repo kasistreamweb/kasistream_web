@@ -1,7 +1,7 @@
 <div class="col-md-2 sidebar p-3">
 
     <div class="logo mb-4">
-        KAistream
+        KAsistream
     </div>
 
     <a href="/admin-dashboard"
@@ -22,6 +22,14 @@
         Data Streamer
     </a>
 
+    <a
+    href="/admin-streamer-ranking"
+    class="menu-item"
+>
+    <i class="fa-solid fa-trophy"></i>
+    Ranking Streamer
+    </a>
+
     <a href="/admin-donations"
        class="menu-item {{ request()->is('admin-donations*') ? 'active-menu' : '' }}">
         <i class="fa-solid fa-money-bill-wave"></i>
@@ -36,10 +44,10 @@
 
     </a>
 
-    <a href="#"
-       class="menu-item">
-        <i class="fa-solid fa-circle-check"></i>
-        Verifikasi Pembayaran
+    <a href="/admin-gateway-transactions"
+    class="menu-item {{ request()->is('admin-gateway-transactions*') ? 'active-menu' : '' }}">
+        <i class="fa-solid fa-credit-card"></i>
+        Transaksi Gateway
     </a>
 
    <a href="/admin-reports"

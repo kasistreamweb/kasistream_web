@@ -174,7 +174,7 @@ $walletCukup =
 
                         <div class="payment-arrow">
 
-                            <i class="fa-solid fa-qrcode"></i>
+                            <i class="fa-solid fa-chevron-right"></i>
 
                         </div>
 

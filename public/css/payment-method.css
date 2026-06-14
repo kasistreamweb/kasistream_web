@@ -29,9 +29,25 @@
 
 .payment-arrow{
 
+    margin-left:auto;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    width:40px;
+
+    height:40px;
+
+    border-radius:12px;
+
     color:#94a3b8;
 
-    font-size:20px;
+    font-size:18px;
+
+    transition:.3s;
 }
 
 .payment-item{

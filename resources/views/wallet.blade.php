@@ -53,13 +53,7 @@
                             Kelola saldo dan transaksi hasil donasi Anda.
                         </p>
 
-                    </div>
-
-                    <div class="wallet-total">
-
-                        Rp {{ number_format(Auth::user()->balance) }}
-
-                    </div>
+                    </div>          
 
                 </div>
 
@@ -71,37 +65,57 @@
 
                 <div class="col-lg-7 mb-4">
 
-                    <div class="wallet-card">
+    <div class="wallet-card h-100">
 
-                        <div>
+        <div>
 
-                            <span class="wallet-label">
-                                Saldo Wallet
-                            </span>
+            <span class="wallet-label">
+                Saldo Wallet
+            </span>
 
-                            <div class="wallet-amount">
-                                Rp {{ number_format(Auth::user()->balance) }}
-                            </div>
+            <div class="wallet-amount">
+                Rp {{ number_format(Auth::user()->balance) }}
+            </div>
 
-                            <div class="wallet-meta">
+            <div class="wallet-meta">
 
-                                <span>
+                @if(Auth::user()->balance >= 15000)
 
-                                    <i class="fa-solid fa-circle text-success"></i>
+                    <span class="withdraw-status success">
 
-                                    Saldo dapat ditarik
+                        <i class="fa-solid fa-circle"></i>
 
-                                </span>
+                        Saldo dapat ditarik
 
-                            </div>
+                    </span>
 
-                        </div>
+                @else
 
-                        <i class="fa-solid fa-wallet wallet-icon"></i>
+                    <span class="withdraw-status danger">
+
+                        <i class="fa-solid fa-circle"></i>
+
+                        Saldo tidak dapat ditarik
+
+                    </span>
+
+                    <div class="withdraw-note">
+
+                        Minimal withdraw Rp 15.000
 
                     </div>
 
-                </div>
+                @endif
+
+            </div>
+
+        </div>
+
+        <i class="fa-solid fa-wallet wallet-icon"></i>
+
+    </div>
+
+</div>
 
                 <!-- PERBAIKAN SPACING -->
 
@@ -141,22 +155,45 @@
 
                 <div class="col-md-6 mb-4">
 
-                    <a
-                        href="/withdraw"
-                        class="action-link"
-                    >
+                    @if(Auth::user()->balance >= 15000)
 
-                        <div class="action-card">
+    <a
+        href="/withdraw"
+        class="action-link"
+    >
 
-                            <i class="fa-solid fa-arrow-up-from-bracket"></i>
+        <div class="action-card">
 
-                            <span>
-                                Tarik Dana
-                            </span>
+            <i class="fa-solid fa-arrow-up-from-bracket"></i>
 
-                        </div>
+            <span>
+                Tarik Dana
+            </span>
 
-                    </a>
+        </div>
+
+    </a>
+
+@else
+
+    <div
+        class="action-card withdraw-disabled"
+        title="Minimal saldo Rp 15.000 untuk melakukan penarikan"
+    >
+
+        <i class="fa-solid fa-lock"></i>
+
+        <span>
+            Tarik Dana
+        </span>
+
+        <small>
+            Minimal Rp 15.000
+        </small>
+
+    </div>
+
+@endif
 
                 </div>
 

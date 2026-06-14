@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,7 +9,7 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
-
+<link rel="stylesheet" href="{{ asset('css/admin.css') }}">
 <style>
 
 body{
@@ -50,10 +49,20 @@ body{
 .active-menu{
     background:rgba(255,255,255,.15);
 }
+
 .content-card{
     background:white;
     border-radius:15px;
     padding:20px;
+}
+
+.table td{
+    vertical-align:middle;
+}
+
+.stat-card{
+    border:none;
+    border-radius:15px;
 }
 
 </style>
@@ -87,124 +96,263 @@ body{
 
         @endif
 
-        <table class="table table-hover">
+        <!-- SEARCH & FILTER -->
 
-            <thead>
+        <form
+            method="GET"
+            action="/admin-withdraws"
+            class="row g-3 mb-4"
+        >
 
-                <tr>
+            <div class="col-md-6">
 
-                    <th>Streamer</th>
-                    <th>Nominal</th>
-                    <th>Bank</th>
-                    <th>Rekening</th>
-                    <th>Status</th>
-                    <th>Aksi</th>
+                <input
+                    type="text"
+                    name="search"
+                    class="form-control"
+                    placeholder="Cari streamer..."
+                    value="{{ request('search') }}"
+                >
 
-                </tr>
+            </div>
 
-            </thead>
+            <div class="col-md-3">
 
-            <tbody>
+                <select
+                    name="status"
+                    class="form-select"
+                >
 
-                @foreach($withdraws as $withdraw)
+                    <option value="">
+                        Semua Status
+                    </option>
+
+                    <option
+                        value="pending"
+                        {{ request('status') == 'pending' ? 'selected' : '' }}
+                    >
+                        Pending
+                    </option>
+
+                    <option
+                        value="approved"
+                        {{ request('status') == 'approved' ? 'selected' : '' }}
+                    >
+                        Approved
+                    </option>
+
+                    <option
+                        value="rejected"
+                        {{ request('status') == 'rejected' ? 'selected' : '' }}
+                    >
+                        Rejected
+                    </option>
+
+                </select>
+
+            </div>
+
+            <div class="col-md-3">
+
+                <button
+                    type="submit"
+                    class="btn btn-primary w-100"
+                >
+
+                    <i class="fa-solid fa-magnifying-glass"></i>
+
+                    Filter
+
+                </button>
+
+            </div>
+
+        </form>
+
+        <!-- TABLE -->
+
+        <div class="table-responsive">
+
+            <table class="table table-hover">
+
+                <thead>
 
                     <tr>
 
-                        <td>
-                            {{ $withdraw->user->name }}
-                        </td>
-
-                        <td>
-                            Rp {{ number_format($withdraw->nominal) }}
-                        </td>
-
-                        <td>
-                            {{ $withdraw->bank }}
-                        </td>
-
-                        <td>
-                            {{ $withdraw->rekening }}
-                        </td>
-
-                        <td>
-
-                            @if($withdraw->status == 'pending')
-
-                                <span class="badge bg-warning">
-
-                                    Pending
-
-                                </span>
-
-                            @elseif($withdraw->status == 'approved')
-
-                                <span class="badge bg-success">
-
-                                    Approved
-
-                                </span>
-
-                            @else
-
-                                <span class="badge bg-danger">
-
-                                    Rejected
-
-                                </span>
-
-                            @endif
-
-                        </td>
-
-                        <td>
-
-                            @if($withdraw->status == 'pending')
-
-                                <form
-                                    action="/admin-withdraws/{{ $withdraw->id }}/approve"
-                                    method="POST"
-                                    class="d-inline">
-
-                                    @csrf
-
-                                    <button
-                                        class="btn btn-success btn-sm">
-
-                                        Approve
-
-                                    </button>
-
-                                </form>
-
-                                <form
-                                    action="/admin-withdraws/{{ $withdraw->id }}/reject"
-                                    method="POST"
-                                    class="d-inline">
-
-                                    @csrf
-
-                                    <button
-                                        class="btn btn-danger btn-sm">
-
-                                        Reject
-
-                                    </button>
-
-                                </form>
-
-                            @endif
-
-                        </td>
+                        <th>Streamer</th>
+                        <th>Nominal</th>
+                        <th>Bank</th>
+                        <th>Rekening</th>
+                        <th>Nama Rekening</th>
+                        <th>Status</th>
+                        <th>Tanggal Request</th>
+                        <th>Aksi</th>
 
                     </tr>
 
-                @endforeach
+                </thead>
 
-            </tbody>
+                <tbody>
 
-        </table>
+                    @forelse($withdraws as $withdraw)
 
-        {{ $withdraws->links() }}
+                        <tr>
+
+                            <td>
+
+                                {{ $withdraw->user->name }}
+
+                            </td>
+
+                            <td>
+
+                                Rp {{ number_format($withdraw->nominal) }}
+
+                            </td>
+
+                            <td>
+
+                                {{ $withdraw->bank }}
+
+                            </td>
+
+                            <td>
+
+                                {{ $withdraw->rekening }}
+
+                            </td>
+
+                            <td>
+
+                                {{ $withdraw->nama_rekening }}
+
+                            </td>
+
+                            <td>
+
+                                @if($withdraw->status == 'pending')
+
+                                    <span class="badge bg-warning text-dark">
+
+                                        Pending
+
+                                    </span>
+
+                                @elseif($withdraw->status == 'approved')
+
+                                    <span class="badge bg-success">
+
+                                        Approved
+
+                                    </span>
+
+                                @else
+
+                                    <span class="badge bg-danger">
+
+                                        Rejected
+
+                                    </span>
+
+                                @endif
+
+                            </td>
+
+                            <td>
+
+                                {{ $withdraw->created_at->format('d M Y H:i') }}
+
+                            </td>
+
+                            <td>
+
+                                <a
+                                    href="/admin-withdraws/{{ $withdraw->id }}"
+                                    class="btn btn-info btn-sm"
+                                >
+
+                                    <i class="fa-solid fa-eye"></i>
+
+                                    Detail
+
+                                </a>
+
+                                @if($withdraw->status == 'pending')
+
+                                    <form
+                                        action="/admin-withdraws/{{ $withdraw->id }}/approve"
+                                        method="POST"
+                                        class="d-inline"
+                                    >
+
+                                        @csrf
+
+                                        <button
+                                            class="btn btn-success btn-sm"
+                                        >
+
+                                            <i class="fa-solid fa-check"></i>
+
+                                            Approve
+
+                                        </button>
+
+                                    </form>
+
+                                    <form
+                                        action="/admin-withdraws/{{ $withdraw->id }}/reject"
+                                        method="POST"
+                                        class="d-inline"
+                                    >
+
+                                        @csrf
+
+                                        <button
+                                            class="btn btn-danger btn-sm"
+                                        >
+
+                                            <i class="fa-solid fa-xmark"></i>
+
+                                            Reject
+
+                                        </button>
+
+                                    </form>
+
+                                @endif
+
+                            </td>
+
+                        </tr>
+
+                    @empty
+
+                        <tr>
+
+                            <td
+                                colspan="8"
+                                class="text-center"
+                            >
+
+                                Belum ada data withdraw.
+
+                            </td>
+
+                        </tr>
+
+                    @endforelse
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <div class="mt-3">
+
+            {{ $withdraws->links() }}
+
+        </div>
 
     </div>
 

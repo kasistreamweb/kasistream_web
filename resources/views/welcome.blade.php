@@ -675,18 +675,17 @@ footer{
 
                             <h3 class="fw-bold">
 
-                                100%
+                                Rp {{ number_format($totalDonasi) }}
 
                             </h3>
 
                             <small class="text-secondary">
 
-                                Aman
+                                Donasi
 
                             </small>
 
                         </div>
-
                     </div>
 
                 </div>
@@ -874,16 +873,15 @@ footer{
 
                 <h3 class="fw-bold">
 
-                    128K+
+                    Rp {{ number_format($totalDonasi) }}
 
                 </h3>
 
                 <p class="text-secondary">
 
-                    Donasi Terkirim
+                    Total Donasi
 
                 </p>
-
             </div>
 
         </div>
@@ -896,13 +894,13 @@ footer{
 
                 <h3 class="fw-bold">
 
-                    4.9/5
+                    {{ number_format($totalFollower) }}
 
                 </h3>
 
                 <p class="text-secondary">
 
-                    Rating Platform
+                    Total Followers
 
                 </p>
 

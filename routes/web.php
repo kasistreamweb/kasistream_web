@@ -8,29 +8,49 @@ use App\Http\Controllers\StreamerController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\WithdrawController;
 use Illuminate\Http\Request;
-
+use App\Models\Donasi;
+use App\Models\Follower;
 /*
 |--------------------------------------------------------------------------
 | LANDING PAGE
 |--------------------------------------------------------------------------
 */
 
+
 Route::get('/', function () {
 
     $streamers = User::where('is_streamer', 1)
-                    ->latest()
-                    ->take(6)
-                    ->get();
+        ->latest()
+        ->take(6)
+        ->get();
 
-    $totalStreamer = User::where('is_streamer', 1)->count();
+    $totalStreamer = User::where(
+        'is_streamer',
+        1
+    )->count();
 
     $totalUser = User::count();
 
-    return view('welcome', compact(
-        'streamers',
-        'totalStreamer',
-        'totalUser'
-    ));
+    $totalDonasi = Donasi::where(
+        'status',
+        'success'
+    )->sum('nominal');
+
+    $totalFollower = User::where(
+        'is_streamer',
+        1
+    )->sum('followers');
+
+    return view(
+        'welcome',
+        compact(
+            'streamers',
+            'totalStreamer',
+            'totalUser',
+            'totalDonasi',
+            'totalFollower'
+        )
+    );
 
 });
 
@@ -77,9 +97,30 @@ Route::get(
 
 Route::get('/user-dashboard', function () {
 
-    $streamers = User::where('is_streamer', 1)->get();
+    $streamers = User::where('is_streamer', 1)
+        ->orderByDesc('followers')
+        ->get();
 
-    return view('user-dashboard', compact('streamers'));
+    $totalFollowing = Follower::where(
+        'user_id',
+        auth()->id()
+    )->count();
+
+    $recentDonations = Donasi::with('streamer')
+        ->where('user_id', auth()->id())
+        ->where('status', 'success')
+        ->latest()
+        ->take(5)
+        ->get();
+
+    return view(
+        'user-dashboard',
+        compact(
+            'streamers',
+            'totalFollowing',
+            'recentDonations'
+        )
+    );
 
 })->middleware('auth');
 
@@ -218,6 +259,11 @@ Route::post('/become-streamer', function (Illuminate\Http\Request $request) {
     [AdminController::class, 'streamers']
     )->middleware('auth');
 
+    Route::get(
+    '/admin-streamers/{id}',
+    [AdminController::class,'streamerDetail']
+    )->middleware('auth');
+
     Route::post(
     '/admin-streamers/remove/{id}',
     [AdminController::class, 'removeStreamer']
@@ -227,6 +273,11 @@ Route::post('/become-streamer', function (Illuminate\Http\Request $request) {
     '/admin-donations',
     [AdminController::class, 'donations']
     )->middleware('auth');
+
+    Route::get(
+    '/admin-donations/{id}',
+    [AdminController::class, 'donationDetail']
+)->middleware('auth');
 
     Route::get('/wallet', function () {
 
@@ -349,6 +400,11 @@ Route::post('/become-streamer', function (Illuminate\Http\Request $request) {
     Route::get(
     '/admin-reports',
     [AdminController::class,'reports']
+    )->middleware('auth');
+
+    Route::get(
+    '/admin-streamer-ranking',
+    [AdminController::class,'streamerRanking']
     )->middleware('auth');
 
     Route::get('/wallet-history', function () {
@@ -529,7 +585,23 @@ Route::get(
 Route::get(
     '/payment-success-manual/{id}',
     [DonasiController::class,'simulateQris']
+
 );
+
+Route::get(
+    '/admin-gateway-transactions',
+    [AdminController::class, 'gatewayTransactions']
+);
+
+Route::get(
+    '/admin-reports/excel',
+    [AdminController::class, 'exportExcel']
+)->name('admin.reports.excel');
+
+Route::get(
+    '/admin-reports/print',
+    [AdminController::class, 'printReport']
+)->name('admin.reports.print');
 /*
 |--------------------------------------------------------------------------
 | LOGOUT

@@ -514,3 +514,47 @@
     }
 
 }
+
+.withdraw-status{
+
+    font-size:14px;
+
+    font-weight:600;
+}
+
+.withdraw-status.success{
+
+    color:#22c55e;
+}
+
+.withdraw-status.danger{
+
+    color:#ef4444;
+}
+
+.withdraw-status i{
+
+    font-size:10px;
+
+    margin-right:6px;
+}
+
+.disabled-withdraw{
+
+    pointer-events:none;
+
+    opacity:.5;
+
+    cursor:not-allowed;
+}
+
+.wallet-card{
+
+    height:100%;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+}

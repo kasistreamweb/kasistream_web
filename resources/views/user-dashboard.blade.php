@@ -53,36 +53,84 @@
 
 </div>
 
-        <!-- TOPBAR -->
+    <!-- TOPBAR -->
 
-        <div class="topbar mb-4">
+<div class="topbar mb-4">
 
-            <div class="row align-items-center">
+    <div class="d-flex align-items-center gap-3 flex-wrap">
 
-                <div class="col-lg-8">
+        <div class="search-flex">
 
-                    <input
-                        type="text"
-                        class="form-control search-box"
-                        placeholder="Cari streamer, game, atau kategori..."
-                    >
+            <div class="search-wrapper">
 
-                </div>
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
 
-                <div class="col-lg-4">
-
-                    <div class="notification-btn">
-
-                        <i class="fa-solid fa-bell"></i>
-
-                    </div>
-
-                </div>
+                <input
+                    type="text"
+                    class="search-box"
+                    placeholder="Cari streamer, game, atau kategori..."
+                >
 
             </div>
 
         </div>
 
+        <a
+            href="#top-streamer"
+            class="trending-badge text-decoration-none"
+        >
+            🔥 Trending
+        </a>
+
+        <div class="notification-btn">
+
+            <i class="fa-solid fa-bell"></i>
+
+        </div>
+
+        <div class="wallet-mini">
+
+            <i class="fa-solid fa-wallet"></i>
+
+            <span>
+
+                Rp {{ number_format(Auth::user()->balance ?? 0) }}
+
+            </span>
+
+        </div>
+
+        <div class="user-mini">
+
+            @if(Auth::user()->foto)
+
+                <img
+                    src="{{ asset('uploads/profile/' . Auth::user()->foto) }}"
+                    class="top-avatar"
+                    alt="{{ Auth::user()->name }}"
+                >
+
+            @else
+
+                <img
+                    src="{{ asset('images/default-avatar.png') }}"
+                    class="top-avatar"
+                    alt="User"
+                >
+
+            @endif
+
+            <span>
+
+                {{ Auth::user()->name }}
+
+            </span>
+
+        </div>
+
+    </div>
+
+</div>
         <!-- STATISTIC -->
 
         <div class="row g-4 mb-5">
@@ -117,7 +165,7 @@
 
                     <h3>
 
-                        0
+                        {{ $totalFollowing }}
 
                     </h3>
 
@@ -126,7 +174,6 @@
                         Mengikuti
 
                     </span>
-
                 </div>
 
             </div>
@@ -178,7 +225,10 @@
         </div>
 
 <!-- TOP STREAMER -->
-<div class="d-flex justify-content-between align-items-center mb-3">
+<div
+    id="top-streamer"
+    class="d-flex justify-content-between align-items-center mb-3"
+>
 
     <h4 class="section-title">
         🔥 Top Streamer
@@ -195,13 +245,39 @@
 
 <div class="row">
 
-    @forelse($streamers as $streamer)
+    @forelse($streamers as $index => $streamer)
 
         <div class="col-xl-4 col-lg-6 col-md-6 mb-4">
 
             <div class="card streamer-card shadow-sm">
 
                 <div class="card-body text-center">
+
+                @if($index == 0)
+
+<div class="rank-badge rank-gold">
+
+    🥇 Top #1
+
+</div>
+
+@elseif($index == 1)
+
+<div class="rank-badge rank-silver">
+
+    🥈 Top #2
+
+</div>
+
+@elseif($index == 2)
+
+<div class="rank-badge rank-bronze">
+
+    🥉 Top #3
+
+</div>
+
+@endif
 
                     @if($streamer->foto)
 
@@ -233,13 +309,21 @@
                         🎮 {{ $streamer->game ?? 'Belum memilih game' }}
                     </div>
 
-                    <div class="small text-muted">
-                        👥 {{ number_format($streamer->followers ?? 0) }} Followers
-                    </div>
+                    <div class="streamer-stat">
 
-                    <div class="small text-muted mb-3">
-                        💰 Rp {{ number_format($streamer->total_donasi ?? 0) }}
-                    </div>
+    <i class="fa-solid fa-users"></i>
+
+    {{ number_format($streamer->followers ?? 0) }}
+
+    Followers
+
+</div>
+
+                    <div class="streamer-donation mb-3">
+
+    💰 Rp {{ number_format($streamer->total_donasi ?? 0) }}
+
+</div>
 
                     <div class="mt-3">
 
@@ -288,81 +372,52 @@
 
             <div class="activity-list">
 
-                <div class="activity-item">
+@forelse($recentDonations as $donasi)
 
-                    <div class="activity-icon donation">
+    <div class="activity-item">
 
-                        <i class="fa-solid fa-gift"></i>
+        <div class="activity-icon donation">
 
-                    </div>
+            <i class="fa-solid fa-gift"></i>
 
-                    <div class="activity-content">
+        </div>
 
-                        <div class="activity-title">
-                            Donasi ke aidil
-                        </div>
+        <div class="activity-content">
 
-                        <div class="activity-amount">
-                            Rp 10.000
-                        </div>
+                <div class="activity-title">
 
-                        <small>
-                            2 jam yang lalu
-                        </small>
-
-                    </div>
+                    Donasi ke
+                    {{ $donasi->streamer->name ?? 'Streamer' }}
 
                 </div>
 
-                <div class="activity-item">
+                <div class="activity-amount">
 
-                    <div class="activity-icon donation">
-
-                        <i class="fa-solid fa-gift"></i>
-
-                    </div>
-
-                    <div class="activity-content">
-
-                        <div class="activity-title">
-                            Donasi ke user
-                        </div>
-
-                        <div class="activity-amount">
-                            Rp 50.000
-                        </div>
-
-                        <small>
-                            5 jam yang lalu
-                        </small>
-
-                    </div>
+                    Rp {{ number_format($donasi->nominal) }}
 
                 </div>
 
-                <div class="activity-item">
+                <small>
 
-                    <div class="activity-icon follow">
+                    {{ $donasi->created_at->diffForHumans() }}
 
-                        <i class="fa-solid fa-star"></i>
-
-                    </div>
-
-                    <div class="activity-content">
-
-                        <div class="activity-title">
-                            Mengikuti aidil
-                        </div>
-
-                        <small>
-                            Kemarin, 21:30
-                        </small>
-
-                    </div>
-
-                </div>
+                </small>
 
             </div>
+
+        </div>
+
+    @empty
+
+        <div class="text-center text-muted py-4">
+
+            Belum ada aktivitas donasi.
+
+        </div>
+
+    @endforelse
+
+    </div>
 
         </div>
 

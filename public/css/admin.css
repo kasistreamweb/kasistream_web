@@ -1,0 +1,47 @@
+body{
+    background:#f4f6f9;
+}
+
+.sidebar{
+    min-height:100vh;
+    background:linear-gradient(
+        180deg,
+        #0f172a,
+        #111827
+    );
+}
+
+.logo{
+    color:white;
+    font-size:24px;
+    font-weight:bold;
+}
+
+.menu-item{
+    display:block;
+    color:white;
+    text-decoration:none;
+    padding:12px 15px;
+    border-radius:10px;
+    margin-bottom:8px;
+    transition:.3s;
+}
+
+.menu-item:hover{
+    background:rgba(255,255,255,.1);
+    color:white;
+}
+
+.active-menu{
+    background:rgba(255,255,255,.15);
+}
+
+.menu-item i{
+    width:22px;
+}
+
+.content-card{
+    background:white;
+    border-radius:15px;
+    padding:20px;
+}
