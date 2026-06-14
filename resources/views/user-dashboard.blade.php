@@ -102,31 +102,26 @@
 
         <div class="user-mini">
 
-            @if(Auth::user()->foto)
+    @if(Auth::user()->foto)
 
-                <img
-                    src="{{ asset('uploads/profile/' . Auth::user()->foto) }}"
-                    class="top-avatar"
-                    alt="{{ Auth::user()->name }}"
-                >
+        <img
+            src="{{ asset('uploads/profile/' . Auth::user()->foto) }}"
+            class="top-avatar"
+            style="
+                width:40px !important;
+                height:40px !important;
+                min-width:40px !important;
+                max-width:40px !important;
+                border-radius:50% !important;
+                object-fit:cover !important;
+            "
+        >
 
-            @else
+    @endif
 
-                <img
-                    src="{{ asset('images/default-avatar.png') }}"
-                    class="top-avatar"
-                    alt="User"
-                >
+    <span>{{ Auth::user()->name }}</span>
 
-            @endif
-
-            <span>
-
-                {{ Auth::user()->name }}
-
-            </span>
-
-        </div>
+</div>
 
     </div>
 
