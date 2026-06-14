@@ -158,11 +158,21 @@ Route::get('/streamer/{id}', function ($id) {
         ->exists();
     }
 
+    $topDonatur = Donasi::with('user')
+        ->where('streamer_id', $streamer->id)
+        ->where('status', 'success')
+        ->selectRaw('user_id, guest_name, SUM(nominal) as total_donasi')
+        ->groupBy('user_id', 'guest_name')
+        ->orderByDesc('total_donasi')
+        ->take(10)
+        ->get();
+
     return view(
         'streamer-detail',
         compact(
             'streamer',
-            'isFollowing'
+            'isFollowing',
+            'topDonatur'
         )
     );
 

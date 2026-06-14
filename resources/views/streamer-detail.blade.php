@@ -406,24 +406,44 @@
                         Top Donatur
                     </div>
 
-                    <ol class="top-donatur">
+<ol class="top-donatur">
 
-                        <li>
-                            <span>🥇 Andi</span>
-                            <span>Rp 500.000</span>
-                        </li>
+    @forelse($topDonatur as $index => $donatur)
 
-                        <li>
-                            <span>🥈 Budi</span>
-                            <span>Rp 300.000</span>
-                        </li>
+        <li>
 
-                        <li>
-                            <span>🥉 Citra</span>
-                            <span>Rp 250.000</span>
-                        </li>
+            <span>
 
-                    </ol>
+                @if($index == 0)
+                    🥇
+                @elseif($index == 1)
+                    🥈
+                @elseif($index == 2)
+                    🥉
+                @else
+                    #{{ $index + 1 }}
+                @endif
+
+                {{ $donatur->user->name ?? $donatur->guest_name }}
+
+            </span>
+
+            <span>
+                Rp {{ number_format($donatur->total_donasi, 0, ',', '.') }}
+            </span>
+
+        </li>
+
+    @empty
+
+        <li>
+            <span>Belum ada donatur</span>
+            <span>Rp 0</span>
+        </li>
+
+    @endforelse
+
+</ol>
 
                 </div>
 

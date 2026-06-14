@@ -21,14 +21,32 @@ class StreamerApiController extends Controller
         );
     }
 
-    public function show($id)
-    {
-        return response()->json(
+public function show($id)
+{
+    $streamer = User::findOrFail($id);
 
-            User::findOrFail($id)
+    $topDonatur = Donasi::where('streamer_id', $id)
+        ->selectRaw('guest_name, user_id, SUM(nominal) as total_donasi')
+        ->groupBy('guest_name', 'user_id')
+        ->orderByDesc('total_donasi')
+        ->take(10)
+        ->get();
 
-        );
-    }
+    $isFollowing = auth()->check()
+        ? Follower::where('user_id', auth()->id())
+            ->where('streamer_id', $id)
+            ->exists()
+        : false;
+
+    return view(
+        'streamers-detail',
+        compact(
+            'streamer',
+            'isFollowing',
+            'topDonatur'
+        )
+    );
+}
 
     public function follow($id)
     {
