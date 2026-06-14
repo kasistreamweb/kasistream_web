@@ -44,12 +44,6 @@
 
     </a>
 
-    <a href="/admin-gateway-transactions"
-    class="menu-item {{ request()->is('admin-gateway-transactions*') ? 'active-menu' : '' }}">
-        <i class="fa-solid fa-credit-card"></i>
-        Transaksi Gateway
-    </a>
-
    <a href="/admin-reports"
         class="menu-item {{ request()->is('admin-reports') ? 'active-menu' : '' }}">
 
