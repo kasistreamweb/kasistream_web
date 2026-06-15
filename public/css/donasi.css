@@ -165,7 +165,15 @@ textarea.form-control{
     min-height:100vh;
 }
 
-
+.header-logo{
+    position:absolute;
+    top:-10px;
+    right:-10px;
+    width:180px;
+    filter:
+    drop-shadow(0 0 20px rgba(37,99,235,.8))
+    drop-shadow(0 0 30px rgba(139,92,246,.5));
+}
 
 .streamer-name{
     color:white;
@@ -412,7 +420,11 @@ textarea.form-control{
 
 @media(max-width:768px){
 
-   
+    .header-logo{
+        top:-5px;
+        right:-5px;
+        width:130px;
+    }
 
     .welcome-section{
         min-height:90px;
