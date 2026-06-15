@@ -12,660 +12,558 @@
 
 <style>
 
-/* ===== VARIABLES ===== */
-:root {
-    --primary: #2563eb;
-    --secondary: #8b5cf6;
-    --dark: #050816;
-    --card: #0f172a;
-    --text: #ffffff;
+:root{
+
+    --primary:#2563eb;
+    --secondary:#8b5cf6;
+    --dark:#050816;
+    --card:#0f172a;
+    --text:#ffffff;
 }
 
-/* ===== RESET ===== */
-*, *::before, *::after {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
 
-/* ===== BASE ===== */
-html {
-    overflow-x: hidden;
-    touch-action: pan-x pan-y;
+body{
+
+    font-family:'Segoe UI',sans-serif;
+
+    background:
+    radial-gradient(
+        circle at top,
+        #1e3a8a 0%,
+        #050816 60%
+    );
+
+    color:white;
+
+    overflow-x:hidden;
 }
 
-body {
-    font-family: 'Segoe UI', sans-serif;
-    background: radial-gradient(circle at top, #1e3a8a 0%, #050816 60%);
-    color: white;
-    overflow-x: hidden;
-}
-
-/* ===== NAVBAR ===== */
-.navbar {
-    background: rgba(5, 8, 22, .85) !important;
+/* NAVBAR */
+.navbar{
+    background: rgba(5,8,22,.85) !important;
     backdrop-filter: blur(15px);
-    border-bottom: 1px solid rgba(255, 255, 255, .08);
+    border-bottom: 1px solid rgba(255,255,255,.08);
+
     position: relative;
     z-index: 1000;
 }
 
-.navbar-brand {
-    color: white !important;
-    font-size: 30px;
-    font-weight: 800;
+.navbar-brand{
+
+    color:white !important;
+
+    font-size:30px;
+
+    font-weight:800;
 }
 
-.nav-link {
-    color: #cbd5e1 !important;
-    margin: 0 10px;
-    transition: .3s;
+.nav-link{
+
+    color:#cbd5e1 !important;
+
+    margin:0 10px;
+
+    transition:.3s;
 }
 
-.nav-link:hover {
-    color: white !important;
+.nav-link:hover{
+
+    color:white !important;
 }
 
-.btn-login {
-    border: 1px solid #8b5cf6;
-    color: white;
-    border-radius: 12px;
-    padding: 10px 20px;
+.btn-login{
+
+    border:1px solid #8b5cf6;
+
+    color:white;
+
+    border-radius:12px;
+
+    padding:10px 20px;
 }
 
-.btn-login:hover {
-    background: #8b5cf6;
-    color: white;
+.btn-login:hover{
+
+    background:#8b5cf6;
+
+    color:white;
 }
 
-.btn-register {
-    background: linear-gradient(90deg, #2563eb, #8b5cf6);
-    color: white;
-    border: none;
-    border-radius: 12px;
-    padding: 10px 22px;
+.btn-register{
+
+    background:
+    linear-gradient(
+        90deg,
+        #2563eb,
+        #8b5cf6
+    );
+
+    color:white;
+
+    border:none;
+
+    border-radius:12px;
+
+    padding:10px 22px;
 }
 
-.btn-register:hover {
-    color: white;
-    box-shadow: 0 0 20px rgba(139, 92, 246, .5);
+.btn-register:hover{
+
+    color:white;
+
+    box-shadow:
+    0 0 20px rgba(139,92,246,.5);
 }
 
-/* ===== HERO ===== */
-.hero {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
+/* HERO */
+
+.hero{
+
+    min-height:100vh;
+
+    display:flex;
+
+    align-items:center;
+
+    position:relative;
+
+    padding-top:90px;
+
+    overflow:hidden;
+}
+
+.hero::before{
+
+    content:'';
+
+    position:absolute;
+
+    width:600px;
+    height:600px;
+
+    border-radius:50%;
+
+    background:
+    rgba(139,92,246,.08);
+
+    top:-150px;
+    right:-150px;
+}
+
+.hero-title{
+
+    font-size:60px;
+
+    font-weight:900;
+
+    line-height:1.05;
+
+    letter-spacing:-2px;
+
+    color:white;
+
+    margin-bottom:25px;
+}
+
+.hero-title span{
+
+    background:
+    linear-gradient(
+        90deg,
+        #60a5fa,
+        #c084fc
+    );
+
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+
+.hero-subtitle{
+
+    color:#cbd5e1;
+
+    font-size:20px;
+
+    margin-top:20px;
+}
+
+.hero-btn{
+
+    margin-top:35px;
+}
+
+.btn-start{
+
+    background:
+    linear-gradient(
+        90deg,
+        #2563eb,
+        #8b5cf6
+    );
+
+    border:none;
+
+    color:white;
+
+    padding:14px 28px;
+
+    border-radius:15px;
+
+    font-weight:600;
+}
+
+.btn-start:hover{
+
+    color:white;
+
+    box-shadow:
+    0 0 25px rgba(139,92,246,.5);
+}
+
+.btn-guest{
+
+    border:1px solid rgba(255,255,255,.15);
+
+    color:white;
+
+    padding:14px 28px;
+
+    border-radius:15px;
+
+    margin-left:10px;
+}
+
+.btn-guest:hover{
+
+    background:white;
+
+    color:#111827;
+}
+
+.hero-logo{
+
     position: relative;
-    padding-top: 90px;
-    overflow: hidden;
+
+    width:130%;
+
+    max-width:600px;
+
+    left:60px;      /* geser kanan-kiri */
+    top:-10px;       /* geser atas-bawah */
+
+    animation:
+    floatLogo 5s ease-in-out infinite;
 }
 
-.hero::before {
-    content: '';
-    position: absolute;
-    width: 600px;
-    height: 600px;
-    border-radius: 50%;
-    background: rgba(139, 92, 246, .08);
-    top: -150px;
-    right: -150px;
-    pointer-events: none;
-    z-index: 0;
+@keyframes floatLogo{
+
+    0%{
+        transform:translateY(0px);
+    }
+
+    50%{
+        transform:translateY(-15px);
+    }
+
+    100%{
+        transform:translateY(0px);
+    }
 }
 
-/* FIX #1 — Tombol hero tidak tertimpa pseudo-element */
-.hero .container,
-.hero .row,
-.hero .col-lg-6 {
-    position: relative;
-    z-index: 5;
+/* SECTION */
+
+.section-title{
+
+    text-align:center;
+
+    font-size:42px;
+
+    font-weight:800;
+
+    margin-bottom:50px;
 }
 
-.hero-btn {
-    position: relative;
-    z-index: 20;
+/* STREAMER CARD */
+
+.streamer-card{
+
+    background:
+    rgba(15,23,42,.9);
+
+    border:
+    1px solid rgba(255,255,255,.08);
+
+    border-radius:20px;
+
+    transition:.3s;
+
+    overflow:hidden;
 }
 
-.btn-start,
-.btn-guest {
-    position: relative;
-    z-index: 30;
-    pointer-events: auto;
+.streamer-card:hover{
+
+    transform:
+    translateY(-8px);
+
+    box-shadow:
+    0 0 30px rgba(139,92,246,.2);
 }
 
-.hero-title {
-    font-size: 60px;
-    font-weight: 900;
-    line-height: 1.05;
-    letter-spacing: -2px;
-    color: white;
-    margin-bottom: 25px;
+.streamer-avatar{
+
+    width:120px;
+    height:120px;
+
+    object-fit:cover;
+
+    border-radius:50%;
+
+    border:
+    3px solid #8b5cf6;
 }
 
-.hero-title span {
-    background: linear-gradient(90deg, #60a5fa, #c084fc);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+.btn-support{
+
+    background:
+    linear-gradient(
+        90deg,
+        #2563eb,
+        #8b5cf6
+    );
+
+    border:none;
+
+    border-radius:12px;
+
+    color:white;
 }
 
-.hero-subtitle {
-    color: #cbd5e1;
-    font-size: 20px;
-    margin-top: 20px;
+/* STATISTICS */
+
+.stat-card{
+
+    background:
+    rgba(15,23,42,.9);
+
+    border:
+    1px solid rgba(255,255,255,.08);
+
+    border-radius:20px;
+
+    padding:30px;
+
+    text-align:center;
 }
 
-.btn-start {
-    background: linear-gradient(90deg, #2563eb, #8b5cf6);
-    border: none;
-    color: white;
-    padding: 14px 28px;
-    border-radius: 15px;
-    font-weight: 600;
+.stat-card i{
+
+    font-size:40px;
+
+    margin-bottom:15px;
+
+    color:#8b5cf6;
 }
 
-.btn-start:hover {
-    color: white;
-    box-shadow: 0 0 25px rgba(139, 92, 246, .5);
+/* FOOTER */
+
+footer{
+
+    margin-top:120px;
+
+    padding:50px 0;
+
+    text-align:center;
+
+    border-top:
+    1px solid rgba(255,255,255,.08);
+
+    color:#cbd5e1;
 }
 
-.btn-guest {
-    border: 1px solid rgba(255, 255, 255, .15);
-    color: white;
-    padding: 14px 28px;
-    border-radius: 15px;
-    margin-left: 10px;
-}
+@media(max-width:768px){
 
-.btn-guest:hover {
-    background: white;
-    color: #111827;
-}
+    /* NAVBAR */
 
-.hero-logo {
-    position: relative;
-    width: 120%;
-    max-width: 520px;
-    left: 30px;
-    top: -80px;
-    animation: floatLogo 5s ease-in-out infinite;
-}
+    .navbar-brand{
+        font-size:22px;
+    }
 
-@keyframes floatLogo {
-    0%   { transform: translateY(0px); }
-    50%  { transform: translateY(-15px); }
-    100% { transform: translateY(0px); }
-}
+    .navbar .container{
+        padding-left:15px;
+        padding-right:15px;
+    }
 
-/* ===== HERO STATS ===== */
-.hero-stats {
-    margin-top: 50px;
-    padding: 25px;
-    border-radius: 20px;
-    background: rgba(255, 255, 255, .04);
-    border: 1px solid rgba(255, 255, 255, .08);
-    backdrop-filter: blur(10px);
-}
+    /* HERO */
 
-.hero-stats h3 {
-    font-weight: 800;
-    margin-bottom: 5px;
-}
+    .hero{
+        min-height:auto;
+        text-align:center;
+        padding-top:90px;
+        padding-bottom:20px;
+    }
 
-.hero-stats small {
-    color: #94a3b8;
-}
+    .hero-title{
+        font-size:32px;
+        line-height:1.25;
+        margin-bottom:15px;
+    }
 
-/* ===== SECTION TITLE ===== */
-.section-title {
-    text-align: center;
-    font-size: 42px;
-    font-weight: 800;
-    margin-bottom: 50px;
-}
-
-/* ===== STREAMER CARD ===== */
-.streamer-card {
-    background: rgba(15, 23, 42, .9);
-    border: 1px solid rgba(255, 255, 255, .08);
-    border-radius: 20px;
-    transition: .3s;
-    overflow: hidden;
-}
-
-.streamer-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 0 30px rgba(139, 92, 246, .2);
-}
-
-.streamer-avatar {
-    width: 120px;
-    height: 120px;
-    object-fit: cover;
-    border-radius: 50%;
-    border: 3px solid #8b5cf6;
-}
-
-.btn-support {
-    background: linear-gradient(90deg, #2563eb, #8b5cf6);
-    border: none;
-    border-radius: 12px;
-    color: white;
-}
-
-/* ===== STATISTICS ===== */
-.stat-card {
-    background: rgba(15, 23, 42, .9);
-    border: 1px solid rgba(255, 255, 255, .08);
-    border-radius: 20px;
-    padding: 30px;
-    text-align: center;
-}
-
-.stat-card i {
-    font-size: 40px;
-    margin-bottom: 15px;
-    color: #8b5cf6;
-}
-
-/* ===== FOOTER ===== */
-footer {
-    margin-top: 120px;
-    padding: 50px 0;
-    text-align: center;
-    border-top: 1px solid rgba(255, 255, 255, .08);
-    color: #cbd5e1;
-}
-
-/* ===== HERO STATS HORIZONTAL ===== */
-.stats-row {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-around;
-    gap: 10px;
-}
-
-.stat-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    flex: 1;
-}
-
-.stat-item h3 {
-    font-size: 22px;
-    font-weight: 800;
-    margin-bottom: 4px;
-    color: white;
-}
-
-.stat-item small {
-    font-size: 12px;
-    color: #94a3b8;
-}
-
-.stat-divider {
-    width: 1px;
-    height: 36px;
-    background: rgba(255, 255, 255, .15);
-    flex-shrink: 0;
-}
-
-
-@media (min-width: 992px){
-
-    .hero .row{
-        min-height:650px;
+    .hero-subtitle{
+        font-size:14px;
+        line-height:1.7;
+        margin-bottom:20px;
     }
 
     .hero-logo{
-        margin-top:-120px;
+        width:90%;
+        max-width:320px;
+        left:0;
+        top:0;
+        margin-top:30px;
     }
 
-}
-/* ============================================
-   MOBILE ONLY — max-width: 768px
-   ============================================ */
-@media (max-width: 768px) {
-
-    /* Safe area notch / home bar */
-    body {
-        padding-bottom: env(safe-area-inset-bottom, 0px);
-    }
-
-    /* ----- NAVBAR ----- */
-    .navbar {
-        padding-top: 10px;
-        padding-bottom: 10px;
-    }
-
-    .navbar .container {
-        padding-left: 16px;
-        padding-right: 16px;
-    }
-
-    .navbar-brand {
-        font-size: 20px;
-        letter-spacing: -0.5px;
-    }
-
-    .navbar-collapse {
-        background: rgba(5, 8, 22, .97);
-        border-radius: 0 0 16px 16px;
-        padding: 12px 16px 20px;
-        margin-top: 10px;
-        border: 1px solid rgba(255, 255, 255, .08);
-        border-top: none;
-    }
-
-    .navbar-nav {
-        gap: 4px;
-        margin-bottom: 16px !important;
-    }
-
-    .nav-link {
-        padding: 10px 12px !important;
-        border-radius: 10px;
-        margin: 0 !important;
-        font-size: 15px;
-    }
-
-    .nav-link:hover {
-        background: rgba(255, 255, 255, .06);
-    }
-
-    .navbar .d-flex {
-        flex-direction: row;
-        gap: 8px;
-    }
-
-    .navbar .d-flex .btn-login,
-    .navbar .d-flex .btn-register {
-        flex: 1;
-        text-align: center;
-        padding: 10px 12px;
-        font-size: 14px;
-    }
-
-    /* ----- HERO ----- */
-    /* FIX #2 — padding hero diperkecil */
-    .hero {
-        min-height: auto;
-        padding-top: 40px;
-        padding-bottom: 20px;
-    }
-
-    .hero .row {
-        flex-direction: column;
-    }
-
-    .hero .col-lg-6:first-child {
-        text-align: center;
-        order: 1;
-    }
-
-    .hero .col-lg-6:last-child {
-        order: 2;
-        margin-top: 30px;
-    }
-
-    .hero-title {
-        font-size: 30px;
-        line-height: 1.2;
-        letter-spacing: -1px;
-        margin-bottom: 14px;
-    }
-
-    .hero-subtitle {
-        font-size: 14px;
-        line-height: 1.75;
-        margin-top: 12px;
-        padding: 0 4px;
-    }
-
-    /* FIX #3 — lingkaran background diperkecil */
-    .hero::before {
-        width: 350px;
-        height: 350px;
-        top: -100px;
-        right: -100px;
-    }
-
-    /* FIX #4 — logo diperkecil */
-    .hero-logo {
-    width: 80%;
-    max-width: 280px;
-    left: 0;
-    top: 0;
-    margin: 25px auto 0;
-    display: block;
-}
-
-    .hero-btn {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        margin-top: 22px;
+    .hero-btn{
+        display:flex;
+        flex-direction:column;
+        gap:10px;
+        margin-top:20px;
     }
 
     .btn-start,
-    .btn-guest {
-        width: 100%;
-        margin: 0 !important;
-        padding: 13px 20px;
-        font-size: 15px;
-        border-radius: 13px;
-        text-align: center;
+    .btn-guest{
+        width:100%;
+        margin:0;
     }
 
-    /* ----- HERO STATS ----- */
-    .hero-stats {
-        margin-top: 28px !important;
-        padding: 16px 12px;
-        border-radius: 16px;
-        text-align: center;
+    .hero-stats{
+        margin-top:20px;
+        padding:18px;
+        text-align:center;
     }
 
-    /* FIX #5 — stats lebih rapi */
-    .hero-stats .row {
-        align-items: center;
+    .hero-stats h3{
+        font-size:18px;
     }
 
-    .hero-stats h3 {
-        font-size: 18px;
-        margin-bottom: 3px;
+    /* SECTION */
+
+    .section-title{
+        font-size:32px;
+        margin-bottom:25px;
     }
 
-    .hero-stats small {
-        font-size: 11px;
-    }
+    /* STREAMER */
 
-    /* ----- SECTION TITLE ----- */
-    .section-title {
-        font-size: 26px;
-        margin-bottom: 24px;
-        letter-spacing: -0.5px;
-    }
-
-    /* ----- STREAMER ----- */
-    #streamer {
-        padding-top: 40px !important;
-        padding-bottom: 20px !important;
-    }
-
-    #streamer .row {
-        --bs-gutter-x: 10px;
+    #streamer .row{
+        --bs-gutter-x:12px;
     }
 
     #streamer .col-lg-4,
-    #streamer .col-md-6 {
-        width: 50% !important;
-        padding-left: 5px;
-        padding-right: 5px;
+    #streamer .col-md-6{
+        width:50%;
+        padding-left:6px;
+        padding-right:6px;
     }
 
-    #streamer .mb-4 {
-        margin-bottom: 10px !important;
+    .streamer-card{
+        border-radius:16px;
     }
 
-    .streamer-card {
-        border-radius: 14px;
+    .streamer-card .card-body{
+        padding:15px !important;
     }
 
-    .streamer-card .card-body {
-        padding: 14px 10px !important;
+    .streamer-avatar{
+        width:70px;
+        height:70px;
     }
 
-    .streamer-avatar {
-        width: 64px;
-        height: 64px;
-        border-width: 2px;
-        margin-bottom: 10px !important;
+    .streamer-card h4{
+        font-size:14px;
     }
 
-    .streamer-card h4 {
-        font-size: 13px;
-        margin-bottom: 4px;
-        line-height: 1.3;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+    .streamer-card p{
+        font-size:12px;
     }
 
-    .streamer-card p {
-        font-size: 11px;
-        margin-bottom: 6px !important;
+    .btn-support{
+        font-size:12px;
+        padding:8px 10px;
     }
 
-    .streamer-card .badge {
-        font-size: 10px;
-        padding: 4px 8px;
+    /* STATISTIK */
+
+    #statistik .col-lg-3,
+    #statistik .col-md-6{
+        width:50%;
     }
 
-    .streamer-card .mb-3 {
-        margin-bottom: 8px !important;
+    .stat-card{
+        padding:20px 10px;
     }
 
-    .btn-support {
-        font-size: 12px;
-        padding: 8px 6px;
-        border-radius: 10px;
+    .stat-card i{
+        font-size:28px;
     }
 
-    /* ----- STATISTIK ----- */
-    #statistik {
-        padding-top: 40px !important;
-        padding-bottom: 20px !important;
+    footer{
+        margin-top:50px;
+        padding:30px 0;
     }
 
-    #statistik .col-md-3 {
-        width: 50% !important;
-        margin-bottom: 10px !important;
+    .cta-buttons{
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        gap:18px;
     }
 
-    .stat-card {
-        padding: 18px 10px;
-        border-radius: 16px;
-    }
-
-    .stat-card i {
-        font-size: 26px;
-        margin-bottom: 10px;
-    }
-
-    .stat-card h3 {
-        font-size: 18px;
-    }
-
-    .stat-card p {
-        font-size: 12px;
-        margin-bottom: 0;
-    }
-
-    /* ----- CTA ----- */
-    .container > .text-center.p-5 {
-        padding: 28px 20px !important;
-        border-radius: 18px !important;
-    }
-
-    .container > .text-center.p-5 h2 {
-        font-size: 20px;
-        margin-bottom: 10px !important;
-    }
-
-    .container > .text-center.p-5 p {
-        font-size: 13px;
-        margin-bottom: 20px !important;
-    }
-
-    .cta-buttons {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 12px;
-    }
-
-    .cta-buttons .btn {
-        width: 100%;
-        max-width: 280px;
-        padding: 12px 20px;
-        font-size: 15px;
-    }
-
-    /* ----- HERO STATS HORIZONTAL MOBILE ----- */
-.stats-row {
-    gap: 6px;
-}
-
-.stat-item h3 {
-    font-size: 16px;
-}
-
-.stat-item small {
-    font-size: 10px;
-}
-
-.stat-divider {
-    height: 28px;
-}
-
-    /* ----- FOOTER ----- */
-    footer {
-        margin-top: 40px;
-        padding: 30px 0 24px;
-    }
-
-    footer h3 {
-        font-size: 20px;
-        margin-bottom: 10px !important;
-    }
-
-    footer p {
-        font-size: 13px;
-    }
-
-    footer .mt-4 {
-        margin-top: 16px !important;
-    }
-
-    footer .fa-lg {
-        font-size: 22px;
-    }
-
-    footer .me-3 {
-        margin-right: 16px !important;
-    }
-
-    footer hr {
-        margin: 16px 0 !important;
-    }
-
-    footer small {
-        font-size: 12px;
+    .cta-buttons .btn{
+        width:260px;
     }
 }
+/* HERO STATS */
+
+.hero-stats{
+
+    margin-top:50px;
+
+    padding:25px;
+
+    border-radius:20px;
+
+    background:
+    rgba(255,255,255,.04);
+
+    border:
+    1px solid rgba(255,255,255,.08);
+
+    backdrop-filter:blur(10px);
+}
+
+.hero-stats h3{
+
+    font-weight:800;
+
+    margin-bottom:5px;
+}
+
+.hero-stats small{
+
+    color:#94a3b8;
+}
+
+html,
+body{
+    touch-action: pan-x pan-y;
+    overflow-x:hidden;
+}
+
 </style>
 
 </head>
@@ -831,29 +729,58 @@ footer {
                 </div>
 
                 <div class="hero-stats mt-5">
-    <div class="stats-row">
 
-        <div class="stat-item">
-            <h3 class="fw-bold">{{ $totalStreamer }}</h3>
-            <small>Streamer</small>
-        </div>
+                    <div class="row">
 
-        <div class="stat-divider"></div>
+                        <div class="col-4">
 
-        <div class="stat-item">
-            <h3 class="fw-bold">{{ $totalUser }}</h3>
-            <small>User</small>
-        </div>
+                            <h3 class="fw-bold">
 
-        <div class="stat-divider"></div>
+                                {{ $totalStreamer }}
 
-        <div class="stat-item">
-            <h3 class="fw-bold">Rp {{ number_format($totalDonasi) }}</h3>
-            <small>Donasi</small>
-        </div>
+                            </h3>
 
-    </div>
-</div>
+                            <small class="text-secondary">
+
+                                Streamer
+
+                            </small>
+
+                        </div>
+
+                        <div class="col-4">
+
+                            <h3 class="fw-bold">
+
+                                {{ $totalUser }}
+
+                            </h3>
+
+                            <small class="text-secondary">
+
+                                User
+
+                            </small>
+
+                        </div>
+
+                        <div class="col-4">
+
+                            <h3 class="fw-bold">
+
+                                Rp {{ number_format($totalDonasi) }}
+
+                            </h3>
+
+                            <small class="text-secondary">
+
+                                Donasi
+
+                            </small>
+
+                        </div>
+                    </div>
+
                 </div>
 
             </div>
