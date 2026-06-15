@@ -619,6 +619,10 @@ body{
         padding-right:10px !important;
     }
 
+    .amount-mobile{
+    overflow-wrap:anywhere;
+}
+
 
 
 }

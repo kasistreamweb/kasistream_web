@@ -197,9 +197,9 @@ h3{
 
                     <h6>Total Donasi</h6>
 
-                    <h3>
-                        Rp {{ number_format($totalDonasi) }}
-                    </h3>
+                    <h3 class="amount-mobile">
+    Rp {{ number_format($totalDonasi) }}
+</h3>
 
                 </div>
 
@@ -215,9 +215,9 @@ h3{
 
                     <h6>Total Withdraw</h6>
 
-                    <h3>
-                        Rp {{ number_format($totalWithdraw) }}
-                    </h3>
+                    <h3 class="amount-mobile">
+    Rp {{ number_format($totalWithdraw) }}
+</h3>
 
                 </div>
 
