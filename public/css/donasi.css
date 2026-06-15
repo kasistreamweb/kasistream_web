@@ -1,181 +1,125 @@
 body{
-
     background:
     radial-gradient(
         circle at top,
         #1e3a8a 0%,
         #050816 60%
     );
-
     color:white;
-
     min-height:100vh;
-
     overflow-x:hidden;
 }
 
 .welcome-section{
-
     position:relative;
-
     min-height:120px;
-
     margin-bottom:30px;
 }
 
 .welcome-section h1{
-
     font-size:42px;
-
     font-weight:700;
+    color:white;
 }
 
 .welcome-section p{
-
     color:#94a3b8;
 }
 
 .donate-card{
-
     background:
     rgba(15,23,42,.90);
-
     border:
     1px solid rgba(255,255,255,.08);
-
     border-radius:24px;
-
     overflow:hidden;
-
     transition:.3s;
-
     color:white;
-
     backdrop-filter:blur(15px);
-
     box-shadow:
     0 0 30px rgba(37,99,235,.15);
 }
 
-.donate-card{
-
-    transition:.3s;
-}
-
 .donate-card:hover{
-
     box-shadow:
     0 0 40px rgba(139,92,246,.18);
 }
 
 .streamer-header{
-
     padding:30px;
-
     border-bottom:
     1px solid rgba(255,255,255,.08);
 }
 
 .streamer-img{
-
     width:170px;
-
     height:170px;
-
     border-radius:50%;
-
     object-fit:cover;
-
     border:
     3px solid #8b5cf6;
-
     box-shadow:
     0 0 25px rgba(139,92,246,.35);
 }
 
 .section{
-
     padding:35px;
 }
 
+.section:first-child{
+    border-right:
+    1px solid rgba(255,255,255,.08);
+}
+
 .nominal-btn{
-
     width:100%;
-
     height:72px;
-
     margin-bottom:15px;
-
     border-radius:16px;
-
     color:white;
-
     font-size:18px;
-
     font-weight:700;
-
     border:
     1px solid rgba(255,255,255,.08);
-
     background:
     rgba(255,255,255,.05);
-
     transition:.3s;
-
     display:flex;
-
     align-items:center;
-
     justify-content:center;
 }
 
 .nominal-btn:hover{
-
     color:white;
-
     border-color:#8b5cf6;
 }
 
 .nominal-btn.active{
-
     background:
     linear-gradient(
         90deg,
         #2563eb,
         #8b5cf6
     );
-
     color:white;
-
     border:none;
-
     transform:scale(1.03);
-
     box-shadow:
     0 0 20px rgba(139,92,246,.45);
 }
 
 .total-text{
-
     font-size:38px;
-
     font-weight:700;
-
     color:#8b5cf6;
 }
 
 .lanjut-btn{
-
     height:60px;
-
     border:none;
-
     border-radius:15px;
-
     font-size:18px;
-
     font-weight:700;
-
     background:
     linear-gradient(
         90deg,
@@ -185,43 +129,36 @@ body{
 }
 
 .lanjut-btn:hover{
-
     transform:translateY(-2px);
-
     box-shadow:
     0 0 20px rgba(139,92,246,.35);
 }
 
 .form-control{
-
     background:#111827;
-
     color:white;
-
     border:
     1px solid #374151;
 }
 
 .form-control,
 textarea{
-
     background:#111827 !important;
-
     color:white !important;
-
     border:1px solid #374151 !important;
 }
 
 .form-control:focus{
-
     background:#111827;
-
     color:white;
-
     border-color:#8b5cf6;
-
     box-shadow:
     0 0 15px rgba(139,92,246,.3);
+}
+
+textarea.form-control{
+    min-height:180px;
+    resize:none;
 }
 
 .content-area{
@@ -230,21 +167,12 @@ textarea{
 
 .header-logo{
     position:absolute;
-    top:-20px;
-    right:0;
+    top:-10px;
+    right:-10px;
     width:180px;
     filter:
     drop-shadow(0 0 20px rgba(37,99,235,.8))
     drop-shadow(0 0 30px rgba(139,92,246,.5));
-}
-
-.welcome-section h1{
-    color:white;
-    font-weight:700;
-}
-
-.welcome-section p{
-    color:#94a3b8;
 }
 
 .streamer-name{
@@ -266,19 +194,13 @@ textarea{
 }
 
 .hero-stat{
-
     flex:1;
-
     min-width:200px;
-
     background:
     rgba(255,255,255,.05);
-
     border:
     1px solid rgba(255,255,255,.08);
-
     border-radius:15px;
-
     padding:18px;
 }
 
@@ -292,185 +214,118 @@ textarea{
     color:#94a3b8;
 }
 
-textarea.form-control{
-
-    min-height:180px;
-
-    resize:none;
-}
-
-.section{
-
-    padding:35px;
-}
-
-.section:first-child{
-
-    border-right:
-    1px solid rgba(255,255,255,.08);
-}
-
 /* ==========================
    GUEST PAYMENT CARD
 ========================== */
 
 .guest-info-card{
-
     margin:20px;
-
     padding:20px;
-
     border-radius:20px;
-
     background:
     linear-gradient(
         135deg,
         rgba(37,99,235,.08),
         rgba(139,92,246,.08)
     );
-
     border:
     1px solid rgba(139,92,246,.45);
-
     box-shadow:
     0 0 25px rgba(139,92,246,.15);
 }
 
 .guest-info-header h4{
-
     color:white;
-
     font-weight:700;
-
     margin-bottom:5px;
 }
 
 .guest-info-header p{
-
     color:#94a3b8;
-
     margin-bottom:20px;
 }
 
 .guest-label{
-
     display:block;
-
     color:white;
-
     font-weight:600;
-
     margin-bottom:10px;
 }
 
 .guest-label i{
-
     color:#8b5cf6;
-
     margin-right:8px;
 }
 
 .guest-input{
-
     height:52px;
-
     border-radius:14px !important;
-
     font-size:16px;
 }
 
 .guest-note{
-
     height:100%;
-
     padding:15px;
-
     border-radius:15px;
-
     display:flex;
-
     flex-direction:column;
-
     justify-content:center;
-
     gap:10px;
-
     background:
     rgba(139,92,246,.12);
-
     border:
     1px solid rgba(139,92,246,.25);
 }
 
 .guest-note i{
-
     font-size:24px;
-
     color:#8b5cf6;
 }
 
 .guest-note span{
-
     color:#cbd5e1;
-
     font-size:13px;
-
     line-height:1.6;
 }
 
+/* ==========================
+   SIDEBAR INFO CARD
+========================== */
+
 .sidebar-info-card{
-
     margin-top:15px;
-
     padding:18px;
-
     border-radius:16px;
-
     background:
     rgba(255,255,255,.04);
-
     border:
     1px solid rgba(255,255,255,.08);
-
     transition:.3s;
 }
 
 .sidebar-info-card:hover{
-
     border-color:#8b5cf6;
-
     box-shadow:
     0 0 20px rgba(139,92,246,.18);
 }
 
 .sidebar-info-card i{
-
     display:block;
-
     font-size:22px;
-
     color:#8b5cf6;
-
     margin-bottom:10px;
 }
 
 .sidebar-info-card h6{
-
     color:white;
-
     font-weight:700;
-
     margin-bottom:8px;
 }
 
 .sidebar-info-card p{
-
     color:#94a3b8;
-
     font-size:13px;
-
     line-height:1.6;
-
     margin:0;
 }
 
@@ -479,89 +334,56 @@ textarea.form-control{
 ========================== */
 
 .sidebar-login-btn{
-
     width:100%;
-
     height:54px;
-
     display:flex;
-
     align-items:center;
-
     justify-content:center;
-
     border:none;
-
     border-radius:14px;
-
     text-decoration:none;
-
     font-weight:700;
-
     color:white;
-
     background:
     linear-gradient(
         135deg,
         #2563eb,
         #8b5cf6
     );
-
     box-shadow:
     0 8px 25px rgba(139,92,246,.25);
-
     transition:.3s;
 }
 
 .sidebar-login-btn:hover{
-
     color:white;
-
     transform:translateY(-2px);
-
     box-shadow:
     0 12px 35px rgba(139,92,246,.4);
 }
 
 .sidebar-register-btn{
-
     width:100%;
-
     height:54px;
-
     margin-top:10px;
-
     display:flex;
-
     align-items:center;
-
     justify-content:center;
-
     text-decoration:none;
-
     border-radius:14px;
-
     border:1px solid rgba(139,92,246,.4);
-
     background:
     rgba(255,255,255,.03);
-
     color:white;
-
     font-weight:600;
-
     transition:.3s;
 }
 
 .sidebar-register-btn:hover{
-
     color:white;
-
     background:
     rgba(139,92,246,.12);
-
     border-color:#8b5cf6;
-
     transform:translateY(-2px);
 }
 
@@ -570,114 +392,107 @@ textarea.form-control{
 ========================= */
 
 .auth-card{
-
     margin:20px 0;
-
     padding:18px;
-
     border-radius:16px;
-
     background:
     rgba(255,255,255,.04);
-
     border:
     1px solid rgba(139,92,246,.18);
 }
 
 .auth-card h6{
-
     color:#fff;
-
     font-weight:700;
-
     margin-bottom:8px;
 }
 
 .auth-card p{
-
     color:#94a3b8;
-
     font-size:13px;
-
     line-height:1.6;
-
     margin-bottom:15px;
 }
 
-.sidebar-login-btn{
+/* =========================
+   MOBILE
+========================= */
 
-    width:100%;
+@media(max-width:768px){
 
-    height:48px;
+    .header-logo{
+        top:-5px;
+        right:-5px;
+        width:130px;
+    }
 
-    display:flex;
+    .welcome-section{
+        min-height:90px;
+    }
 
-    align-items:center;
+    .welcome-section h1{
+        font-size:28px;
+    }
 
-    justify-content:center;
+    .streamer-header{
+        padding:20px;
+    }
 
-    text-decoration:none;
+    .streamer-img{
+        width:110px;
+        height:110px;
+        margin-bottom:15px;
+    }
 
-    border-radius:12px;
+    .streamer-name{
+        font-size:26px;
+    }
 
-    font-weight:700;
+    .game-text{
+        font-size:15px;
+    }
 
-    color:#fff;
+    .hero-stats{
+        flex-direction:row;
+        gap:10px;
+    }
 
-    background:
-    linear-gradient(
-        135deg,
-        #2563eb,
-        #8b5cf6
-    );
+    .hero-stat{
+        min-width:unset;
+        padding:12px 15px;
+    }
 
-    transition:.3s;
-}
+    .hero-stat h3{
+        font-size:18px;
+    }
 
-.sidebar-login-btn:hover{
+    .section{
+        padding:20px;
+    }
 
-    color:#fff;
+    .section:first-child{
+        border-right:none;
+        border-bottom:
+        1px solid rgba(255,255,255,.08);
+    }
 
-    transform:translateY(-2px);
+    .nominal-btn{
+        height:55px;
+        font-size:15px;
+    }
 
-    box-shadow:
-    0 10px 25px rgba(139,92,246,.35);
-}
+    .lanjut-btn{
+        height:50px;
+        font-size:16px;
+    }
 
-.sidebar-register-btn{
+    .guest-info-card{
+        margin:15px;
+        padding:15px;
+    }
 
-    width:100%;
-
-    height:48px;
-
-    margin-top:10px;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    text-decoration:none;
-
-    border-radius:12px;
-
-    border:1px solid rgba(139,92,246,.35);
-
-    color:#fff;
-
-    background:
-    rgba(255,255,255,.03);
-
-    transition:.3s;
-}
-
-.sidebar-register-btn:hover{
-
-    color:#fff;
-
-    background:
-    rgba(139,92,246,.12);
-
-    border-color:#8b5cf6;
+    .guest-note{
+        margin-top:10px;
+        height:auto;
+    }
 }
