@@ -420,11 +420,7 @@ textarea.form-control{
 
 @media(max-width:768px){
 
-    .header-logo{
-        top:-1px;
-        right:-1px;
-        width:100px;
-    }
+   
 
     .welcome-section{
         min-height:90px;
