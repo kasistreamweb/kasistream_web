@@ -386,60 +386,133 @@ footer{
 
 @media(max-width:768px){
 
+    /* NAVBAR */
+
+    .navbar-brand{
+        font-size:22px;
+    }
+
+    .navbar .container{
+        padding-left:15px;
+        padding-right:15px;
+    }
+
+    /* HERO */
+
     .hero{
-
+        min-height:auto;
         text-align:center;
+        padding-top:100px;
+        padding-bottom:30px;
+    }
 
-        padding-top:130px;
-
-        padding-bottom:60px;
+    .hero .row{
+        flex-direction:column-reverse;
     }
 
     .hero-title{
-
-        font-size:42px;
-
-        line-height:1.2;
+        font-size:32px;
+        line-height:1.25;
+        margin-bottom:15px;
     }
 
     .hero-subtitle{
-
-        font-size:18px;
+        font-size:14px;
+        line-height:1.7;
+        margin-bottom:20px;
     }
 
     .hero-logo{
-
-        width:100%;
-
-        max-width:400px;
-
+        width:80%;
+        max-width:260px;
         left:0;
-
         top:0;
-
-        margin-top:40px;
+        margin:0 auto 20px;
     }
 
     .hero-btn{
-
         display:flex;
-
         flex-direction:column;
-
-        gap:12px;
+        gap:10px;
+        margin-top:20px;
     }
 
+    .btn-start,
     .btn-guest{
-
-        margin-left:0;
+        width:100%;
+        margin:0;
     }
 
     .hero-stats{
-
+        margin-top:25px;
+        padding:18px;
         text-align:center;
     }
-}
 
+    .hero-stats h3{
+        font-size:18px;
+    }
+
+    /* SECTION */
+
+    .section-title{
+        font-size:32px;
+        margin-bottom:25px;
+    }
+
+    /* STREAMER */
+
+    #streamer .row{
+        --bs-gutter-x:12px;
+    }
+
+    #streamer .col-lg-4,
+    #streamer .col-md-6{
+        width:50%;
+        padding-left:6px;
+        padding-right:6px;
+    }
+
+    .streamer-card .card-body{
+        padding:15px !important;
+    }
+
+    .streamer-avatar{
+        width:70px;
+        height:70px;
+    }
+
+    .streamer-card h4{
+        font-size:14px;
+    }
+
+    .streamer-card p{
+        font-size:12px;
+    }
+
+    .btn-support{
+        font-size:12px;
+    }
+
+    /* STATISTIK */
+
+    #statistik .col-lg-3,
+    #statistik .col-md-6{
+        width:50%;
+    }
+
+    .stat-card{
+        padding:20px 10px;
+    }
+
+    .stat-card i{
+        font-size:28px;
+    }
+
+    footer{
+        margin-top:50px;
+    }
+}
 /* HERO STATS */
 
 .hero-stats{
