@@ -277,6 +277,42 @@ footer {
     color: #cbd5e1;
 }
 
+/* ===== HERO STATS HORIZONTAL ===== */
+.stats-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    gap: 10px;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    flex: 1;
+}
+
+.stat-item h3 {
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 4px;
+    color: white;
+}
+
+.stat-item small {
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+.stat-divider {
+    width: 1px;
+    height: 36px;
+    background: rgba(255, 255, 255, .15);
+    flex-shrink: 0;
+}
+
 /* ============================================
    MOBILE ONLY — max-width: 768px
    ============================================ */
@@ -566,6 +602,23 @@ footer {
         font-size: 15px;
     }
 
+    /* ----- HERO STATS HORIZONTAL MOBILE ----- */
+.stats-row {
+    gap: 6px;
+}
+
+.stat-item h3 {
+    font-size: 16px;
+}
+
+.stat-item small {
+    font-size: 10px;
+}
+
+.stat-divider {
+    height: 28px;
+}
+
     /* ----- FOOTER ----- */
     footer {
         margin-top: 40px;
@@ -766,58 +819,29 @@ footer {
                 </div>
 
                 <div class="hero-stats mt-5">
+    <div class="stats-row">
 
-                    <div class="row">
+        <div class="stat-item">
+            <h3 class="fw-bold">{{ $totalStreamer }}</h3>
+            <small>Streamer</small>
+        </div>
 
-                        <div class="col-4">
+        <div class="stat-divider"></div>
 
-                            <h3 class="fw-bold">
+        <div class="stat-item">
+            <h3 class="fw-bold">{{ $totalUser }}</h3>
+            <small>User</small>
+        </div>
 
-                                {{ $totalStreamer }}
+        <div class="stat-divider"></div>
 
-                            </h3>
+        <div class="stat-item">
+            <h3 class="fw-bold">Rp {{ number_format($totalDonasi) }}</h3>
+            <small>Donasi</small>
+        </div>
 
-                            <small class="text-secondary">
-
-                                Streamer
-
-                            </small>
-
-                        </div>
-
-                        <div class="col-4">
-
-                            <h3 class="fw-bold">
-
-                                {{ $totalUser }}
-
-                            </h3>
-
-                            <small class="text-secondary">
-
-                                User
-
-                            </small>
-
-                        </div>
-
-                        <div class="col-4">
-
-                            <h3 class="fw-bold">
-
-                                Rp {{ number_format($totalDonasi) }}
-
-                            </h3>
-
-                            <small class="text-secondary">
-
-                                Donasi
-
-                            </small>
-
-                        </div>
-                    </div>
-
+    </div>
+</div>
                 </div>
 
             </div>
