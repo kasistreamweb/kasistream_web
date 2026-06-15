@@ -1,6 +1,8 @@
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 <title>KAsistream - Donate & Support Streamers</title>
 
@@ -45,13 +47,15 @@ body{
 
 .navbar{
 
-    background:
-    rgba(5,8,22,.85) !important;
+    position:fixed;
 
-    backdrop-filter:blur(15px);
+    top:0;
 
-    border-bottom:
-    1px solid rgba(255,255,255,.08);
+    left:0;
+
+    right:0;
+
+    z-index:9999;
 }
 
 .navbar-brand{
@@ -544,6 +548,12 @@ footer{
 .hero-stats small{
 
     color:#94a3b8;
+}
+
+html,
+body{
+    touch-action: pan-x pan-y;
+    overflow-x:hidden;
 }
 
 </style>
