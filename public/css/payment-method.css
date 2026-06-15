@@ -367,4 +367,56 @@
     .header-logo{
         display:none;
     }
+
+    .welcome-section h1{
+        font-size:26px;
+        font-weight:700;
+    }
+
+    .welcome-section p{
+        font-size:14px;
+        color:#94a3b8;
+    }
+
+    .payment-card{
+        padding:18px;
+        border-radius:18px;
+    }
+
+    .payment-list{
+        gap:10px;
+    }
+
+    .payment-item{
+        min-height:70px;
+        padding:14px 16px;
+        border-radius:14px;
+        gap:12px;
+    }
+
+    .payment-item input{
+        transform:scale(1.2);
+        margin-right:10px;
+    }
+
+    .payment-item h5{
+        font-size:14px;
+    }
+
+    .payment-item small{
+        font-size:12px;
+    }
+
+    .payment-arrow{
+        width:32px;
+        height:32px;
+        font-size:14px;
+    }
+
+    .lanjut-btn{
+        width:100%;
+        height:52px;
+        font-size:16px;
+        border-radius:14px;
+    }
 }
