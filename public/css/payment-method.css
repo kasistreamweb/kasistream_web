@@ -361,3 +361,10 @@
 
     display:block;
 }
+
+@media(max-width:768px){
+
+    .header-logo{
+        display:none;
+    }
+}
