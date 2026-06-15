@@ -441,147 +441,129 @@ body{
 
 @media(max-width:768px){
 
-    /* ROW UTAMA - sidebar di atas, konten di bawah */
+    /* LAYOUT */
+
     .row.g-0{
         flex-direction:column;
     }
 
-    /* SIDEBAR */
-.sidebar{
-        position:relative !important;
-        top:auto !important;
-        min-height:auto !important;
-        height:auto !important;
-        overflow:visible !important;
+    .sidebar{
+        min-height:auto;
+        height:auto;
+        position:relative;
+        top:auto;
+        border-right:none;
+        border-bottom:
+        1px solid rgba(255,255,255,.08);
     }
 
-    .row.g-0{
-        display:flex !important;
-        flex-direction:column !important;
-    }
-
-    /* KONTEN */
     .col-md-9,
     .col-lg-10{
         width:100% !important;
         max-width:100% !important;
+        flex:0 0 100% !important;
         padding:16px !important;
     }
 
     /* PAGE TITLE */
+
     .page-title{
-        padding:16px;
-        border-radius:16px;
+        padding:20px;
+        border-radius:18px;
     }
 
     .page-title h2{
-        font-size:18px;
+        font-size:24px;
+        margin-bottom:8px;
     }
 
     .page-title p{
-        font-size:13px;
+        font-size:14px;
+        line-height:1.6;
     }
 
     /* FILTER */
+
     .filter-card{
-        border-radius:16px;
+        border-radius:18px;
     }
 
     .filter-card .card-body{
-        padding:14px;
+        padding:18px;
     }
 
     .form-control,
     .form-select{
-        height:46px;
+        height:48px;
         font-size:14px;
     }
 
-    /* STATS CARD */
-    .stats-card{
-        padding:18px;
-        border-radius:16px;
-    }
+    /* STATS */
 
-    .stats-card i{
-        font-size:24px;
+    .stats-card{
+        padding:20px;
+        border-radius:18px;
     }
 
     .stats-card h3{
-        font-size:26px;
+        font-size:28px;
     }
 
-    /* STREAMER CARD - 2 kolom di HP */
+    /* STREAMER CARD */
+
     .col-lg-4.col-md-6{
-        width:50% !important;
-        padding-left:6px !important;
-        padding-right:6px !important;
-    }
+    width:100% !important;
+    max-width:100% !important;
+    padding-left:0 !important;
+    padding-right:0 !important;
+}
 
     .streamer-card{
-        padding:14px;
-        border-radius:16px;
+        padding:20px;
+        border-radius:20px;
     }
 
     .streamer-img{
-        width:75px !important;
-        height:75px !important;
-        min-width:75px !important;
-        min-height:75px !important;
-        max-width:75px !important;
-        max-height:75px !important;
+        width:100px !important;
+        height:100px !important;
+        min-width:100px !important;
+        min-height:100px !important;
+        max-width:100px !important;
+        max-height:100px !important;
     }
 
     .streamer-card h4{
-        font-size:13px;
-        margin-bottom:2px;
+        font-size:18px;
     }
 
     .streamer-card .text-muted{
-        font-size:11px;
-        margin-bottom:8px !important;
+        font-size:13px;
     }
 
     .stats{
-        font-size:11px;
-        line-height:1.7;
-        margin-bottom:10px !important;
+        font-size:13px;
+        line-height:1.8;
     }
 
     .btn-streamer{
-        font-size:12px;
-        padding:8px 10px;
-        border-radius:10px;
+        height:48px;
+        font-size:14px;
+        border-radius:12px;
+    }
+
+    /* AUTH CARD */
+
+    .auth-card,
+    .sidebar-info-card{
+        border-radius:18px;
     }
 
     /* PAGINATION */
+
     .pagination{
         margin-top:20px;
         flex-wrap:wrap;
         gap:4px;
     }
-
-    .page-link{
-        font-size:13px;
-        padding:6px 10px;
-    }
 }
 
-@media(max-width:400px){
-
-    /* 1 kolom kalau layar sangat sempit */
-    .col-lg-4.col-md-6{
-        width:100% !important;
-        padding-left:0 !important;
-        padding-right:0 !important;
-    }
-
-    .streamer-img{
-        width:90px !important;
-        height:90px !important;
-        min-width:90px !important;
-        min-height:90px !important;
-        max-width:90px !important;
-        max-height:90px !important;
-    }
-}
