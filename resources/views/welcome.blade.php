@@ -402,12 +402,8 @@ footer{
     .hero{
         min-height:auto;
         text-align:center;
-        padding-top:100px;
-        padding-bottom:30px;
-    }
-
-    .hero .row{
-        flex-direction:column-reverse;
+        padding-top:90px;
+        padding-bottom:20px;
     }
 
     .hero-title{
@@ -423,11 +419,11 @@ footer{
     }
 
     .hero-logo{
-        width:80%;
-        max-width:260px;
+        width:90%;
+        max-width:320px;
         left:0;
         top:0;
-        margin:0 auto 20px;
+        margin-top:30px;
     }
 
     .hero-btn{
@@ -444,7 +440,7 @@ footer{
     }
 
     .hero-stats{
-        margin-top:25px;
+        margin-top:20px;
         padding:18px;
         text-align:center;
     }
@@ -473,6 +469,10 @@ footer{
         padding-right:6px;
     }
 
+    .streamer-card{
+        border-radius:16px;
+    }
+
     .streamer-card .card-body{
         padding:15px !important;
     }
@@ -492,6 +492,7 @@ footer{
 
     .btn-support{
         font-size:12px;
+        padding:8px 10px;
     }
 
     /* STATISTIK */
@@ -511,6 +512,7 @@ footer{
 
     footer{
         margin-top:50px;
+        padding:30px 0;
     }
 }
 /* HERO STATS */
