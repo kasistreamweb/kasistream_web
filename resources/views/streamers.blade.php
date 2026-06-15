@@ -17,17 +17,14 @@
 </head>
 <body>
 
-<div class="streamers-layout">
+<div class="container-fluid">
+    <div class="row">
 
-    {{-- SIDEBAR --}}
-    <aside class="sidebar-wrapper">
+        {{-- SIDEBAR --}}
         @include('layouts.sidebar')
-    </aside>
 
-    {{-- KONTEN UTAMA --}}
-    <main class="content-wrapper">
-
-        <div class="p-4">
+        {{-- KONTEN UTAMA --}}
+        <div class="col-md-9 col-lg-10 p-4">
 
             {{-- HEADER --}}
             <div class="page-title mb-4">
@@ -145,11 +142,10 @@
                 {{ $streamers->links() }}
             </div>
 
-        </div>{{-- tutup .p-4 --}}
+        </div>{{-- tutup col --}}
 
-    </main>
-
-</div>{{-- tutup .streamers-layout --}}
+    </div>{{-- tutup row --}}
+</div>{{-- tutup container-fluid --}}
 
 </body>
 </html>
