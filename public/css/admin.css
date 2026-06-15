@@ -156,4 +156,78 @@ body{
         height:220px !important;
     }
 
+        .content-card{
+        padding:15px !important;
+    }
+
+    .content-card h3{
+        font-size:22px !important;
+    }
+
+    /* FILTER */
+
+    form.row.g-3{
+        row-gap:10px !important;
+    }
+
+    form.row.g-3 .col-md-4,
+    form.row.g-3 .col-md-3,
+    form.row.g-3 .col-md-2{
+        width:100% !important;
+        max-width:100% !important;
+        flex:0 0 100% !important;
+    }
+
+    .form-control,
+    .form-select{
+        height:48px !important;
+        font-size:14px !important;
+    }
+
+    /* TABLE */
+
+    .table-responsive{
+        overflow-x:auto;
+        border-radius:12px;
+    }
+
+    .admin-table{
+        min-width:700px;
+    }
+
+    .admin-table th{
+        white-space:nowrap;
+        font-size:13px;
+    }
+
+    .admin-table td{
+        white-space:nowrap;
+        font-size:13px;
+        vertical-align:middle;
+    }
+
+    .profile-img{
+        width:35px !important;
+        height:35px !important;
+    }
+
+    .btn-sm{
+        font-size:12px !important;
+        padding:6px 10px !important;
+    }
+
+    /* PAGINATION */
+
+    .pagination{
+        flex-wrap:wrap;
+        justify-content:center;
+        gap:4px;
+    }
+
+    .page-link{
+        font-size:13px;
+        padding:6px 10px;
+    }
+
 }
+

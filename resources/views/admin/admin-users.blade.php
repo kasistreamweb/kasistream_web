@@ -198,7 +198,8 @@ body{
 
         @endif
 
-        <table class="table table-hover">
+        <div class="table-responsive">
+        <table class="table table-hover admin-table">
 
             <thead>
 
@@ -294,6 +295,9 @@ body{
         </table>
 
         {{ $users->links() }}
+        
+        </table>
+    </div>
 
     </div>
 
