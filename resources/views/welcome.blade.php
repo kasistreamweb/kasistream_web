@@ -513,6 +513,17 @@ footer{
         margin-top:50px;
         padding:30px 0;
     }
+
+    .cta-buttons{
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        gap:18px;
+    }
+
+    .cta-buttons .btn{
+        width:260px;
+    }
 }
 /* HERO STATS */
 
@@ -1021,23 +1032,23 @@ body{
 
         </p>
 
-        <a
-            href="/register"
-            class="btn btn-light btn-lg me-2"
-        >
+        <div class="cta-buttons">
 
-            Daftar Sekarang
+    <a
+        href="/register"
+        class="btn btn-light btn-lg"
+    >
+        Daftar Sekarang
+    </a>
 
-        </a>
+    <a
+        href="/streamers"
+        class="btn btn-outline-light btn-lg"
+    >
+        Donasi Tanpa Login
+    </a>
 
-        <a
-            href="/streamers"
-            class="btn btn-outline-light btn-lg"
-        >
-
-            Donasi Tanpa Login
-
-        </a>
+</div>
 
     </div>
 
