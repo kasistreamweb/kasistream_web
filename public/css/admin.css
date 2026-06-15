@@ -448,6 +448,178 @@ body{
         gap:4px;
     }
 
+    /* HEADER */
+
+    .content-card{
+        padding:15px !important;
+    }
+
+    .content-card h3{
+        font-size:24px !important;
+    }
+
+    /* FILTER */
+
+    form.row.g-3 .col-md-6,
+    form.row.g-3 .col-md-3{
+        width:100% !important;
+        max-width:100% !important;
+        flex:0 0 100% !important;
+    }
+
+    .form-control,
+    .form-select{
+        height:48px !important;
+        font-size:14px !important;
+    }
+
+    /* TABLE */
+
+    .withdraw-table{
+        min-width:950px;
+    }
+
+    .withdraw-table th{
+        white-space:nowrap;
+        font-size:13px;
+    }
+
+    .withdraw-table td{
+        white-space:nowrap;
+        font-size:13px;
+        vertical-align:middle;
+    }
+
+    /* STATUS */
+
+    .badge{
+        font-size:11px !important;
+    }
+
+    /* ACTION */
+
+    .withdraw-actions{
+        display:flex;
+        gap:6px;
+        align-items:center;
+    }
+
+    .withdraw-actions form{
+        margin:0;
+    }
+
+    .withdraw-actions .btn{
+        font-size:11px !important;
+        padding:6px 8px !important;
+    }
+
+    /* PAGINATION */
+
+    .pagination{
+        flex-wrap:wrap;
+        justify-content:center;
+        gap:4px;
+    }
+
+     .content-card{
+        padding:16px !important;
+        border-radius:18px !important;
+    }
+
+    h2{
+        font-size:24px !important;
+    }
+
+    h3{
+        font-size:18px !important;
+    }
+
+    h4{
+        font-size:18px !important;
+    }
+
+    /* FILTER */
+
+    form.row.g-3 .col-md-4,
+    form.row.g-3 .col-md-2{
+        width:100% !important;
+        max-width:100% !important;
+        flex:0 0 100% !important;
+    }
+
+    .form-control{
+        height:48px !important;
+        font-size:14px !important;
+    }
+
+    /* STAT CARD */
+
+    .stat-card{
+        margin-bottom:15px;
+    }
+
+    .stat-card .card-body{
+        padding:16px !important;
+    }
+
+    .stat-card h6{
+        font-size:13px !important;
+        margin-bottom:8px;
+    }
+
+    .stat-card h3{
+        font-size:18px !important;
+        word-break:break-word;
+    }
+
+    /* GATEWAY */
+
+    .text-center .col-md-4{
+        margin-bottom:15px;
+    }
+
+    /* TABLE */
+
+    .table-responsive{
+        overflow-x:auto;
+    }
+
+    .report-table{
+        min-width:600px;
+    }
+
+    .report-table th,
+    .report-table td{
+        white-space:nowrap;
+        font-size:13px;
+    }
+
+    /* EXPORT BUTTON */
+
+    .btn-success,
+    .btn-secondary,
+    .btn-primary{
+        height:48px;
+        font-size:14px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+    }
+
+    /* TOP STREAMER & DONATUR */
+
+    .col-md-6{
+        margin-bottom:20px;
+    }
+
+    /* SPACING */
+
+    .container-fluid{
+        padding-left:10px !important;
+        padding-right:10px !important;
+    }
+
+
 
 }
 

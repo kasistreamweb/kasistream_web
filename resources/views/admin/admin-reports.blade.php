@@ -157,7 +157,7 @@ h3{
 
     <div class="row mb-4">
 
-        <div class="col-md-3">
+        <div class="col-6 col-md-3 mb-3">
 
             <div class="card stat-card shadow h-100">
 
@@ -173,7 +173,7 @@ h3{
 
         </div>
 
-        <div class="col-md-3">
+        <div class="col-6 col-md-3 mb-3">
 
             <div class="card stat-card shadow h-100">
 
@@ -189,7 +189,7 @@ h3{
 
         </div>
 
-        <div class="col-md-3">
+        <div class="col-6 col-md-3 mb-3">
 
             <div class="card stat-card shadow h-100">
 
@@ -207,7 +207,7 @@ h3{
 
         </div>
 
-        <div class="col-md-3">
+        <div class="col-6 col-md-3 mb-3">
 
             <div class="card stat-card shadow h-100">
 
@@ -365,7 +365,8 @@ h3{
                 Top Streamer
             </h4>
 
-            <table class="table table-hover">
+            <div class="table-responsive">
+    <table class="table table-hover report-table">
 
                 <thead>
                     <tr>
@@ -399,6 +400,7 @@ h3{
                 </tbody>
 
             </table>
+            </div>
 
         </div>
 

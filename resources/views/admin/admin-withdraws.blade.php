@@ -173,7 +173,7 @@ body{
 
         <div class="table-responsive">
 
-            <table class="table table-hover">
+            <table class="table table-hover withdraw-table">
 
                 <thead>
 
@@ -265,7 +265,7 @@ body{
                             </td>
 
                             <td>
-
+                                    <div class="withdraw-actions">
 
                                 @if($withdraw->status == 'pending')
 
@@ -310,7 +310,7 @@ body{
                                     </form>
 
                                 @endif
-
+                                </div>
                             </td>
 
                         </tr>
