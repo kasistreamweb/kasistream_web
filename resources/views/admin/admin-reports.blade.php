@@ -58,64 +58,23 @@ h3{
 }
 
 @media print{
-
-    body *{
-        visibility:hidden;
-    }
-
-    #reportArea,
-    #reportArea *{
-        visibility:visible;
-    }
-
-    #reportArea{
-        position:absolute;
-        left:0;
-        top:0;
-        width:100%;
-    }
-
-    .btn,
-    form,
-    .sidebar{
-        display:none !important;
-    }
+    body *{ visibility:hidden; }
+    #reportArea, #reportArea *{ visibility:visible; }
+    #reportArea{ position:absolute; left:0; top:0; width:100%; }
+    .btn, form, .sidebar{ display:none !important; }
 }
 
 @media(max-width:768px){
-
-    .content-card{
-        padding:15px;
-        margin-bottom:16px;
-    }
-
-    .stat-card .card-body{
-        padding:12px;
-    }
-
-    h2{
-        font-size:20px;
-    }
-
-    h3{
-        font-size:18px;
-    }
-
-    h4{
-        font-size:16px;
-    }
-
-    .amount-mobile{
-        font-size:15px;
-    }
-
-    .table{
-        font-size:13px;
-    }
+    .content-card{ padding:15px; margin-bottom:16px; }
+    .stat-card .card-body{ padding:12px; }
+    h2{ font-size:20px; }
+    h3{ font-size:18px; }
+    h4{ font-size:16px; }
+    .amount-mobile{ font-size:15px; }
+    .table{ font-size:13px; }
 }
 
 </style>
-
 </head>
 <body>
 
@@ -125,50 +84,30 @@ h3{
 @include('admin.layouts.sidebar')
 
 <div class="col-md-10 p-4">
-
 <div id="reportArea">
 
     <h2 class="mb-4">Laporan Sistem</h2>
 
     {{-- FILTER --}}
     <form method="GET" class="row g-3 mb-4">
-
         <div class="col-md-4">
-            <input
-                type="date"
-                name="dari"
-                class="form-control"
-                value="{{ request('dari') }}"
-            >
+            <input type="date" name="dari" class="form-control" value="{{ request('dari') }}">
         </div>
-
         <div class="col-md-4">
-            <input
-                type="date"
-                name="sampai"
-                class="form-control"
-                value="{{ request('sampai') }}"
-            >
+            <input type="date" name="sampai" class="form-control" value="{{ request('sampai') }}">
         </div>
-
         <div class="col-md-2">
             <button type="submit" class="btn btn-primary w-100">
-                <i class="fa-solid fa-filter"></i>
-                Filter
+                <i class="fa-solid fa-filter"></i> Filter
             </button>
         </div>
-
         <div class="col-md-2">
-            <a href="/admin-reports" class="btn btn-secondary w-100">
-                Reset
-            </a>
+            <a href="/admin-reports" class="btn btn-secondary w-100">Reset</a>
         </div>
-
     </form>
 
     {{-- CARD STATISTIK --}}
     <div class="row g-3 section-gap">
-
         <div class="col-6 col-md-3">
             <div class="card stat-card shadow h-100">
                 <div class="card-body">
@@ -177,7 +116,6 @@ h3{
                 </div>
             </div>
         </div>
-
         <div class="col-6 col-md-3">
             <div class="card stat-card shadow h-100">
                 <div class="card-body">
@@ -186,41 +124,31 @@ h3{
                 </div>
             </div>
         </div>
-
         <div class="col-6 col-md-3">
             <div class="card stat-card shadow h-100">
                 <div class="card-body">
                     <h6>Total Donasi</h6>
-                    <h3 class="amount-mobile">
-                        Rp {{ number_format($totalDonasi) }}
-                    </h3>
+                    <h3 class="amount-mobile">Rp {{ number_format($totalDonasi) }}</h3>
                 </div>
             </div>
         </div>
-
         <div class="col-6 col-md-3">
             <div class="card stat-card shadow h-100">
                 <div class="card-body">
                     <h6>Total Withdraw</h6>
-                    <h3 class="amount-mobile">
-                        Rp {{ number_format($totalWithdraw) }}
-                    </h3>
+                    <h3 class="amount-mobile">Rp {{ number_format($totalWithdraw) }}</h3>
                 </div>
             </div>
         </div>
-
     </div>
 
     {{-- PENDAPATAN PLATFORM & GATEWAY --}}
     <div class="row g-3 section-gap">
-
         <div class="col-md-4">
             <div class="card stat-card shadow h-100">
                 <div class="card-body">
                     <h6>Pendapatan Platform</h6>
-                    <h3 class="amount-mobile">
-                        Rp {{ number_format($totalPendapatanPlatform) }}
-                    </h3>
+                    <h3 class="amount-mobile">Rp {{ number_format($totalPendapatanPlatform) }}</h3>
                     <small class="text-muted">
                         {{ number_format(($totalPendapatanPlatform / max($totalDonasi,1)) * 100,1) }}%
                         dari total donasi
@@ -228,7 +156,6 @@ h3{
                 </div>
             </div>
         </div>
-
         <div class="col-md-8">
             <div class="content-card shadow h-100">
                 <h4 class="mb-4">Statistik Gateway</h4>
@@ -248,12 +175,10 @@ h3{
                 </div>
             </div>
         </div>
-
     </div>
 
     {{-- RINGKASAN PLATFORM & TOP STREAMER --}}
     <div class="row g-3 section-gap">
-
         <div class="col-md-6">
             <div class="content-card shadow h-100">
                 <h4 class="mb-3">Ringkasan Platform</h4>
@@ -277,7 +202,6 @@ h3{
                 </table>
             </div>
         </div>
-
         <div class="col-md-6">
             <div class="content-card shadow h-100">
                 <h4 class="mb-3">Top Streamer</h4>
@@ -305,29 +229,20 @@ h3{
                 </div>
             </div>
         </div>
-
     </div>
 
     {{-- EXPORT LAPORAN & TOP DONATUR --}}
     <div class="row g-3 section-gap">
-
         <div class="col-md-6">
             <div class="content-card shadow h-100">
                 <h4 class="mb-4">Export Laporan</h4>
 
                 <div class="d-grid gap-3 mb-4">
-                    
-                        href="{{ route('admin.reports.excel') }}"
-                        class="btn btn-success"
-                    >
+                    <a href="{{ route('admin.reports.excel') }}" class="btn btn-success">
                         <i class="fa-solid fa-file-excel me-2"></i>
                         Export Excel
                     </a>
-                    
-                        href="{{ route('admin.reports.print', request()->all()) }}"
-                        target="_blank"
-                        class="btn btn-secondary"
-                    >
+                    <a href="{{ route('admin.reports.print', request()->all()) }}" target="_blank" class="btn btn-secondary">
                         <i class="fa-solid fa-print me-2"></i>
                         Print Laporan
                     </a>
@@ -337,25 +252,11 @@ h3{
 
                 <p>
                     <strong>Periode :</strong><br>
-                    {{ request('dari') ?: '-' }}
-                    s/d
-                    {{ request('sampai') ?: '-' }}
+                    {{ request('dari') ?: '-' }} s/d {{ request('sampai') ?: '-' }}
                 </p>
-
-                <p>
-                    Total Transaksi :
-                    <strong>{{ $totalTransaksi }}</strong>
-                </p>
-
-                <p>
-                    Total Donasi :
-                    <strong>Rp {{ number_format($totalDonasi) }}</strong>
-                </p>
-
-                <p class="mb-0">
-                    Pendapatan Platform :
-                    <strong>Rp {{ number_format($totalPendapatanPlatform) }}</strong>
-                </p>
+                <p>Total Transaksi : <strong>{{ $totalTransaksi }}</strong></p>
+                <p>Total Donasi : <strong>Rp {{ number_format($totalDonasi) }}</strong></p>
+                <p class="mb-0">Pendapatan Platform : <strong>Rp {{ number_format($totalPendapatanPlatform) }}</strong></p>
 
             </div>
         </div>
@@ -385,7 +286,6 @@ h3{
                 </div>
             </div>
         </div>
-
     </div>
 
 </div>{{-- tutup reportArea --}}

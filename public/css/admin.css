@@ -301,19 +301,16 @@ body{
     }
 
     .admin-table,
-    .report-table,
-    .streamer-table,
-    .donation-table,
-    .withdraw-table{
+    .report-table{
         min-width:700px;
-    }
-
-    .donation-table{
-        min-width:1200px;
     }
 
     .streamer-table{
         min-width:850px;
+    }
+
+    .donation-table{
+        min-width:1200px;
     }
 
     .withdraw-table{
@@ -358,11 +355,12 @@ body{
     .btn-success,
     .btn-secondary,
     .btn-primary{
-        height:48px;
-        font-size:14px;
-        display:flex;
-        align-items:center;
-        justify-content:center;
+        height:48px !important;
+        font-size:14px !important;
+        display:block !important;
+        width:100%;
+        visibility:visible !important;
+        opacity:1 !important;
     }
 
     /* ACTION BUTTONS */
