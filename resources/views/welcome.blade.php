@@ -44,18 +44,13 @@ body{
 }
 
 /* NAVBAR */
-
 .navbar{
+    background: rgba(5,8,22,.85) !important;
+    backdrop-filter: blur(15px);
+    border-bottom: 1px solid rgba(255,255,255,.08);
 
-    position:fixed;
-
-    top:0;
-
-    left:0;
-
-    right:0;
-
-    z-index:9999;
+    position: relative;
+    z-index: 1000;
 }
 
 .navbar-brand{
@@ -137,7 +132,7 @@ body{
 
     position:relative;
 
-    padding-top:100px;
+    padding-top:90px;
 }
 
 .hero::before{
