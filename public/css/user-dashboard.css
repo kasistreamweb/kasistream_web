@@ -1133,4 +1133,136 @@ img{
     .sidebar-logo{
         width:110px;
     }
+
+        /* =====================================
+       MOBILE UI IMPROVEMENT
+    ===================================== */
+
+    /* Welcome Area */
+
+    .welcome-section{
+        text-align:center;
+        padding-right:0 !important;
+        min-height:auto !important;
+    }
+
+    .welcome-section h1{
+        font-size:22px !important;
+    }
+
+    .welcome-section p{
+        font-size:13px !important;
+    }
+
+    /* Logo jangan menimpa teks */
+
+    .header-logo{
+        position:relative !important;
+        top:auto !important;
+        right:auto !important;
+
+        display:block !important;
+        margin:12px auto 0 !important;
+
+        width:110px !important;
+        height:auto !important;
+    }
+
+    /* Search Area */
+
+    .topbar-actions{
+        display:grid !important;
+        grid-template-columns:1fr 1fr;
+        gap:8px;
+        align-items:center;
+    }
+
+    .search-flex{
+        grid-column:1 / -1;
+        width:100%;
+    }
+
+    .search-box{
+        width:100%;
+    }
+
+    /* Wallet */
+
+    .wallet-mini{
+        justify-content:center;
+    }
+
+    /* Statistik */
+
+    .stats-card{
+        min-height:auto !important;
+        padding:14px !important;
+    }
+
+    .stats-card h3{
+        font-size:20px !important;
+    }
+
+    .stats-card span{
+        font-size:12px !important;
+    }
+
+    /* Top Streamer */
+
+    .streamer-card{
+        padding:14px !important;
+    }
+
+    .streamer-img{
+        width:70px !important;
+        height:70px !important;
+        min-width:70px !important;
+        min-height:70px !important;
+        max-width:70px !important;
+        max-height:70px !important;
+    }
+
+    .streamer-card h5{
+        font-size:14px !important;
+    }
+
+    .streamer-stat{
+        font-size:11px !important;
+    }
+
+    .streamer-donation{
+        font-size:12px !important;
+    }
+
+    /* Aktivitas */
+
+    .activity-item{
+        padding:10px;
+    }
+
+    .activity-title{
+        font-size:12px !important;
+    }
+
+    .activity-amount{
+        font-size:12px !important;
+    }
+
+    /* Category */
+
+    .category-btn{
+        margin-bottom:6px;
+    }
+
+    /* Sidebar Guest Card */
+
+    .sidebar-info-card{
+        display:none !important;
+    }
+
+    /* Jarak antar section */
+
+    .section-title{
+        margin-bottom:12px;
+    }
 }
