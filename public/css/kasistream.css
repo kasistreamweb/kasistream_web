@@ -438,3 +438,23 @@ p{
 .sidebar-streamer-btn i{
     margin-right:10px;
 }
+
+@media(max-width:768px){
+
+    .sidebar{
+        padding:12px;
+    }
+
+    .auth-card{
+        margin-bottom:20px;
+    }
+
+    .sidebar-info-card{
+        display:none;
+    }
+
+    .page-title{
+        margin-top:0 !important;
+    }
+
+}
