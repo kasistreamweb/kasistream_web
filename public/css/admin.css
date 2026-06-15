@@ -283,5 +283,84 @@ body{
         gap:4px;
     }
 
+    .content-card{
+        padding:15px !important;
+    }
+
+    .content-card h2{
+        font-size:24px !important;
+    }
+
+    /* STAT CARD */
+
+    .stat-card{
+        padding:15px !important;
+        border-radius:14px !important;
+    }
+
+    .stat-card h3{
+        font-size:18px !important;
+    }
+
+    .stat-card small{
+        font-size:11px !important;
+    }
+
+    /* RANK CARD */
+
+    .rank-card{
+        padding:15px !important;
+        border-radius:16px !important;
+    }
+
+    .rank-row{
+        text-align:center;
+    }
+
+    .rank-badge{
+        width:42px !important;
+        height:42px !important;
+        font-size:16px !important;
+        margin:auto;
+    }
+
+    .profile{
+        width:55px !important;
+        height:55px !important;
+        margin-top:10px;
+        margin-bottom:10px;
+    }
+
+    .rank-row .col-md-1,
+    .rank-row .col-md-2,
+    .rank-row .col-md-3{
+        width:100% !important;
+        max-width:100% !important;
+        flex:0 0 100% !important;
+        margin-bottom:8px;
+    }
+
+    .rank-row strong{
+        font-size:15px;
+    }
+
+    .rank-row small{
+        font-size:12px;
+    }
+
+    .rank-row .btn{
+        width:100%;
+        margin-top:8px;
+    }
+
+    /* PAGINATION */
+
+    .pagination{
+        flex-wrap:wrap;
+        justify-content:center;
+        gap:4px;
+    }
+
+
 }
 

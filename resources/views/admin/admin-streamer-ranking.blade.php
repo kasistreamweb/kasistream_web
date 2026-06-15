@@ -117,7 +117,7 @@ body{
 
                 <div class="row mb-4">
 
-                    <div class="col-md-3 mb-3">
+                    <div class="col-6 col-md-3 mb-3">
 
                         <div class="stat-card">
 
@@ -133,7 +133,7 @@ body{
 
                     </div>
 
-                    <div class="col-md-3 mb-3">
+                    <div class="col-6 col-md-3 mb-3">
 
                         <div class="stat-card">
 
@@ -149,7 +149,7 @@ body{
 
                     </div>
 
-                    <div class="col-md-3 mb-3">
+                    <div class="col-6 col-md-3 mb-3">
 
                         <div class="stat-card">
 
@@ -165,7 +165,7 @@ body{
 
                     </div>
 
-                    <div class="col-md-3 mb-3">
+                   <div class="col-6 col-md-3 mb-3">
 
                         <div class="stat-card">
 
@@ -198,7 +198,7 @@ body{
 
                     <div class="rank-card shadow-sm">
 
-                        <div class="row align-items-center">
+    <div class="row align-items-center rank-row">
 
                             <div class="col-md-1">
 
