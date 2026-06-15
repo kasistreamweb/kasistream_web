@@ -181,62 +181,52 @@ h3{
     <h2 class="mb-4">Laporan Sistem</h2>
 
     {{-- FILTER --}}
-    <div class="filter-card">
+<div class="filter-card">
 
-        <form method="GET">
-            <div class="row g-3 align-items-end">
+    <form method="GET">
+        <div class="row g-3 align-items-end">
 
-                <div class="col-md-4">
-                    <div class="filter-label">Dari Tanggal</div>
-                    <input
-                        type="date"
-                        name="dari"
-                        class="form-control"
-                        value="{{ request('dari') }}"
-                    >
-                </div>
-
-                <div class="col-md-1 d-none d-md-block">
-                    <div class="filter-divider">→</div>
-                </div>
-
-                <div class="col-md-4">
-                    <div class="filter-label">Sampai Tanggal</div>
-                    @if(request('dari') && request('sampai'))
-                        <div class="filter-info">
-                            <i class="fa-solid fa-calendar-check"></i>
-                            {{ \Carbon\Carbon::parse(request('sampai'))->translatedFormat('d M Y') }}
-                        </div>
-                    @else
-                        <div class="filter-info">
-                            <i class="fa-solid fa-calendar"></i>
-                            Pilih tanggal mulai terlebih dahulu
-                        </div>
-                    @endif
-                    <input
-                        type="hidden"
-                        name="sampai"
-                        value="{{ request('dari') ? request('dari', now()->format('Y-m-d')) : '' }}"
-                    >
-                </div>
-
-                <div class="col-md-2">
-                    <button type="submit" class="btn btn-filter w-100">
-                        <i class="fa-solid fa-magnifying-glass me-2"></i>
-                        Filter
-                    </button>
-                </div>
-
-                <div class="col-md-1">
-                    <a href="/admin-reports" class="btn btn-reset w-100">
-                        <i class="fa-solid fa-rotate-left"></i>
-                    </a>
-                </div>
-
+            <div class="col-md-4">
+                <div class="filter-label">Dari Tanggal</div>
+                <input
+                    type="date"
+                    name="dari"
+                    class="form-control"
+                    value="{{ request('dari') }}"
+                >
             </div>
-        </form>
 
-    </div>
+            <div class="col-md-1 d-none d-md-flex justify-content-center">
+                <div class="filter-divider">→</div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="filter-label">Sampai Tanggal</div>
+                <input
+                    type="date"
+                    name="sampai"
+                    class="form-control"
+                    value="{{ request('sampai') }}"
+                >
+            </div>
+
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-filter w-100">
+                    <i class="fa-solid fa-magnifying-glass me-2"></i>
+                    Filter
+                </button>
+            </div>
+
+            <div class="col-md-1">
+                <a href="/admin-reports" class="btn btn-reset w-100">
+                    <i class="fa-solid fa-rotate-left"></i>
+                </a>
+            </div>
+
+        </div>
+    </form>
+
+</div>
 
     {{-- CARD STATISTIK --}}
     <div class="row g-3 section-gap">
