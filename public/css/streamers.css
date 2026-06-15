@@ -439,42 +439,35 @@ body{
    RESPONSIVE MOBILE
 ======================= */
 
-@media(max-width:768px){
+@media (max-width:768px){
+
+    html,
+    body{
+        height:auto !important;
+        overflow-y:auto !important;
+    }
 
     .row.g-0{
         display:block !important;
+        height:auto !important;
+        overflow:visible !important;
     }
 
     .sidebar{
         position:relative !important;
-        width:100% !important;
-        max-width:100% !important;
-        min-height:auto !important;
+        top:auto !important;
         height:auto !important;
+        min-height:auto !important;
+        max-height:none !important;
         overflow:visible !important;
-        margin-bottom:20px;
     }
 
-    .col-md-3,
-    .col-lg-2,
+    .content-area,
     .col-md-9,
     .col-lg-10{
-        width:100% !important;
-        max-width:100% !important;
-        flex:none !important;
-    }
-
-    .sidebar-info-card{
-        position:relative !important;
-        z-index:1 !important;
-    }
-
-    .page-title,
-    .filter-card,
-    .stats-card,
-    .streamer-card{
-        position:relative;
-        z-index:2;
+        height:auto !important;
+        max-height:none !important;
+        overflow:visible !important;
     }
 
 }
