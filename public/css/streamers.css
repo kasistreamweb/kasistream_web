@@ -32,9 +32,6 @@ body{
 
     box-shadow:
     0 0 30px rgba(0,0,0,.35);
-
-    position:sticky;
-    top:0;
 }
 
 .sidebar-user h6{
@@ -435,56 +432,44 @@ body{
     border-color:#8b5cf6;
 }
 
-/* =======================
-   RESPONSIVE MOBILE
-======================= */
+/* =====================================
+   NEW LAYOUT
+===================================== */
 
-@media(max-width:768px){
+.streamers-layout{
+    display:flex;
+    min-height:100vh;
+}
 
-    .auth-card{
-        display:none !important;
-    }
+.sidebar-wrapper{
+    width:280px;
+    flex-shrink:0;
+}
 
-    .sidebar-info-card{
-        display:none !important;
-    }
+.content-wrapper{
+    flex:1;
+    min-width:0;
+}
 
+/* =====================================
+   DESKTOP
+===================================== */
 
-    html,
-    body{
-        height:auto !important;
-        overflow-y:auto !important;
-    }
-
-    .row.g-0{
-        display:block !important;
-        height:auto !important;
-        overflow:visible !important;
-    }
+@media(min-width:769px){
 
     .sidebar{
-        position:relative !important;
-        top:auto !important;
-        min-height:auto !important;
-        height:auto !important;
-    }
-
-
-    .content-area,
-    .col-md-9,
-    .col-lg-10{
-        height:auto !important;
-        max-height:none !important;
-        overflow:visible !important;
+        position:sticky;
+        top:0;
+        height:100vh;
     }
 
 }
 
-/* ===================================
-   FIX DOUBLE SCROLL MOBILE
-=================================== */
+/* =====================================
+   MOBILE
+===================================== */
 
-@media (max-width:768px){
+@media(max-width:768px){
 
     html,
     body{
@@ -493,36 +478,35 @@ body{
         height:auto !important;
     }
 
-    .row.g-0{
+    .streamers-layout{
         display:block !important;
-        height:auto !important;
-        overflow:visible !important;
+        min-height:auto !important;
+    }
+
+    .sidebar-wrapper{
+        width:100% !important;
+        display:block !important;
+    }
+
+    .content-wrapper{
+        width:100% !important;
+        display:block !important;
     }
 
     .sidebar{
         position:static !important;
         top:auto !important;
-        left:auto !important;
 
-        width:100% !important;
         height:auto !important;
         min-height:auto !important;
 
         overflow:visible !important;
     }
 
-    .col-md-3,
-    .col-lg-2,
-    .col-md-9,
-    .col-lg-10{
-        display:block !important;
+    .col-lg-4.col-md-6{
         width:100% !important;
         max-width:100% !important;
-        flex:none !important;
-
-        height:auto !important;
-        min-height:auto !important;
-        overflow:visible !important;
+        flex:0 0 100% !important;
     }
 
     .page-title,

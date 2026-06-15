@@ -27,13 +27,15 @@
 </head>
 <body>
 
-    <div class="row g-0">
+    <div class="streamers-layout">
 
-        {{-- SIDEBAR --}}
+    <aside class="sidebar-wrapper">
         @include('layouts.sidebar')
+    </aside>
 
-        {{-- CONTENT --}}
-        <div class="col-md-9 col-lg-10 p-4">
+    <main class="content-wrapper">
+
+        <div class="p-4">
 
             {{-- HEADER --}}
             <div class="page-title mb-4">
@@ -247,11 +249,8 @@
 
                 {{ $streamers->links() }}
 
-            </div>
-
-        </div>
-
-    </div>
+                   </div>
+    </main>
 
 </div>
 
