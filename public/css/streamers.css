@@ -470,7 +470,6 @@ body{
     }
 
 
-
     .content-area,
     .col-md-9,
     .col-lg-10{
@@ -479,4 +478,57 @@ body{
         overflow:visible !important;
     }
 
+}
+
+/* ===================================
+   FIX DOUBLE SCROLL MOBILE
+=================================== */
+
+@media (max-width:768px){
+
+    html,
+    body{
+        overflow-x:hidden !important;
+        overflow-y:auto !important;
+        height:auto !important;
+    }
+
+    .row.g-0{
+        display:block !important;
+        height:auto !important;
+        overflow:visible !important;
+    }
+
+    .sidebar{
+        position:static !important;
+        top:auto !important;
+        left:auto !important;
+
+        width:100% !important;
+        height:auto !important;
+        min-height:auto !important;
+
+        overflow:visible !important;
+    }
+
+    .col-md-3,
+    .col-lg-2,
+    .col-md-9,
+    .col-lg-10{
+        display:block !important;
+        width:100% !important;
+        max-width:100% !important;
+        flex:none !important;
+
+        height:auto !important;
+        min-height:auto !important;
+        overflow:visible !important;
+    }
+
+    .page-title,
+    .filter-card,
+    .stats-card,
+    .streamer-card{
+        overflow:visible !important;
+    }
 }
