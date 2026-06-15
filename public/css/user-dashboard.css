@@ -953,7 +953,30 @@ img{
     font-size:15px;
 }
 
+/* =========================================
+   MOBILE DASHBOARD KAISTREAM
+========================================= */
+
+/* =========================================
+   MOBILE DASHBOARD KAISTREAM
+========================================= */
+
 @media(max-width:768px){
+
+    html,
+    body{
+        overflow-x:hidden !important;
+    }
+
+    /* CONTENT */
+    .content-area{
+        padding:12px !important;
+    }
+
+    /* HAPUS LOGO MENGAMBANG */
+    .header-logo{
+        display:none !important;
+    }
 
     /* SIDEBAR */
     .sidebar{
@@ -961,308 +984,219 @@ img{
         height:auto !important;
         position:static !important;
         border-right:none !important;
-        border-bottom:
-        1px solid rgba(255,255,255,.08);
+        border-bottom:1px solid rgba(255,255,255,.08);
+        padding:12px !important;
     }
 
-    .col-md-9.col-lg-10{
-        width:100% !important;
-        max-width:100% !important;
-        padding:12px !important;
+    .sidebar-user{
+        margin-bottom:20px !important;
+    }
+
+    .sidebar-avatar{
+        width:70px !important;
+        height:70px !important;
+    }
+
+    .menu-item{
+        padding:12px 15px !important;
+        font-size:13px !important;
+        margin-bottom:6px !important;
+    }
+
+    .sidebar-title{
+        font-size:10px !important;
+        margin:10px 0 !important;
+    }
+
+    .sidebar-info-card{
+        display:none !important;
+    }
+
+    .logout-btn{
+        height:42px !important;
+        font-size:13px !important;
     }
 
     /* WELCOME */
     .welcome-section{
-        min-height:80px;
-        padding-right:100px;
-    }
 
-    .welcome-section h1{
-        font-size:20px;
-        line-height:1.3;
-    }
+        background:none !important;
+        border:none !important;
+        box-shadow:none !important;
 
-    .welcome-section p{
-        font-size:13px;
-    }
+        padding:0 !important;
 
-    .header-logo{
-        width:90px !important;
-        top:-10px;
-        right:0;
-    }
-
-    /* TOPBAR */
-    .topbar{
-        padding:12px;
-    }
-
-    .topbar-actions{
-        gap:8px;
-        flex-wrap:wrap;
-    }
-
-    .search-flex{
-        min-width:100%;
-        order:-1;
-    }
-
-    .search-box{
-        height:46px;
-        font-size:13px;
-    }
-
-    .trending-badge{
-        font-size:12px;
-        padding:8px 12px;
-    }
-
-    .notification-btn{
-        width:46px;
-        height:46px;
-        border-radius:14px;
-    }
-
-    .wallet-mini{
-        font-size:12px;
-        padding:8px 12px;
-    }
-
-    .wallet-mini span{
-        font-size:12px;
-    }
-
-    .user-mini span{
-        display:none;
-    }
-
-    .user-mini{
-        padding:8px;
-    }
-
-    /* STATS */
-    .stats-card{
-        margin-bottom:0;
-        min-height:100px;
-        padding:15px;
-    }
-
-    .stats-card h3{
-        font-size:18px;
-    }
-
-    .stats-card i{
-        font-size:20px;
-        margin-bottom:6px;
-    }
-
-    /* STREAMER CARD */
-    .streamer-card{
-        border-radius:16px;
-    }
-
-    .streamer-card .card-body{
-        padding:15px;
-    }
-
-    .streamer-img{
-        width:80px !important;
-        height:80px !important;
-        min-width:80px !important;
-        max-width:80px !important;
-        min-height:80px !important;
-        max-height:80px !important;
-    }
-
-    .streamer-card h5{
-        font-size:14px;
-        margin-bottom:4px;
-    }
-
-    .streamer-stat{
-        font-size:12px;
-    }
-
-    .streamer-donation{
-        font-size:13px;
-    }
-
-    /* ACTIVITY */
-    .activity-card{
-        padding:16px;
-        height:auto;
-    }
-
-    .activity-list{
-        flex-direction:column;
-        gap:12px;
-    }
-
-    .activity-item{
-        min-width:auto;
-        width:100%;
-    }
-
-    .activity-icon{
-        width:42px;
-        height:42px;
-        font-size:16px;
-        flex-shrink:0;
-    }
-
-    .activity-title{
-        font-size:13px;
-    }
-
-    .activity-amount{
-        font-size:13px;
-    }
-
-    /* CATEGORY */
-    .category-btn{
-        font-size:12px;
-        padding:8px 14px;
-    }
-
-    /* SECTION TITLE */
-    .section-title{
-        font-size:16px;
-    }
-
-    /* SIDEBAR LOGO */
-    .sidebar-logo{
-        width:110px;
-    }
-
-        /* =====================================
-       MOBILE UI IMPROVEMENT
-    ===================================== */
-
-    /* Welcome Area */
-
-    .welcome-section{
-        text-align:center;
-        padding-right:0 !important;
         min-height:auto !important;
+
+        margin-bottom:20px !important;
     }
 
     .welcome-section h1{
         font-size:22px !important;
+        line-height:1.3 !important;
+        margin-bottom:5px !important;
     }
 
     .welcome-section p{
         font-size:13px !important;
+        color:#94a3b8 !important;
     }
 
-    /* Logo jangan menimpa teks */
+    /* TOPBAR */
 
-    .header-logo{
-        position:relative !important;
-        top:auto !important;
-        right:auto !important;
-
-        display:block !important;
-        margin:12px auto 0 !important;
-
-        width:110px !important;
-        height:auto !important;
+    .topbar{
+        padding:12px !important;
     }
-
-    /* Search Area */
 
     .topbar-actions{
-        display:grid !important;
-        grid-template-columns:1fr 1fr;
-        gap:8px;
-        align-items:center;
+        display:flex !important;
+        flex-wrap:wrap !important;
+        gap:8px !important;
     }
 
     .search-flex{
-        grid-column:1 / -1;
-        width:100%;
+        width:100% !important;
+        order:-1;
     }
 
     .search-box{
-        width:100%;
+        height:46px !important;
+        font-size:13px !important;
     }
 
-    /* Wallet */
+    .trending-badge{
+        font-size:12px !important;
+        padding:8px 12px !important;
+    }
+
+    .notification-btn{
+        width:46px !important;
+        height:46px !important;
+    }
 
     .wallet-mini{
-        justify-content:center;
+        flex:1 !important;
+        font-size:12px !important;
     }
 
-    /* Statistik */
+    .wallet-mini span{
+        font-size:12px !important;
+    }
+
+    .user-mini{
+        display:none !important;
+    }
+
+    /* STATISTIC */
 
     .stats-card{
-        min-height:auto !important;
-        padding:14px !important;
+        padding:16px !important;
+        min-height:100px !important;
+        border-radius:16px !important;
     }
 
     .stats-card h3{
+        font-size:22px !important;
+    }
+
+    .stats-card i{
         font-size:20px !important;
+        margin-bottom:8px !important;
     }
 
     .stats-card span{
         font-size:12px !important;
     }
 
-    /* Top Streamer */
+    /* TOP STREAMER */
+
+    .col-xl-4.col-lg-6.col-md-6{
+        width:100% !important;
+        max-width:100% !important;
+        flex:0 0 100% !important;
+    }
 
     .streamer-card{
-        padding:14px !important;
+        border-radius:18px !important;
+    }
+
+    .streamer-card .card-body{
+        padding:18px !important;
     }
 
     .streamer-img{
-        width:70px !important;
-        height:70px !important;
-        min-width:70px !important;
-        min-height:70px !important;
-        max-width:70px !important;
-        max-height:70px !important;
+        width:90px !important;
+        height:90px !important;
+        min-width:90px !important;
+        min-height:90px !important;
+        max-width:90px !important;
+        max-height:90px !important;
     }
 
     .streamer-card h5{
-        font-size:14px !important;
+        font-size:15px !important;
     }
 
     .streamer-stat{
-        font-size:11px !important;
+        font-size:12px !important;
     }
 
     .streamer-donation{
-        font-size:12px !important;
+        font-size:13px !important;
     }
 
-    /* Aktivitas */
+    .rank-badge{
+        font-size:11px !important;
+    }
+
+    /* SECTION */
+
+    .section-title{
+        font-size:16px !important;
+    }
+
+    /* ACTIVITY */
+
+    .activity-card{
+        padding:16px !important;
+        border-radius:18px !important;
+    }
+
+    .activity-list{
+        display:flex !important;
+        flex-direction:column !important;
+        gap:12px !important;
+    }
 
     .activity-item{
-        padding:10px;
+        width:100% !important;
+    }
+
+    .activity-icon{
+        width:42px !important;
+        height:42px !important;
+        font-size:16px !important;
+        flex-shrink:0;
     }
 
     .activity-title{
-        font-size:12px !important;
+        font-size:13px !important;
     }
 
     .activity-amount{
-        font-size:12px !important;
+        font-size:13px !important;
     }
 
-    /* Category */
+    /* CATEGORY */
 
     .category-btn{
-        margin-bottom:6px;
+        font-size:12px !important;
+        padding:8px 12px !important;
     }
 
-    /* Sidebar Guest Card */
+    /* BUTTON */
 
-    .sidebar-info-card{
-        display:none !important;
-    }
-
-    /* Jarak antar section */
-
-    .section-title{
-        margin-bottom:12px;
+    .btn-primary{
+        font-size:13px !important;
     }
 }
