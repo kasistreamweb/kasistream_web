@@ -193,14 +193,12 @@
 </div>
 
 @if(
-    !request()->is('streamers') &&
-    !request()->is('streamer/*') &&
-    (
-        request()->is('donasi/*') ||
-        request()->is('payment-method') ||
-        request()->is('payment-detail') ||
-        request()->is('payment-qr/*')
-    )
+    request()->is('streamers') ||
+    request()->is('streamer/*') ||
+    request()->is('donasi/*') ||
+    request()->is('payment-method') ||
+    request()->is('payment-detail') ||
+    request()->is('payment-qr/*')
 )
 
     <div class="sidebar-info-card">
