@@ -131,3 +131,65 @@ body{
 
     padding:14px;
 }
+
+@media(max-width:768px){
+
+    .success-wrapper{
+        padding:20px 15px;
+        align-items:flex-start;
+    }
+
+    .success-card{
+        padding:25px 20px;
+        border-radius:20px;
+    }
+
+    .success-icon{
+        width:90px;
+        height:90px;
+        font-size:40px;
+        margin-bottom:18px;
+    }
+
+    .success-title{
+        font-size:26px;
+    }
+
+    .success-subtitle{
+        font-size:15px;
+    }
+
+    .detail-box{
+        margin-top:25px;
+        padding:18px;
+        border-radius:16px;
+    }
+
+    .detail-box h4{
+        font-size:17px;
+        margin-bottom:18px;
+    }
+
+    .detail-row{
+        font-size:14px;
+        margin-bottom:12px;
+        flex-direction:column;
+        gap:4px;
+    }
+
+    .detail-row span:first-child{
+        font-size:12px;
+    }
+
+    .total-payment{
+        font-size:18px;
+    }
+
+    .btn-home,
+    .btn-history{
+        width:100%;
+        padding:12px;
+        font-size:15px;
+        border-radius:12px;
+    }
+}
