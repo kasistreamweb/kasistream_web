@@ -106,7 +106,7 @@ body{
 
 <div class="row">
 
-    <div class="col-lg-4 col-md-6 mb-4">
+    <div class="col-6 col-md-6 col-lg-4 mb-3">
 
         <div class="card card-stat shadow-sm">
 
@@ -136,7 +136,7 @@ body{
 
     </div>
 
-    <div class="col-lg-4 col-md-6 mb-4">
+    <div class="col-6 col-md-6 col-lg-4 mb-3">
 
         <div class="card card-stat shadow-sm">
 
@@ -166,7 +166,7 @@ body{
 
     </div>
 
-    <div class="col-lg-4 col-md-6 mb-4">
+    <div class="col-6 col-md-6 col-lg-4 mb-3">
 
         <div class="card card-stat shadow-sm">
 
@@ -196,7 +196,7 @@ body{
 
     </div>
 
-    <div class="col-lg-4 col-md-6 mb-4">
+    <div class="col-6 col-md-6 col-lg-4 mb-3">
 
         <div class="card card-stat shadow-sm">
 
@@ -226,7 +226,8 @@ body{
 
     </div>
 
-    <div class="col-lg-4 col-md-6 mb-4">
+<div class="col-6 col-md-6 col-lg-4 mb-3">
+    
 
         <div class="card card-stat shadow-sm">
 
@@ -256,7 +257,7 @@ body{
 
     </div>
 
-    <div class="col-lg-4 col-md-6 mb-4">
+    <div class="col-6 col-md-6 col-lg-4 mb-3">
 
         <div class="card card-stat shadow-sm">
 
@@ -291,7 +292,7 @@ body{
 
     <div class="row">
 
-        <div class="col-md-6 mb-4">
+        <div class="col-12 col-lg-6 mb-4">
 
             <div class="content-card shadow-sm">
 

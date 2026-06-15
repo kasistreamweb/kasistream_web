@@ -1,4 +1,4 @@
-<div class="col-md-2 sidebar p-3">
+<div class="col-lg-2 col-md-3 sidebar p-3">
 
     <div class="logo mb-4">
         KAsistream

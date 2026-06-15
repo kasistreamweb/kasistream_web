@@ -45,3 +45,115 @@ body{
     border-radius:15px;
     padding:20px;
 }
+
+/* =====================================
+   MOBILE ADMIN DASHBOARD
+===================================== */
+
+@media(max-width:768px){
+
+    body{
+        overflow-x:hidden;
+    }
+
+    /* SIDEBAR */
+
+    .sidebar{
+        min-height:auto !important;
+        height:auto !important;
+        padding:15px !important;
+    }
+
+    .logo{
+        font-size:28px !important;
+        text-align:center;
+        margin-bottom:20px;
+    }
+
+    .menu-item{
+        padding:12px 14px !important;
+        font-size:13px !important;
+        margin-bottom:6px !important;
+    }
+
+    /* CONTENT */
+
+    .col-md-10{
+        width:100% !important;
+        max-width:100% !important;
+        flex:0 0 100% !important;
+    }
+
+     .col-md-2.sidebar{
+        width:100% !important;
+        max-width:100% !important;
+        flex:0 0 100% !important;
+    }
+
+    h2.fw-bold{
+        font-size:28px !important;
+        margin-bottom:20px !important;
+    }
+
+    /* STAT CARD */
+
+    .card-stat{
+        border-radius:14px !important;
+    }
+
+    .card-stat .card-body{
+        padding:15px !important;
+    }
+
+    .card-stat h2{
+        font-size:24px !important;
+        margin-bottom:0 !important;
+    }
+
+    .card-stat h4{
+        font-size:20px !important;
+        margin-bottom:0 !important;
+    }
+
+    .card-stat .icon{
+        font-size:22px !important;
+    }
+
+    .card-stat small{
+        font-size:12px !important;
+    }
+
+    /* GRAFIK */
+
+    .content-card{
+        padding:15px !important;
+        border-radius:14px !important;
+    }
+
+    .content-card h4{
+        font-size:18px !important;
+    }
+
+    #donasiChart{
+        height:250px !important;
+    }
+
+    /* DONASI */
+
+    .donasi-item{
+        padding:12px 0 !important;
+    }
+
+    .donasi-item strong{
+        font-size:13px !important;
+    }
+
+    .donasi-item small{
+        font-size:11px !important;
+    }
+
+        #donasiChart{
+        height:220px !important;
+    }
+
+}
