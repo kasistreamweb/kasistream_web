@@ -100,7 +100,7 @@ body{
     display:flex;
     align-items:center;
     position:relative;
-    padding-top:50px;
+    margin-top:-40px;  /* ← negatif = naik, positif = turun */
     overflow:hidden;
 }
 
@@ -201,9 +201,9 @@ body{
 .hero-logo{
     position:relative;
     width:150%;
-    max-width:680px;
-    left:40px;
-    top:-10px;
+    max-width:750px;
+    left:70px;
+    top:30px;
     animation:
     floatLogo 5s ease-in-out infinite;
 }
