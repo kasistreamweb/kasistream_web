@@ -45,9 +45,11 @@ body{
     border-radius:15px;
     padding:20px;
 }
+
 .report-card{
     height:100%;
 }
+
 /* =====================================
    MOBILE ADMIN DASHBOARD
 ===================================== */
@@ -64,6 +66,12 @@ body{
         min-height:auto !important;
         height:auto !important;
         padding:15px !important;
+    }
+
+    .col-md-2.sidebar{
+        width:100% !important;
+        max-width:100% !important;
+        flex:0 0 100% !important;
     }
 
     .logo{
@@ -86,10 +94,15 @@ body{
         flex:0 0 100% !important;
     }
 
-     .col-md-2.sidebar{
-        width:100% !important;
-        max-width:100% !important;
-        flex:0 0 100% !important;
+    .container-fluid{
+        padding-left:10px !important;
+        padding-right:10px !important;
+    }
+
+    /* TYPOGRAPHY */
+
+    h2{
+        font-size:24px !important;
     }
 
     h2.fw-bold{
@@ -97,7 +110,60 @@ body{
         margin-bottom:20px !important;
     }
 
+    h3{
+        font-size:18px !important;
+    }
+
+    h4{
+        font-size:18px !important;
+    }
+
+    /* CONTENT CARD */
+
+    .content-card{
+        padding:15px !important;
+        border-radius:14px !important;
+    }
+
+    .content-card h2{
+        font-size:24px !important;
+    }
+
+    .content-card h3{
+        font-size:22px !important;
+    }
+
+    .content-card h4{
+        font-size:18px !important;
+    }
+
     /* STAT CARD */
+
+    .stat-card{
+        margin-bottom:15px;
+        padding:15px !important;
+        border-radius:14px !important;
+    }
+
+    .stat-card .card-body{
+        padding:16px !important;
+    }
+
+    .stat-card h3{
+        font-size:18px !important;
+        word-break:break-word;
+    }
+
+    .stat-card h6{
+        font-size:13px !important;
+        margin-bottom:8px;
+    }
+
+    .stat-card small{
+        font-size:11px !important;
+    }
+
+    /* CARD STAT (dashboard) */
 
     .card-stat{
         border-radius:14px !important;
@@ -125,186 +191,17 @@ body{
         font-size:12px !important;
     }
 
-    /* GRAFIK */
+    /* CARD GENERIC */
 
-    .content-card{
+    .card .card-body{
         padding:15px !important;
-        border-radius:14px !important;
     }
 
-    .content-card h4{
+    .card .card-body h4{
         font-size:18px !important;
     }
 
-    #donasiChart{
-        height:250px !important;
-    }
-
-    /* DONASI */
-
-    .donasi-item{
-        padding:12px 0 !important;
-    }
-
-    .donasi-item strong{
-        font-size:13px !important;
-    }
-
-    .donasi-item small{
-        font-size:11px !important;
-    }
-
-        #donasiChart{
-        height:220px !important;
-    }
-
-        .content-card{
-        padding:15px !important;
-    }
-
-    .content-card h3{
-        font-size:22px !important;
-    }
-
-    /* FILTER */
-
-    form.row.g-3{
-        row-gap:10px !important;
-    }
-
-    form.row.g-3 .col-md-4,
-    form.row.g-3 .col-md-3,
-    form.row.g-3 .col-md-2{
-        width:100% !important;
-        max-width:100% !important;
-        flex:0 0 100% !important;
-    }
-
-    .form-control,
-    .form-select{
-        height:48px !important;
-        font-size:14px !important;
-    }
-
-    /* TABLE */
-
-    .table-responsive{
-        overflow-x:auto;
-        border-radius:12px;
-    }
-
-    .admin-table{
-        min-width:700px;
-    }
-
-    .admin-table th{
-        white-space:nowrap;
-        font-size:13px;
-    }
-
-    .admin-table td{
-        white-space:nowrap;
-        font-size:13px;
-        vertical-align:middle;
-    }
-
-    .profile-img{
-        width:35px !important;
-        height:35px !important;
-    }
-
-    .btn-sm{
-        font-size:12px !important;
-        padding:6px 10px !important;
-    }
-
-    /* PAGINATION */
-
-    .pagination{
-        flex-wrap:wrap;
-        justify-content:center;
-        gap:4px;
-    }
-
-    .page-link{
-        font-size:13px;
-        padding:6px 10px;
-    }
-
-    .table-responsive{
-        overflow-x:auto;
-        border-radius:14px;
-    }
-
-    .streamer-table{
-        min-width:850px;
-    }
-
-    .streamer-table th{
-        white-space:nowrap;
-        font-size:13px;
-    }
-
-    .streamer-table td{
-        white-space:nowrap;
-        font-size:13px;
-        vertical-align:middle;
-    }
-
-    .profile-img{
-        width:40px !important;
-        height:40px !important;
-    }
-
-    .action-buttons{
-        display:flex;
-        gap:6px;
-        align-items:center;
-    }
-
-    .action-buttons form{
-        margin:0;
-    }
-
-    .btn-sm{
-        font-size:12px !important;
-        padding:6px 10px !important;
-    }
-
-    .content-card{
-        padding:15px !important;
-    }
-
-    .content-card h3{
-        font-size:24px !important;
-    }
-
-    .pagination{
-        flex-wrap:wrap;
-        justify-content:center;
-        gap:4px;
-    }
-
-    .content-card{
-        padding:15px !important;
-    }
-
-    .content-card h2{
-        font-size:24px !important;
-    }
-
-    /* STAT CARD */
-
-    .stat-card{
-        padding:15px !important;
-        border-radius:14px !important;
-    }
-
-    .stat-card h3{
-        font-size:18px !important;
-    }
-
-    .stat-card small{
+    .card .card-body small{
         font-size:11px !important;
     }
 
@@ -324,13 +221,6 @@ body{
         height:42px !important;
         font-size:16px !important;
         margin:auto;
-    }
-
-    .profile{
-        width:55px !important;
-        height:55px !important;
-        margin-top:10px;
-        margin-bottom:10px;
     }
 
     .rank-row .col-md-1,
@@ -355,42 +245,23 @@ body{
         margin-top:8px;
     }
 
-    /* PAGINATION */
-
-    .pagination{
-        flex-wrap:wrap;
-        justify-content:center;
-        gap:4px;
+    .profile{
+        width:55px !important;
+        height:55px !important;
+        margin-top:10px;
+        margin-bottom:10px;
     }
 
-    /* HEADER */
+    /* FILTER FORM */
 
-    .content-card{
-        padding:15px !important;
+    form.row.g-3{
+        row-gap:10px !important;
     }
 
-    .content-card h3{
-        font-size:24px !important;
-    }
-
-    /* STATISTIK */
-
-    .card .card-body{
-        padding:15px !important;
-    }
-
-    .card .card-body h4{
-        font-size:18px !important;
-    }
-
-    .card .card-body small{
-        font-size:11px !important;
-    }
-
-    /* FILTER */
-
+    form.row.g-3 .col-md-2,
+    form.row.g-3 .col-md-3,
     form.row.g-3 .col-md-4,
-    form.row.g-3 .col-md-2{
+    form.row.g-3 .col-md-6{
         width:100% !important;
         max-width:100% !important;
         flex:0 0 100% !important;
@@ -400,6 +271,26 @@ body{
     .form-select{
         height:48px !important;
         font-size:14px !important;
+    }
+
+    /* CHART */
+
+    #donasiChart{
+        height:220px !important;
+    }
+
+    /* DONASI ITEM */
+
+    .donasi-item{
+        padding:12px 0 !important;
+    }
+
+    .donasi-item strong{
+        font-size:13px !important;
+    }
+
+    .donasi-item small{
+        font-size:11px !important;
     }
 
     /* TABLE */
@@ -409,19 +300,46 @@ body{
         border-radius:14px;
     }
 
+    .admin-table,
+    .report-table,
+    .streamer-table,
+    .donation-table,
+    .withdraw-table{
+        min-width:700px;
+    }
+
     .donation-table{
         min-width:1200px;
     }
 
-    .donation-table th{
-        white-space:nowrap;
-        font-size:13px;
+    .streamer-table{
+        min-width:850px;
     }
 
-    .donation-table td{
+    .withdraw-table{
+        min-width:950px;
+    }
+
+    .admin-table th,
+    .admin-table td,
+    .report-table th,
+    .report-table td,
+    .streamer-table th,
+    .streamer-table td,
+    .donation-table th,
+    .donation-table td,
+    .withdraw-table th,
+    .withdraw-table td{
         white-space:nowrap;
         font-size:13px;
         vertical-align:middle;
+    }
+
+    /* PROFILE IMAGE */
+
+    .profile-img{
+        width:40px !important;
+        height:40px !important;
     }
 
     /* BADGE */
@@ -430,82 +348,33 @@ body{
         font-size:11px !important;
     }
 
-    /* BUTTON */
-
-    .action-buttons{
-        display:flex;
-        gap:6px;
-    }
+    /* BUTTONS */
 
     .btn-sm{
         font-size:12px !important;
         padding:6px 10px !important;
     }
 
-    /* PAGINATION */
-
-    .pagination{
-        flex-wrap:wrap;
+    .btn-success,
+    .btn-secondary,
+    .btn-primary{
+        height:48px;
+        font-size:14px;
+        display:flex;
+        align-items:center;
         justify-content:center;
-        gap:4px;
     }
 
-    /* HEADER */
+    /* ACTION BUTTONS */
 
-    .content-card{
-        padding:15px !important;
-    }
-
-    .content-card h3{
-        font-size:24px !important;
-    }
-
-    /* FILTER */
-
-    form.row.g-3 .col-md-6,
-    form.row.g-3 .col-md-3{
-        width:100% !important;
-        max-width:100% !important;
-        flex:0 0 100% !important;
-    }
-
-    .form-control,
-    .form-select{
-        height:48px !important;
-        font-size:14px !important;
-    }
-
-    /* TABLE */
-
-    .withdraw-table{
-        min-width:950px;
-    }
-
-    .withdraw-table th{
-        white-space:nowrap;
-        font-size:13px;
-    }
-
-    .withdraw-table td{
-        white-space:nowrap;
-        font-size:13px;
-        vertical-align:middle;
-    }
-
-    /* STATUS */
-
-    .badge{
-        font-size:11px !important;
-    }
-
-    /* ACTION */
-
+    .action-buttons,
     .withdraw-actions{
         display:flex;
         gap:6px;
         align-items:center;
     }
 
+    .action-buttons form,
     .withdraw-actions form{
         margin:0;
     }
@@ -523,55 +392,9 @@ body{
         gap:4px;
     }
 
-     .content-card{
-        padding:16px !important;
-        border-radius:18px !important;
-    }
-
-    h2{
-        font-size:24px !important;
-    }
-
-    h3{
-        font-size:18px !important;
-    }
-
-    h4{
-        font-size:18px !important;
-    }
-
-    /* FILTER */
-
-    form.row.g-3 .col-md-4,
-    form.row.g-3 .col-md-2{
-        width:100% !important;
-        max-width:100% !important;
-        flex:0 0 100% !important;
-    }
-
-    .form-control{
-        height:48px !important;
-        font-size:14px !important;
-    }
-
-    /* STAT CARD */
-
-    .stat-card{
-        margin-bottom:15px;
-    }
-
-    .stat-card .card-body{
-        padding:16px !important;
-    }
-
-    .stat-card h6{
-        font-size:13px !important;
-        margin-bottom:8px;
-    }
-
-    .stat-card h3{
-        font-size:18px !important;
-        word-break:break-word;
+    .page-link{
+        font-size:13px;
+        padding:6px 10px;
     }
 
     /* GATEWAY */
@@ -580,71 +403,17 @@ body{
         margin-bottom:15px;
     }
 
-    /* TABLE */
-
-    .table-responsive{
-        overflow-x:auto;
-    }
-
-    .report-table{
-        min-width:600px;
-    }
-
-    .report-table th,
-    .report-table td{
-        white-space:nowrap;
-        font-size:13px;
-    }
-
-    /* EXPORT BUTTON */
-
-    .btn-success,
-    .btn-secondary,
-    .btn-primary{
-        height:48px;
-        font-size:14px;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-    }
-
-    /* TOP STREAMER & DONATUR */
+    /* SPACING */
 
     .col-md-6{
         margin-bottom:20px;
     }
 
-    /* SPACING */
-
-    .container-fluid{
-        padding-left:10px !important;
-        padding-right:10px !important;
-    }
-
-    .amount-mobile{
-    overflow-wrap:anywhere;
-}
-
-     .row.g-4{
+    .row.g-4{
         --bs-gutter-y:1.5rem;
     }
 
-    .content-card .card{
-        margin-bottom:0 !important;
+    .amount-mobile{
+        overflow-wrap:anywhere;
     }
-
-    .content-card .col-md-6,
-    .content-card .col-lg-6{
-        margin-bottom:8px;
-    }
-
-    .content-card .col-md-4,
-    .content-card .col-lg-4{
-        margin-bottom:8px;
-    }
-
-
-
-
 }
-
