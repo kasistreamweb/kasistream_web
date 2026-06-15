@@ -184,10 +184,10 @@ body {
 
 .hero-logo {
     position: relative;
-    width: 130%;
-    max-width: 600px;
-    left: 60px;
-    top: -10px;
+    width: 120%;
+    max-width: 520px;
+    left: 30px;
+    top: -80px;
     animation: floatLogo 5s ease-in-out infinite;
 }
 
@@ -313,6 +313,18 @@ footer {
     flex-shrink: 0;
 }
 
+
+@media (min-width: 992px){
+
+    .hero .row{
+        min-height:650px;
+    }
+
+    .hero-logo{
+        margin-top:-120px;
+    }
+
+}
 /* ============================================
    MOBILE ONLY — max-width: 768px
    ============================================ */
@@ -423,13 +435,13 @@ footer {
 
     /* FIX #4 — logo diperkecil */
     .hero-logo {
-        width: 70%;
-        max-width: 220px;
-        left: 0;
-        top: 0;
-        margin: 0 auto;
-        display: block;
-    }
+    width: 80%;
+    max-width: 280px;
+    left: 0;
+    top: 0;
+    margin: 25px auto 0;
+    display: block;
+}
 
     .hero-btn {
         display: flex;
