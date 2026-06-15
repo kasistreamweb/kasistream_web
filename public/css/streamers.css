@@ -21,17 +21,16 @@ body{
 
 .sidebar{
     min-height:100vh;
-
     background:
     rgba(15,23,42,.95);
-
     backdrop-filter:blur(15px);
-
     border-right:
     1px solid rgba(255,255,255,.08);
-
     box-shadow:
     0 0 30px rgba(0,0,0,.35);
+    position:sticky;
+    top:0;
+    height:100vh;
 }
 
 .sidebar-user h6{
@@ -51,6 +50,26 @@ body{
     transform:translateY(-2px);
     box-shadow:
     0 0 20px rgba(239,68,68,.4);
+}
+
+/* =======================
+   LAYOUT
+======================= */
+
+.streamers-layout{
+    display:flex;
+    min-height:100vh;
+}
+
+.sidebar-wrapper{
+    width:16.666667%;
+    flex-shrink:0;
+}
+
+.content-wrapper{
+    width:83.333333%;
+    flex:1;
+    min-width:0;
 }
 
 /* =======================
@@ -432,42 +451,9 @@ body{
     border-color:#8b5cf6;
 }
 
-/* =====================================
-   NEW LAYOUT
-===================================== */
-
-.streamers-layout{
-    display:flex;
-    min-height:100vh;
-}
-
-.sidebar-wrapper{
-    width:280px;
-    flex-shrink:0;
-}
-
-.content-wrapper{
-    flex:1;
-    min-width:0;
-}
-
-/* =====================================
-   DESKTOP
-===================================== */
-
-@media(min-width:769px){
-
-    .sidebar{
-        position:sticky;
-        top:0;
-        height:100vh;
-    }
-
-}
-
-/* =====================================
-   MOBILE
-===================================== */
+/* =======================
+   MOBILE ONLY
+======================= */
 
 @media(max-width:768px){
 
@@ -485,22 +471,21 @@ body{
 
     .sidebar-wrapper{
         width:100% !important;
-        display:block !important;
     }
 
     .content-wrapper{
         width:100% !important;
-        display:block !important;
     }
 
     .sidebar{
         position:static !important;
         top:auto !important;
-
         height:auto !important;
         min-height:auto !important;
-
         overflow:visible !important;
+        border-right:none !important;
+        border-bottom:
+        1px solid rgba(255,255,255,.08);
     }
 
     .col-lg-4.col-md-6{
@@ -509,10 +494,20 @@ body{
         flex:0 0 100% !important;
     }
 
-    .page-title,
-    .filter-card,
-    .stats-card,
-    .streamer-card{
-        overflow:visible !important;
-    }
+    .page-title{
+    margin-top:15px;
+}
+
+.p-4{
+    padding:15px !important;
+}
+
+.streamer-card{
+    padding:20px;
+}
+
+.streamer-img{
+    width:100px !important;
+    height:100px !important;
+}
 }
