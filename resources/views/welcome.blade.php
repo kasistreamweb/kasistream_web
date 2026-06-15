@@ -100,7 +100,7 @@ body{
     display:flex;
     align-items:center;
     position:relative;
-    padding-top:70px;
+    padding-top:50px;
     overflow:hidden;
 }
 
