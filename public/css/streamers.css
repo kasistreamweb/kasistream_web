@@ -449,7 +449,6 @@ body{
         display:none !important;
     }
 
-}
 
     html,
     body{
@@ -466,11 +465,11 @@ body{
     .sidebar{
         position:relative !important;
         top:auto !important;
-        height:auto !important;
         min-height:auto !important;
-        max-height:none !important;
-        overflow:visible !important;
+        height:auto !important;
     }
+
+
 
     .content-area,
     .col-md-9,
