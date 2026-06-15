@@ -315,7 +315,7 @@ footer{
     }
 
     .hero-title{
-        font-size:32px;
+        font-size:45px;
         line-height:1.25;
         margin-bottom:15px;
     }
