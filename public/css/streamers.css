@@ -32,6 +32,9 @@ body{
 
     box-shadow:
     0 0 30px rgba(0,0,0,.35);
+
+    position:sticky;
+    top:0;
 }
 
 .sidebar-user h6{
@@ -444,14 +447,17 @@ body{
     }
 
     /* SIDEBAR */
-    .sidebar{
-        min-height:auto;
-        position:relative;
-        top:0;
-        width:100% !important;
-        border-right:none;
-        border-bottom:
-        1px solid rgba(255,255,255,.08);
+.sidebar{
+        position:relative !important;
+        top:auto !important;
+        min-height:auto !important;
+        height:auto !important;
+        overflow:visible !important;
+    }
+
+    .row.g-0{
+        display:flex !important;
+        flex-direction:column !important;
     }
 
     /* KONTEN */
