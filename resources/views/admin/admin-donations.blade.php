@@ -99,7 +99,7 @@ body{
 
         <div class="row mb-4">
 
-    <div class="col-md-3">
+   <div class="col-6 col-md-3 mb-3">
 
         <div class="card shadow-sm">
 
@@ -117,7 +117,7 @@ body{
 
     </div>
 
-    <div class="col-md-3">
+    <div class="col-6 col-md-3 mb-3">
 
         <div class="card shadow-sm">
 
@@ -135,7 +135,7 @@ body{
 
     </div>
 
-    <div class="col-md-3">
+    <div class="col-6 col-md-3 mb-3">
 
         <div class="card shadow-sm">
 
@@ -153,7 +153,7 @@ body{
 
     </div>
 
-    <div class="col-md-3">
+    <div class="col-6 col-md-3 mb-3">
 
         <div class="card shadow-sm">
 
@@ -262,7 +262,8 @@ body{
 
 </form>
 
-        <table class="table table-hover">
+        <div class="table-responsive">
+    <table class="table table-hover donation-table">
 
             <thead>
 
@@ -384,14 +385,18 @@ body{
 
                         </td>
 
-                        <td>
+<td>
 
-    <a
-        href="/admin-donations/{{ $item->id }}"
-        class="btn btn-sm btn-info"
-    >
-        <i class="fa-solid fa-eye"></i>
-    </a>
+    <div class="action-buttons">
+
+        <a
+            href="/admin-donations/{{ $item->id }}"
+            class="btn btn-sm btn-info"
+        >
+            Detail
+        </a>
+
+    </div>
 
 </td>
 
@@ -415,7 +420,7 @@ body{
             </tbody>
 
         </table>
-
+</div>
         <div class="mt-3">
 
             {{ $donasi->links() }}

@@ -361,6 +361,93 @@ body{
         gap:4px;
     }
 
+    /* HEADER */
+
+    .content-card{
+        padding:15px !important;
+    }
+
+    .content-card h3{
+        font-size:24px !important;
+    }
+
+    /* STATISTIK */
+
+    .card .card-body{
+        padding:15px !important;
+    }
+
+    .card .card-body h4{
+        font-size:18px !important;
+    }
+
+    .card .card-body small{
+        font-size:11px !important;
+    }
+
+    /* FILTER */
+
+    form.row.g-3 .col-md-4,
+    form.row.g-3 .col-md-2{
+        width:100% !important;
+        max-width:100% !important;
+        flex:0 0 100% !important;
+    }
+
+    .form-control,
+    .form-select{
+        height:48px !important;
+        font-size:14px !important;
+    }
+
+    /* TABLE */
+
+    .table-responsive{
+        overflow-x:auto;
+        border-radius:14px;
+    }
+
+    .donation-table{
+        min-width:1200px;
+    }
+
+    .donation-table th{
+        white-space:nowrap;
+        font-size:13px;
+    }
+
+    .donation-table td{
+        white-space:nowrap;
+        font-size:13px;
+        vertical-align:middle;
+    }
+
+    /* BADGE */
+
+    .badge{
+        font-size:11px !important;
+    }
+
+    /* BUTTON */
+
+    .action-buttons{
+        display:flex;
+        gap:6px;
+    }
+
+    .btn-sm{
+        font-size:12px !important;
+        padding:6px 10px !important;
+    }
+
+    /* PAGINATION */
+
+    .pagination{
+        flex-wrap:wrap;
+        justify-content:center;
+        gap:4px;
+    }
+
 
 }
 
