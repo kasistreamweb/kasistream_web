@@ -253,14 +253,14 @@ body{
                         </div>
 
                         {{-- TOMBOL --}}
-                        
-                            href="/admin-streamers/{{ $streamer->id }}"
-                            class="btn btn-primary btn-sm ms-auto"
-                            style="white-space:nowrap;"
-                        >
-                            <i class="fa-solid fa-eye me-1"></i>
-                            Detail
-                        </a>
+
+                        href="/admin-streamers/{{ $streamer->id }}"
+                        class="btn btn-primary btn-sm ms-auto"
+                        style="white-space:nowrap;"
+                    >
+                        <i class="fa-solid fa-eye me-1"></i>
+                        Detail
+                    </a>
 
                     </div>
                 </div>
