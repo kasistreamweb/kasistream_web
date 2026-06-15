@@ -114,6 +114,26 @@ body {
     z-index: 0;
 }
 
+/* FIX #1 — Tombol hero tidak tertimpa pseudo-element */
+.hero .container,
+.hero .row,
+.hero .col-lg-6 {
+    position: relative;
+    z-index: 5;
+}
+
+.hero-btn {
+    position: relative;
+    z-index: 20;
+}
+
+.btn-start,
+.btn-guest {
+    position: relative;
+    z-index: 30;
+    pointer-events: auto;
+}
+
 .hero-title {
     font-size: 60px;
     font-weight: 900;
@@ -133,10 +153,6 @@ body {
     color: #cbd5e1;
     font-size: 20px;
     margin-top: 20px;
-}
-
-.hero-btn {
-    margin-top: 35px;
 }
 
 .btn-start {
@@ -326,10 +342,11 @@ footer {
     }
 
     /* ----- HERO ----- */
+    /* FIX #2 — padding hero diperkecil */
     .hero {
         min-height: auto;
-        padding-top: 80px;
-        padding-bottom: 40px;
+        padding-top: 40px;
+        padding-bottom: 20px;
     }
 
     .hero .row {
@@ -360,9 +377,18 @@ footer {
         padding: 0 4px;
     }
 
+    /* FIX #3 — lingkaran background diperkecil */
+    .hero::before {
+        width: 350px;
+        height: 350px;
+        top: -100px;
+        right: -100px;
+    }
+
+    /* FIX #4 — logo diperkecil */
     .hero-logo {
-        width: 80%;
-        max-width: 280px;
+        width: 70%;
+        max-width: 220px;
         left: 0;
         top: 0;
         margin: 0 auto;
@@ -394,8 +420,13 @@ footer {
         text-align: center;
     }
 
+    /* FIX #5 — stats lebih rapi */
+    .hero-stats .row {
+        align-items: center;
+    }
+
     .hero-stats h3 {
-        font-size: 17px;
+        font-size: 18px;
         margin-bottom: 3px;
     }
 
@@ -570,7 +601,6 @@ footer {
         font-size: 12px;
     }
 }
-
 </style>
 
 </head>
