@@ -45,7 +45,9 @@ body{
     border-radius:15px;
     padding:20px;
 }
-
+.report-card{
+    height:100%;
+}
 /* =====================================
    MOBILE ADMIN DASHBOARD
 ===================================== */
@@ -622,6 +624,25 @@ body{
     .amount-mobile{
     overflow-wrap:anywhere;
 }
+
+     .row.g-4{
+        --bs-gutter-y:1.5rem;
+    }
+
+    .content-card .card{
+        margin-bottom:0 !important;
+    }
+
+    .content-card .col-md-6,
+    .content-card .col-lg-6{
+        margin-bottom:8px;
+    }
+
+    .content-card .col-md-4,
+    .content-card .col-lg-4{
+        margin-bottom:8px;
+    }
+
 
 
 

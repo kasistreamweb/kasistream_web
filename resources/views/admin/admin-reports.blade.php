@@ -315,7 +315,7 @@ h3{
     <!-- RINGKASAN DAN TOP -->
 
 <!-- BARIS ATAS -->
-<div class="row">
+<div class="row g-4">
 
     <!-- RINGKASAN PLATFORM -->
     <div class="col-md-6">
@@ -357,7 +357,7 @@ h3{
     </div>
 
     <!-- TOP STREAMER -->
-    <div class="col-md-6">
+    <div class="row g-4 mt-2">
 
         <div class="content-card shadow">
 
@@ -409,7 +409,7 @@ h3{
 </div>
 
 <!-- BARIS BAWAH -->
-<div class="row mt-4">
+<div class="row g-4 mt-2">
 
     <!-- EXPORT LAPORAN -->
     <div class="col-md-6">
