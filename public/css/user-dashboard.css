@@ -419,33 +419,6 @@ a:hover{
     border-radius:15px;
 }
 
-/* =========================
-   RESPONSIVE
-========================= */
-
-@media(max-width:768px){
-
-    .sidebar{
-
-        min-height:auto;
-    }
-
-    .stats-card{
-
-        margin-bottom:15px;
-    }
-
-    .topbar{
-
-        padding:12px;
-    }
-
-
-    .sidebar-logo{
-
-        width:110px;
-    }
-}
 
 .notification-btn:hover{
 
@@ -978,4 +951,186 @@ img{
     font-weight:700;
 
     font-size:15px;
+}
+
+@media(max-width:768px){
+
+    /* SIDEBAR */
+    .sidebar{
+        min-height:auto !important;
+        height:auto !important;
+        position:static !important;
+        border-right:none !important;
+        border-bottom:
+        1px solid rgba(255,255,255,.08);
+    }
+
+    .col-md-9.col-lg-10{
+        width:100% !important;
+        max-width:100% !important;
+        padding:12px !important;
+    }
+
+    /* WELCOME */
+    .welcome-section{
+        min-height:80px;
+        padding-right:100px;
+    }
+
+    .welcome-section h1{
+        font-size:20px;
+        line-height:1.3;
+    }
+
+    .welcome-section p{
+        font-size:13px;
+    }
+
+    .header-logo{
+        width:90px !important;
+        top:-10px;
+        right:0;
+    }
+
+    /* TOPBAR */
+    .topbar{
+        padding:12px;
+    }
+
+    .topbar-actions{
+        gap:8px;
+        flex-wrap:wrap;
+    }
+
+    .search-flex{
+        min-width:100%;
+        order:-1;
+    }
+
+    .search-box{
+        height:46px;
+        font-size:13px;
+    }
+
+    .trending-badge{
+        font-size:12px;
+        padding:8px 12px;
+    }
+
+    .notification-btn{
+        width:46px;
+        height:46px;
+        border-radius:14px;
+    }
+
+    .wallet-mini{
+        font-size:12px;
+        padding:8px 12px;
+    }
+
+    .wallet-mini span{
+        font-size:12px;
+    }
+
+    .user-mini span{
+        display:none;
+    }
+
+    .user-mini{
+        padding:8px;
+    }
+
+    /* STATS */
+    .stats-card{
+        margin-bottom:0;
+        min-height:100px;
+        padding:15px;
+    }
+
+    .stats-card h3{
+        font-size:18px;
+    }
+
+    .stats-card i{
+        font-size:20px;
+        margin-bottom:6px;
+    }
+
+    /* STREAMER CARD */
+    .streamer-card{
+        border-radius:16px;
+    }
+
+    .streamer-card .card-body{
+        padding:15px;
+    }
+
+    .streamer-img{
+        width:80px !important;
+        height:80px !important;
+        min-width:80px !important;
+        max-width:80px !important;
+        min-height:80px !important;
+        max-height:80px !important;
+    }
+
+    .streamer-card h5{
+        font-size:14px;
+        margin-bottom:4px;
+    }
+
+    .streamer-stat{
+        font-size:12px;
+    }
+
+    .streamer-donation{
+        font-size:13px;
+    }
+
+    /* ACTIVITY */
+    .activity-card{
+        padding:16px;
+        height:auto;
+    }
+
+    .activity-list{
+        flex-direction:column;
+        gap:12px;
+    }
+
+    .activity-item{
+        min-width:auto;
+        width:100%;
+    }
+
+    .activity-icon{
+        width:42px;
+        height:42px;
+        font-size:16px;
+        flex-shrink:0;
+    }
+
+    .activity-title{
+        font-size:13px;
+    }
+
+    .activity-amount{
+        font-size:13px;
+    }
+
+    /* CATEGORY */
+    .category-btn{
+        font-size:12px;
+        padding:8px 14px;
+    }
+
+    /* SECTION TITLE */
+    .section-title{
+        font-size:16px;
+    }
+
+    /* SIDEBAR LOGO */
+    .sidebar-logo{
+        width:110px;
+    }
 }
