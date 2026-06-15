@@ -441,129 +441,40 @@ body{
 
 @media(max-width:768px){
 
-    /* LAYOUT */
-
     .row.g-0{
-        flex-direction:column;
+        display:block !important;
     }
 
     .sidebar{
-        min-height:auto;
-        height:auto;
-        position:relative;
-        top:auto;
-        border-right:none;
-        border-bottom:
-        1px solid rgba(255,255,255,.08);
+        position:relative !important;
+        width:100% !important;
+        max-width:100% !important;
+        min-height:auto !important;
+        height:auto !important;
+        overflow:visible !important;
+        margin-bottom:20px;
     }
 
+    .col-md-3,
+    .col-lg-2,
     .col-md-9,
     .col-lg-10{
         width:100% !important;
         max-width:100% !important;
-        flex:0 0 100% !important;
-        padding:16px !important;
+        flex:none !important;
     }
 
-    /* PAGE TITLE */
-
-    .page-title{
-        padding:20px;
-        border-radius:18px;
-    }
-
-    .page-title h2{
-        font-size:24px;
-        margin-bottom:8px;
-    }
-
-    .page-title p{
-        font-size:14px;
-        line-height:1.6;
-    }
-
-    /* FILTER */
-
-    .filter-card{
-        border-radius:18px;
-    }
-
-    .filter-card .card-body{
-        padding:18px;
-    }
-
-    .form-control,
-    .form-select{
-        height:48px;
-        font-size:14px;
-    }
-
-    /* STATS */
-
-    .stats-card{
-        padding:20px;
-        border-radius:18px;
-    }
-
-    .stats-card h3{
-        font-size:28px;
-    }
-
-    /* STREAMER CARD */
-
-    .col-lg-4.col-md-6{
-    width:100% !important;
-    max-width:100% !important;
-    padding-left:0 !important;
-    padding-right:0 !important;
-}
-
-    .streamer-card{
-        padding:20px;
-        border-radius:20px;
-    }
-
-    .streamer-img{
-        width:100px !important;
-        height:100px !important;
-        min-width:100px !important;
-        min-height:100px !important;
-        max-width:100px !important;
-        max-height:100px !important;
-    }
-
-    .streamer-card h4{
-        font-size:18px;
-    }
-
-    .streamer-card .text-muted{
-        font-size:13px;
-    }
-
-    .stats{
-        font-size:13px;
-        line-height:1.8;
-    }
-
-    .btn-streamer{
-        height:48px;
-        font-size:14px;
-        border-radius:12px;
-    }
-
-    /* AUTH CARD */
-
-    .auth-card,
     .sidebar-info-card{
-        border-radius:18px;
+        position:relative !important;
+        z-index:1 !important;
     }
 
-    /* PAGINATION */
-
-    .pagination{
-        margin-top:20px;
-        flex-wrap:wrap;
-        gap:4px;
+    .page-title,
+    .filter-card,
+    .stats-card,
+    .streamer-card{
+        position:relative;
+        z-index:2;
     }
+
 }
-
