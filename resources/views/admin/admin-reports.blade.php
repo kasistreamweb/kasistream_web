@@ -57,6 +57,96 @@ h3{
     margin-bottom:24px;
 }
 
+/* FILTER CARD */
+.filter-card{
+    background:white;
+    border-radius:15px;
+    padding:24px;
+    box-shadow:0 2px 12px rgba(0,0,0,.08);
+    margin-bottom:24px;
+}
+
+.filter-card .filter-label{
+    font-size:13px;
+    font-weight:600;
+    color:#6b7280;
+    text-transform:uppercase;
+    letter-spacing:.5px;
+    margin-bottom:6px;
+}
+
+.filter-card .form-control{
+    border-radius:10px;
+    border:1px solid #e5e7eb;
+    height:46px;
+    font-size:14px;
+    color:#111827;
+}
+
+.filter-card .form-control:focus{
+    border-color:#6366f1;
+    box-shadow:0 0 0 3px rgba(99,102,241,.1);
+}
+
+.filter-divider{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#9ca3af;
+    font-size:13px;
+    padding-top:24px;
+}
+
+.filter-info{
+    background:#f8fafc;
+    border-radius:10px;
+    padding:12px 16px;
+    font-size:13px;
+    color:#6b7280;
+    border:1px solid #e5e7eb;
+    height:46px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.filter-info i{
+    color:#6366f1;
+}
+
+.btn-filter{
+    height:46px;
+    border-radius:10px;
+    font-weight:600;
+    font-size:14px;
+    background:linear-gradient(90deg,#4f46e5,#7c3aed);
+    border:none;
+    color:white;
+    transition:.3s;
+}
+
+.btn-filter:hover{
+    transform:translateY(-1px);
+    box-shadow:0 4px 15px rgba(99,102,241,.35);
+    color:white;
+}
+
+.btn-reset{
+    height:46px;
+    border-radius:10px;
+    font-weight:600;
+    font-size:14px;
+    background:white;
+    border:1px solid #e5e7eb;
+    color:#6b7280;
+    transition:.3s;
+}
+
+.btn-reset:hover{
+    background:#f3f4f6;
+    color:#111827;
+}
+
 @media print{
     body *{ visibility:hidden; }
     #reportArea, #reportArea *{ visibility:visible; }
@@ -66,6 +156,8 @@ h3{
 
 @media(max-width:768px){
     .content-card{ padding:15px; margin-bottom:16px; }
+    .filter-card{ padding:16px; }
+    .filter-divider{ padding-top:0; }
     .stat-card .card-body{ padding:12px; }
     h2{ font-size:20px; }
     h3{ font-size:18px; }
@@ -89,22 +181,62 @@ h3{
     <h2 class="mb-4">Laporan Sistem</h2>
 
     {{-- FILTER --}}
-    <form method="GET" class="row g-3 mb-4">
-        <div class="col-md-4">
-            <input type="date" name="dari" class="form-control" value="{{ request('dari') }}">
-        </div>
-        <div class="col-md-4">
-            <input type="date" name="sampai" class="form-control" value="{{ request('sampai') }}">
-        </div>
-        <div class="col-md-2">
-            <button type="submit" class="btn btn-primary w-100">
-                <i class="fa-solid fa-filter"></i> Filter
-            </button>
-        </div>
-        <div class="col-md-2">
-            <a href="/admin-reports" class="btn btn-secondary w-100">Reset</a>
-        </div>
-    </form>
+    <div class="filter-card">
+
+        <form method="GET">
+            <div class="row g-3 align-items-end">
+
+                <div class="col-md-4">
+                    <div class="filter-label">Dari Tanggal</div>
+                    <input
+                        type="date"
+                        name="dari"
+                        class="form-control"
+                        value="{{ request('dari') }}"
+                    >
+                </div>
+
+                <div class="col-md-1 d-none d-md-block">
+                    <div class="filter-divider">→</div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="filter-label">Sampai Tanggal</div>
+                    @if(request('dari') && request('sampai'))
+                        <div class="filter-info">
+                            <i class="fa-solid fa-calendar-check"></i>
+                            {{ \Carbon\Carbon::parse(request('sampai'))->translatedFormat('d M Y') }}
+                        </div>
+                    @else
+                        <div class="filter-info">
+                            <i class="fa-solid fa-calendar"></i>
+                            Pilih tanggal mulai terlebih dahulu
+                        </div>
+                    @endif
+                    <input
+                        type="hidden"
+                        name="sampai"
+                        value="{{ request('dari') ? request('dari', now()->format('Y-m-d')) : '' }}"
+                    >
+                </div>
+
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-filter w-100">
+                        <i class="fa-solid fa-magnifying-glass me-2"></i>
+                        Filter
+                    </button>
+                </div>
+
+                <div class="col-md-1">
+                    <a href="/admin-reports" class="btn btn-reset w-100">
+                        <i class="fa-solid fa-rotate-left"></i>
+                    </a>
+                </div>
+
+            </div>
+        </form>
+
+    </div>
 
     {{-- CARD STATISTIK --}}
     <div class="row g-3 section-gap">
