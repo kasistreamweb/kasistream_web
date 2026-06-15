@@ -421,8 +421,8 @@ textarea.form-control{
 @media(max-width:768px){
 
     .header-logo{
-        top:-5px;
-        right:-5px;
+        top:-1px;
+        right:-1px;
         width:100px;
     }
 
