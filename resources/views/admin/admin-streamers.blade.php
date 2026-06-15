@@ -91,7 +91,8 @@ body{
 
         @endif
 
-        <table class="table table-hover">
+        <div class="table-responsive">
+        <table class="table table-hover streamer-table">
 
             <thead>
 
@@ -157,31 +158,32 @@ body{
 
                         <td>
 
-                            <a
-                                href="/admin-streamers/{{ $streamer->id }}"
-                                class="btn btn-info btn-sm">
+    <div class="action-buttons">
 
-                                Detail
+        <a
+            href="/admin-streamers/{{ $streamer->id }}"
+            class="btn btn-info btn-sm"
+        >
+            Detail
+        </a>
 
-                            </a>
+        <form
+            action="/admin-streamers/remove/{{ $streamer->id }}"
+            method="POST"
+        >
+            @csrf
 
-                            <form
-                                action="/admin-streamers/remove/{{ $streamer->id }}"
-                                method="POST"
-                                class="d-inline">
+            <button
+                class="btn btn-danger btn-sm"
+            >
+                Cabut Status
+            </button>
 
-                                @csrf
+        </form>
 
-                                <button
-                                    class="btn btn-danger btn-sm">
+    </div>
 
-                                    Cabut Status
-
-                                </button>
-
-                            </form>
-
-                        </td>
+</td>
 
                     </tr>
 
@@ -190,6 +192,7 @@ body{
             </tbody>
 
         </table>
+        </div>
 
         {{ $streamers->links() }}
 

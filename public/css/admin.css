@@ -229,5 +229,59 @@ body{
         padding:6px 10px;
     }
 
+    .table-responsive{
+        overflow-x:auto;
+        border-radius:14px;
+    }
+
+    .streamer-table{
+        min-width:850px;
+    }
+
+    .streamer-table th{
+        white-space:nowrap;
+        font-size:13px;
+    }
+
+    .streamer-table td{
+        white-space:nowrap;
+        font-size:13px;
+        vertical-align:middle;
+    }
+
+    .profile-img{
+        width:40px !important;
+        height:40px !important;
+    }
+
+    .action-buttons{
+        display:flex;
+        gap:6px;
+        align-items:center;
+    }
+
+    .action-buttons form{
+        margin:0;
+    }
+
+    .btn-sm{
+        font-size:12px !important;
+        padding:6px 10px !important;
+    }
+
+    .content-card{
+        padding:15px !important;
+    }
+
+    .content-card h3{
+        font-size:24px !important;
+    }
+
+    .pagination{
+        flex-wrap:wrap;
+        justify-content:center;
+        gap:4px;
+    }
+
 }
 
