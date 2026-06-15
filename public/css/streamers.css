@@ -439,7 +439,17 @@ body{
    RESPONSIVE MOBILE
 ======================= */
 
-@media (max-width:768px){
+@media(max-width:768px){
+
+    .auth-card{
+        display:none !important;
+    }
+
+    .sidebar-info-card{
+        display:none !important;
+    }
+
+}
 
     html,
     body{
