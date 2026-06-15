@@ -26,7 +26,6 @@ body{
     padding:25px;
 }
 
-/* STAT CARD */
 .stat-card{
     background:white;
     border-radius:15px;
@@ -58,7 +57,6 @@ body{
     color:#111827;
 }
 
-/* RANK CARD */
 .rank-card{
     background:white;
     border-radius:14px;
@@ -75,7 +73,6 @@ body{
     transform:translateY(-2px);
 }
 
-/* RANK BADGE */
 .rank-badge{
     width:44px;
     height:44px;
@@ -118,7 +115,6 @@ body{
     flex-shrink:0;
 }
 
-/* PROFILE */
 .profile{
     width:48px;
     height:48px;
@@ -128,7 +124,6 @@ body{
     flex-shrink:0;
 }
 
-/* STREAMER INFO */
 .streamer-name{
     font-weight:700;
     font-size:15px;
@@ -141,7 +136,6 @@ body{
     color:#6b7280;
 }
 
-/* STAT BADGE */
 .stat-badge{
     display:inline-flex;
     align-items:center;
@@ -154,6 +148,28 @@ body{
     color:#374151;
     font-weight:500;
     white-space:nowrap;
+}
+
+.btn-detail{
+    background:linear-gradient(90deg,#4f46e5,#7c3aed);
+    color:white;
+    border:none;
+    border-radius:8px;
+    padding:6px 14px;
+    font-size:13px;
+    font-weight:600;
+    white-space:nowrap;
+    text-decoration:none;
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    transition:.3s;
+}
+
+.btn-detail:hover{
+    color:white;
+    transform:translateY(-1px);
+    box-shadow:0 4px 12px rgba(99,102,241,.35);
 }
 
 </style>
@@ -227,10 +243,9 @@ body{
 
                         {{-- FOTO --}}
                         <img
-                            src="{{ $streamer->foto
-                                ? asset('uploads/profile/'.$streamer->foto)
-                                : 'https://via.placeholder.com/60' }}"
+                            src="{{ $streamer->foto ? asset('uploads/profile/'.$streamer->foto) : 'https://via.placeholder.com/60' }}"
                             class="profile"
+                            alt="{{ $streamer->name }}"
                         >
 
                         {{-- NAMA & GAME --}}
@@ -253,14 +268,10 @@ body{
                         </div>
 
                         {{-- TOMBOL --}}
-
-                        href="/admin-streamers/{{ $streamer->id }}"
-                        class="btn btn-primary btn-sm ms-auto"
-                        style="white-space:nowrap;"
-                    >
-                        <i class="fa-solid fa-eye me-1"></i>
-                        Detail
-                    </a>
+                        <a href="/admin-streamers/{{ $streamer->id }}" class="btn-detail ms-auto">
+                            <i class="fa-solid fa-eye"></i>
+                            Detail
+                        </a>
 
                     </div>
                 </div>
