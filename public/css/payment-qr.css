@@ -621,3 +621,37 @@ body{
 
     display:block;
 }
+
+@media(max-width:768px){
+
+    .header-logo{
+        display:none;
+    }
+
+    #countdown{
+        font-size:36px;
+        letter-spacing:1px;
+    }
+
+    .welcome-section h1{
+        font-size:26px;
+    }
+
+    .section-title{
+        font-size:20px;
+    }
+
+    .qr-image{
+        width:250px;
+    }
+
+    .qr-card,
+    .detail-card{
+        padding:20px;
+        border-radius:18px;
+    }
+
+    .welcome-section{
+        padding:20px;
+    }
+}
