@@ -109,7 +109,6 @@ class AuthController extends Controller
         $user->name = $request->name;
         $user->onopay_phone = $request->onopay_phone;
 
-        $user->{'jadwal_Live'} = $request->jadwal_Live;
 
         if ($request->hasFile('foto')) {
 
