@@ -7,7 +7,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-
+use Illuminate\Support\Str;
 class AuthController extends Controller
 {
     public function register(Request $request)
@@ -26,7 +26,10 @@ class AuthController extends Controller
 
             $file = $request->file('foto');
 
-            $namaFoto = time() . '_' . $file->getClientOriginalName();
+            $namaFoto =
+                time() . '_' .
+                Str::random(12) . '.' .
+                $file->getClientOriginalExtension();
 
             $file->move(
                 public_path('uploads/profile'),

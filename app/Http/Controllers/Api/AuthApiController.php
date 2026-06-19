@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Follower;
+use Illuminate\Support\Str;
 
 class AuthApiController extends Controller
 {
@@ -25,18 +26,18 @@ class AuthApiController extends Controller
 
         if ($request->hasFile('foto')) {
 
-            $file = $request->file('foto');
+    $file = $request->file('foto');
 
-            $namaFoto =
-                time() .
-                '_' .
-                $file->getClientOriginalName();
+    $namaFoto =
+        time() . '_' .
+        Str::random(12) . '.' .
+        $file->getClientOriginalExtension();
 
-            $file->move(
-                public_path('uploads/profile'),
-                $namaFoto
-            );
-        }
+    $file->move(
+        public_path('uploads/profile'),
+        $namaFoto
+    );
+}
 
         $user = User::create([
             'name' => $request->name,
