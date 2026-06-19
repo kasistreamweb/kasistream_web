@@ -70,4 +70,40 @@ class WithdrawApiController extends Controller
             'data' => $data
         ]);
     }
+
+    public function summary(Request $request)
+{
+    $user = $request->user();
+
+    $totalDonasi =
+        \App\Models\Donasi::where(
+            'streamer_id',
+            $user->id
+        )
+        ->where('status', 'paid')
+        ->sum('nominal');
+
+    $totalWithdraw =
+        \App\Models\Withdraw::where(
+            'user_id',
+            $user->id
+        )
+        ->where('status', 'approved')
+        ->sum('nominal');
+
+    $pendingWithdraw =
+        \App\Models\Withdraw::where(
+            'user_id',
+            $user->id
+        )
+        ->where('status', 'pending')
+        ->sum('nominal');
+
+    return response()->json([
+        'balance' => $user->balance,
+        'total_donasi' => $totalDonasi,
+        'total_withdraw' => $totalWithdraw,
+        'pending_withdraw' => $pendingWithdraw,
+    ]);
+}
 }

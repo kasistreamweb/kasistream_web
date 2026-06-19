@@ -76,6 +76,12 @@ Route::middleware('auth:sanctum')
         'history'
     ]);
 
+    Route::get('/wallet-summary',
+    [
+        WithdrawApiController::class,
+        'summary'
+    ]);
+
     Route::post('/withdraw',
     [
         WithdrawApiController::class,
