@@ -25,19 +25,10 @@ class AuthApiController extends Controller
         $namaFoto = null;
 
         if ($request->hasFile('foto')) {
-
-    $file = $request->file('foto');
-
-    $namaFoto =
-        time() . '_' .
-        Str::random(12) . '.' .
-        $file->getClientOriginalExtension();
-
-    $file->move(
-        public_path('uploads/profile'),
-        $namaFoto
-    );
-}
+            $file = $request->file('foto');
+            $namaFoto = time() . '_' . Str::random(12) . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('uploads/profile'), $namaFoto);
+        }
 
         $user = User::create([
             'name' => $request->name,
@@ -49,9 +40,12 @@ class AuthApiController extends Controller
             'foto' => $namaFoto,
         ]);
 
-        $token = $user
-            ->createToken('mobile')
-            ->plainTextToken;
+        $token = $user->createToken('mobile')->plainTextToken;
+
+        // Tambahkan URL foto lengkap di response register
+        if ($user->foto) {
+            $user->foto = asset('uploads/profile/' . $user->foto);
+        }
 
         return response()->json([
             'success' => true,
@@ -68,27 +62,21 @@ class AuthApiController extends Controller
             'password' => 'required'
         ]);
 
-        $user = User::where(
-            'email',
-            $request->email
-        )->first();
+        $user = User::where('email', $request->email)->first();
 
-        if (
-            !$user ||
-            !Hash::check(
-                $request->password,
-                $user->password
-            )
-        ) {
+        if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Email atau Password Salah'
             ], 401);
         }
 
-        $token = $user
-            ->createToken('mobile')
-            ->plainTextToken;
+        $token = $user->createToken('mobile')->plainTextToken;
+
+        // Tambahkan URL foto lengkap di response login
+        if ($user->foto) {
+            $user->foto = asset('uploads/profile/' . $user->foto);
+        }
 
         return response()->json([
             'success' => true,
@@ -99,17 +87,19 @@ class AuthApiController extends Controller
 
     public function profile(Request $request)
     {
-        return response()->json(
-            $request->user()
-        );
+        $user = $request->user();
+
+        // Tambahkan URL foto lengkap di response profile
+        if ($user->foto) {
+            $user->foto = asset('uploads/profile/' . $user->foto);
+        }
+
+        return response()->json($user);
     }
 
     public function logout(Request $request)
     {
-        $request
-            ->user()
-            ->currentAccessToken()
-            ->delete();
+        $request->user()->currentAccessToken()->delete();
 
         return response()->json([
             'success' => true
@@ -117,34 +107,94 @@ class AuthApiController extends Controller
     }
 
     public function dashboardSummary(Request $request)
-{
-    $user = $request->user();
+    {
+        $user = $request->user();
 
-    $streamerCount = User::where(
-        'is_streamer',
-        1
-    )->count();
+        $streamerCount = User::where('is_streamer', 1)->count();
 
-    $followingCount = 0;
+        $followingCount = 0;
 
-    if (class_exists(\App\Models\Follower::class)) {
+        if (class_exists(\App\Models\Follower::class)) {
+            $followingCount = Follower::where('user_id', $user->id)->count();
+        }
 
-        $followingCount = Follower::where(
-            'user_id',
-            $user->id
-        )->count();
+        return response()->json([
+            'success' => true,
+            'streamer_count' => $streamerCount,
+            'following_count' => $followingCount,
+            'total_donasi' => (int) $user->total_donasi,
+            'balance' => (int) $user->balance,
+        ]);
     }
 
-    return response()->json([
-        'success' => true,
+    public function updateProfile(Request $request)
+    {
+        $user = $request->user();
 
-        'streamer_count' => $streamerCount,
+        $request->validate([
+            'name' => 'nullable|max:100',
+            'bio' => 'nullable|max:500',
+            'game' => 'nullable|max:100',
+            'instagram' => 'nullable|max:100',
+            'youtube' => 'nullable|max:100',
+            'tiktok' => 'nullable|max:100',
+            'discord' => 'nullable|max:100',
+            'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:4096'
+        ]);
 
-        'following_count' => $followingCount,
+        // Update fields
+        if ($request->has('name')) {
+            $user->name = $request->name;
+        }
 
-        'total_donasi' => (int) $user->total_donasi,
+        if ($request->has('bio')) {
+            $user->bio = $request->bio;
+        }
 
-        'balance' => (int) $user->balance,
-    ]);
-}
+        if ($request->has('game')) {
+            $user->game = $request->game;
+        }
+
+        if ($request->has('instagram')) {
+            $user->instagram = $request->instagram;
+        }
+
+        if ($request->has('youtube')) {
+            $user->youtube = $request->youtube;
+        }
+
+        if ($request->has('tiktok')) {
+            $user->tiktok = $request->tiktok;
+        }
+
+        if ($request->has('discord')) {
+            $user->discord = $request->discord;
+        }
+
+        // Upload foto
+        if ($request->hasFile('foto')) {
+            // Hapus foto lama jika ada
+            if ($user->foto && file_exists(public_path('uploads/profile/' . $user->foto))) {
+                unlink(public_path('uploads/profile/' . $user->foto));
+            }
+
+            $file = $request->file('foto');
+            $namaFoto = time() . '_' . Str::random(12) . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('uploads/profile'), $namaFoto);
+            $user->foto = $namaFoto;
+        }
+
+        $user->save();
+
+        // Tambahkan URL foto lengkap di response
+        if ($user->foto) {
+            $user->foto = asset('uploads/profile/' . $user->foto);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Profile berhasil diperbarui',
+            'user' => $user
+        ]);
+    }
 }
