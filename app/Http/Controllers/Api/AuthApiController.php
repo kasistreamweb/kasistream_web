@@ -42,10 +42,10 @@ class AuthApiController extends Controller
 
         $token = $user->createToken('mobile')->plainTextToken;
 
-        // Tambahkan URL foto lengkap di response register
-        if ($user->foto) {
-            $user->foto = asset('uploads/profile/' . $user->foto);
-        }
+        // Gunakan foto_url (tidak menimpa field foto)
+        $user->foto_url = $user->foto
+            ? asset('uploads/profile/' . $user->foto)
+            : null;
 
         return response()->json([
             'success' => true,
@@ -73,10 +73,10 @@ class AuthApiController extends Controller
 
         $token = $user->createToken('mobile')->plainTextToken;
 
-        // Tambahkan URL foto lengkap di response login
-        if ($user->foto) {
-            $user->foto = asset('uploads/profile/' . $user->foto);
-        }
+        // Gunakan foto_url (tidak menimpa field foto)
+        $user->foto_url = $user->foto
+            ? asset('uploads/profile/' . $user->foto)
+            : null;
 
         return response()->json([
             'success' => true,
@@ -89,10 +89,10 @@ class AuthApiController extends Controller
     {
         $user = $request->user();
 
-        // Tambahkan URL foto lengkap di response profile
-        if ($user->foto) {
-            $user->foto = asset('uploads/profile/' . $user->foto);
-        }
+        // Gunakan foto_url (tidak menimpa field foto)
+        $user->foto_url = $user->foto
+            ? asset('uploads/profile/' . $user->foto)
+            : null;
 
         return response()->json($user);
     }
@@ -186,10 +186,10 @@ class AuthApiController extends Controller
 
         $user->save();
 
-        // Tambahkan URL foto lengkap di response
-        if ($user->foto) {
-            $user->foto = asset('uploads/profile/' . $user->foto);
-        }
+        // Gunakan foto_url (tidak menimpa field foto)
+        $user->foto_url = $user->foto
+            ? asset('uploads/profile/' . $user->foto)
+            : null;
 
         return response()->json([
             'success' => true,
