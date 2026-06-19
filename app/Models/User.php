@@ -56,6 +56,6 @@ class User extends Authenticatable
         return 'https://via.placeholder.com/100';
     }
 
-    return asset('public/uploads/profile/' . $this->foto);
+    return asset('uploads/profile/' . $this->foto);
 }
 }
