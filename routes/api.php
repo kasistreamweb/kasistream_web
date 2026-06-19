@@ -34,6 +34,12 @@ Route::get('/streamers/{id}',
 Route::middleware('auth:sanctum')
 ->group(function(){
 
+    Route::get('/dashboard-summary',
+    [
+        AuthApiController::class,
+        'dashboardSummary'
+    ]);
+
     Route::get('/profile',
     [
         AuthApiController::class,
