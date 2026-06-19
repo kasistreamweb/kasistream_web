@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Follower;
+use App\Models\Donasi;
 use Illuminate\Http\Request;
 
 class StreamerApiController extends Controller
@@ -12,54 +13,62 @@ class StreamerApiController extends Controller
     public function index()
     {
         return response()->json(
-
             User::where(
                 'is_streamer',
                 1
             )->get()
-
         );
     }
 
-public function show($id)
-{
-    $streamer = User::findOrFail($id);
+    public function show($id)
+    {
+        $streamer = User::findOrFail($id);
 
-    $topDonatur = Donasi::where('streamer_id', $id)
-        ->selectRaw('guest_name, user_id, SUM(nominal) as total_donasi')
-        ->groupBy('guest_name', 'user_id')
-        ->orderByDesc('total_donasi')
+        $topDonatur = Donasi::where(
+            'streamer_id',
+            $id
+        )
+        ->selectRaw(
+            'guest_name, user_id, SUM(nominal) as total_donasi'
+        )
+        ->groupBy(
+            'guest_name',
+            'user_id'
+        )
+        ->orderByDesc(
+            'total_donasi'
+        )
         ->take(10)
         ->get();
 
-    $isFollowing = auth()->check()
-        ? Follower::where('user_id', auth()->id())
-            ->where('streamer_id', $id)
+        $isFollowing = auth()->check()
+            ? Follower::where(
+                'user_id',
+                auth()->id()
+            )
+            ->where(
+                'streamer_id',
+                $id
+            )
             ->exists()
-        : false;
+            : false;
 
-    return view(
-        'streamers-detail',
-        compact(
-            'streamer',
-            'isFollowing',
-            'topDonatur'
-        )
-    );
-}
+        return response()->json([
+            'streamer' => $streamer,
+            'is_following' => $isFollowing,
+            'top_donatur' => $topDonatur,
+        ]);
+    }
 
     public function follow($id)
     {
         Follower::firstOrCreate([
-
-            'user_id'=>auth()->id(),
-
-            'streamer_id'=>$id
-
+            'user_id' => auth()->id(),
+            'streamer_id' => $id,
         ]);
 
         return response()->json([
-            'success'=>true
+            'success' => true,
         ]);
     }
 
@@ -76,7 +85,7 @@ public function show($id)
         ->delete();
 
         return response()->json([
-            'success'=>true
+            'success' => true,
         ]);
     }
 }

@@ -22,6 +22,7 @@ class User extends Authenticatable
         'is_streamer',
         'bio',
         'game',
+        'jadwal_live',
         'instagram',
         'youtube',
         'tiktok',

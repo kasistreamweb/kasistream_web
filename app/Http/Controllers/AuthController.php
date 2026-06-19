@@ -98,9 +98,11 @@ class AuthController extends Controller
 
     public function updateProfile(Request $request)
     {
+        
         $request->validate([
             'name' => 'required|max:100',
             'onopay_phone' => 'nullable|max:20|unique:users,onopay_phone,' . Auth::id(),
+            'jadwal_live' => 'nullable|max:255',
             'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:4096'
         ]);
 
@@ -109,6 +111,7 @@ class AuthController extends Controller
         $user->name = $request->name;
         $user->onopay_phone = $request->onopay_phone;
 
+        $user->jadwal_live = $request->jadwal_live;
 
         if ($request->hasFile('foto')) {
 
