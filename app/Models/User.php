@@ -50,12 +50,12 @@ class User extends Authenticatable
         ];
     }
 
-    public function getFotoUrlAttribute()
-    {
-        if (!$this->foto) {
-            return 'https://via.placeholder.com/100';
-        }
-
-        return asset('uploads/profile/' . $this->foto);
+   public function getFotoUrlAttribute()
+{
+    if (!$this->foto) {
+        return 'https://via.placeholder.com/100';
     }
+
+    return asset('public/uploads/profile/' . $this->foto);
+}
 }
