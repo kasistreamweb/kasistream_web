@@ -27,6 +27,9 @@ Route::get('/streamers/{id}', [
     'show'
 ]);
 
+Route::post('/guest/donate-qris', [DonasiApiController::class, 'guestDonateQris']);
+Route::post('/guest/pay-onopay/{id}', [DonasiApiController::class, 'guestPayOnopay']);
+
 Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/dashboard-summary', [

@@ -310,4 +310,169 @@ class DonasiApiController extends Controller
             ], 500);
         }
     }
+
+    // ── GUEST DONATE QRIS ──
+    public function guestDonateQris(Request $request)
+    {
+        $request->validate([
+            'streamer_id' => 'required|exists:users,id',
+            'guest_name' => 'required|string|max:100',
+            'guest_phone' => 'required|string|max:20',
+            'nominal' => 'required|numeric|min:1000',
+            'pesan' => 'nullable|max:150',
+        ]);
+
+        $streamer = User::findOrFail(
+            $request->streamer_id
+        );
+
+        $adminFee = 1500;
+
+        $grandTotal =
+            $request->nominal +
+            $adminFee;
+
+        $donasi = Donasi::create([
+            'user_id' => null,
+            'guest_name' => $request->guest_name,
+            'guest_phone' => $request->guest_phone,
+
+            'streamer_id' => $streamer->id,
+            'nominal' => $request->nominal,
+            'pesan' => $request->pesan,
+
+            'admin_fee' => $adminFee,
+            'grand_total' => $grandTotal,
+
+            'payment_method' => 'qris',
+            'status' => 'pending',
+        ]);
+
+        $response = Http::post(
+            'https://www.onopay.web.id/api/v1/payment/qr/generate',
+            [
+                'phone_number' =>
+                    $streamer->onopay_phone,
+
+                'amount' =>
+                    $grandTotal,
+
+                'description' =>
+                    'Donasi KAistream #' .
+                    $donasi->id,
+
+                'customer_name' =>
+                    $request->guest_name,
+
+                'customer_phone' =>
+                    $request->guest_phone,
+
+                'qr_mode' =>
+                    'single_use'
+            ]
+        );
+
+        if (!$response->successful()) {
+            return response()->json([
+                'success' => false
+            ], 500);
+        }
+
+        $result = $response->json();
+
+        $donasi->update([
+            'qr_code' =>
+                $result['data']['qr_code']
+                    ?? null,
+
+            'qr_image' =>
+                $result['data']['qr_image']
+                    ?? null,
+
+            'onopay_receiver' =>
+                $streamer->onopay_phone,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'data' => $donasi
+        ]);
+    }
+
+    // ── GUEST PAY ONOPAY ──
+    public function guestPayOnopay($id)
+    {
+        $donasi = Donasi::findOrFail($id);
+
+        if (!$donasi->guest_phone) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Nomor OnoPay guest tidak ditemukan'
+            ], 400);
+        }
+
+        $response = Http::post(
+            'https://www.onopay.web.id/api/v1/payment/qr/pay',
+            [
+                'qr_code' =>
+                    $donasi->qr_code,
+
+                'payer_phone' =>
+                    $donasi->guest_phone,
+            ]
+        );
+
+        $result = $response->json();
+
+        if (
+            !$response->successful() ||
+            !isset($result['success']) ||
+            !$result['success']
+        ) {
+            return response()->json([
+                'success' => false,
+                'message' =>
+                    $result['message']
+                    ?? 'Pembayaran gagal'
+            ], 400);
+        }
+
+        DB::beginTransaction();
+
+        try {
+
+            $donasi->update([
+                'status' => 'success',
+                'qris_status' => 'paid'
+            ]);
+
+            $streamer = User::findOrFail(
+                $donasi->streamer_id
+            );
+
+            $streamer->balance +=
+                $donasi->nominal;
+
+            $streamer->total_donasi +=
+                $donasi->nominal;
+
+            $streamer->save();
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'data' => $donasi
+            ]);
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
 }
