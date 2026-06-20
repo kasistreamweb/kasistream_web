@@ -94,4 +94,14 @@ Route::middleware('auth:sanctum')
         'history'
     ]);
 
+    Route::post(
+    '/donate-qris',
+    [DonasiApiController::class, 'donateQris']
+    );
+
+    Route::get(
+        '/check-payment/{id}',
+        [DonasiApiController::class, 'checkPayment']
+    );
+
 });

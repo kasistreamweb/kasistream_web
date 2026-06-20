@@ -1,460 +1,225 @@
-<?php
+// lib/app/services/donation_service.dart
 
-namespace App\Http\Controllers;
+import 'dart:convert';
+import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
+import '../config/api_config.dart';
+import '../controllers/auth_controller.dart';
 
-use Illuminate\Http\Request;
-use App\Models\User;
-use App\Models\Donasi;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
+class DonationService {
+  final String baseUrl = ApiConfig.baseUrl;
 
-class DonasiController extends Controller
-{
-    public function create($id)
-    {
-        $streamer = User::findOrFail($id);
-
-        return view(
-            'donasi',
-            compact('streamer')
-        );
-    }
-
-public function store(Request $request)
-{
-   
-   $request->validate([
-    'streamer_id' => 'required|exists:users,id',
-    'nominal' => 'required|numeric|min:1000',
-    'pesan' => 'nullable|max:150',
-    'guest_name' => 'nullable|max:100',
-    'guest_phone' => 'nullable|max:20'
-]);
-
-    $fiturTotal = array_sum(
-        $request->fitur ?? []
-    );
-
-    $adminFee = (int) (
-        $request->admin_fee ?? 1500
-    );
-
-    $grandTotal = (int) (
-        $request->grand_total ??
-        (
-            $request->nominal +
-            $fiturTotal +
-            $adminFee
-        )
-    );
-
-    /*
-    |--------------------------------------------------------------------------
-    | CEK SALDO WALLET
-    |--------------------------------------------------------------------------
-    */
-
-    if (
-        Auth::check() &&
-        strtolower($request->metode) != 'qris'
-    ) {
-
-        $user = Auth::user();
-
-        if ($grandTotal > $user->balance) {
-
-            return back()
-                ->withInput()
-                ->with(
-                    'error',
-                    'Saldo wallet tidak mencukupi.'
-                );
-        }
-    }
-
+  Future<Map<String, dynamic>> donate({
+    required int streamerId,
+    required int nominal,
+    required String pesan,
+    int adminFee = 1500,
+    int fiturTotal = 0,
+    int grandTotal = 0,
+    String metode = 'wallet',
+    String? guestName,
+    String? guestPhone,
+    List<String> fitur = const [],
+  }) async {
     try {
+      final authController = Get.find<AuthController>();
+      final token = authController.token.value;
 
-        DB::beginTransaction();
+      // Hitung grand total jika belum diset
+      if (grandTotal == 0) {
+        grandTotal = nominal + fiturTotal + adminFee;
+      }
 
-        /*
-        |--------------------------------------------------------------------------
-        | SIMPAN DONASI
-        |--------------------------------------------------------------------------
-        */
+      final response = await http.post(
+        Uri.parse('$baseUrl/api/donasi/store'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({
+          'streamer_id': streamerId,
+          'nominal': nominal,
+          'pesan': pesan,
+          'admin_fee': adminFee,
+          'fitur_total': fiturTotal,
+          'grand_total': grandTotal,
+          'metode': metode,
+          'guest_name': guestName ?? '',
+          'guest_phone': guestPhone ?? '',
+          'fitur': fitur,
+        }),
+      );
 
-        $donasi = Donasi::create([
+      print('=== DONASI RESPONSE ===');
+      print('Status: ${response.statusCode}');
+      print('Body: ${response.body}');
 
-            'user_id' => Auth::check()
-                ? Auth::id()
-                : null,
-
-            'guest_name' => $request->guest_name,
-            'guest_phone' => $request->guest_phone,
-
-            'streamer_id' => $request->streamer_id,
-
-            'nominal' => $request->nominal,
-
-            'fitur_total' => $fiturTotal,
-
-            'admin_fee' => $adminFee,
-
-            'grand_total' => $grandTotal,
-
-            'payment_method' => strtolower(
-                $request->metode
-            ),
-
-            'pesan' => $request->pesan,
-
-            'status' => strtolower($request->metode) == 'qris'
-                ? 'pending'
-                : 'success',
-
-            'qris_status' => 'pending'
-        ]);
-
-        /*
-        |--------------------------------------------------------------------------
-        | WALLET
-        |--------------------------------------------------------------------------
-        */
-
-        if (
-            Auth::check() &&
-            strtolower($request->metode) != 'qris'
-        ) {
-
-            $user = User::findOrFail(
-                Auth::id()
-            );
-
-            $user->balance -= $grandTotal;
-
-            $user->save();
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | TAMBAH SALDO STREAMER
-        |--------------------------------------------------------------------------
-        */
-
-
-
-        if (
-            strtolower($request->metode) != 'qris'
-        ) {
-
-            $streamer = User::findOrFail(
-                $request->streamer_id
-            );
-
-            $streamer->balance +=
-                $request->nominal;
-
-            $streamer->total_donasi +=
-                $request->nominal;
-
-            $streamer->save();
-        }
-
-        DB::commit();
-
-    } catch (\Exception $e) {
-
-        DB::rollBack();
-
-        return back()
-            ->withInput()
-            ->with(
-                'error',
-                $e->getMessage()
-            );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = jsonDecode(response.body);
+        return {
+          'success': true,
+          'data': data['data'] ?? data,
+          'message': data['message'] ?? 'Donasi berhasil',
+        };
+      } else {
+        final data = jsonDecode(response.body);
+        return {
+          'success': false,
+          'message': data['message'] ?? 'Donasi gagal',
+          'errors': data['errors'] ?? {},
+        };
+      }
+    } catch (e) {
+      print('Error donasi: $e');
+      return {
+        'success': false,
+        'message': 'Terjadi kesalahan: $e',
+      };
     }
+  }
 
-/*
-|--------------------------------------------------------------------------
-| ONOPAY QR
-|--------------------------------------------------------------------------
-*/
-
-if (strtolower($request->metode) == 'qris') {
-
-    $streamer = User::findOrFail(
-        $request->streamer_id
-    );
-
-    if (!$streamer->onopay_phone) {
-
-        return back()->with(
-            'error',
-            'Nomor OnoPay streamer belum diatur.'
-        );
-    }
-
-    $response = Http::post(
-        'https://www.onopay.web.id/api/v1/payment/qr/generate',
-        [
-            'phone_number' => $streamer->onopay_phone,
-            'amount' => $grandTotal,
-            'description' => 'Donasi KAistream #' . $donasi->id,
-            'customer_name' => $request->guest_name ?? 'Guest',
-            'customer_phone' => $request->guest_phone,
-            'qr_mode' => 'single_use'
-        ]
-    );
-
-    \Log::info('ONOPAY GENERATE', [
-        'status' => $response->status(),
-        'body' => $response->body(),
-    ]);
-
-    if (!$response->successful()) {
-
-        return back()->with(
-            'error',
-            'Gagal membuat QR OnoPay.'
-        );
-    }
-
-    $result = $response->json();
-
-    if (
-        !isset($result['success']) ||
-        !$result['success']
-    ) {
-
-        return back()->with(
-            'error',
-            $result['message']
-                ?? 'Generate QR gagal.'
-        );
-    }
-
-    $donasi->update([
-
-        'qr_code' =>
-            $result['data']['qr_code'] ?? null,
-
-        'qr_image' =>
-            $result['data']['qr_image'] ?? null,
-
-        'onopay_receiver' =>
-            $streamer->onopay_phone,
-
-        'status' =>
-            'pending'
-    ]);
-
-    return redirect()->route(
-        'payment.qr',
-        $donasi->id
-    );
-}
-
-return redirect()->route(
-    'payment.success',
-    $donasi->id
-);
-}
-
-public function history()
-{
-    $donasi = Donasi::with('streamer')
-        ->where('user_id', auth()->id())
-        ->latest()
-        ->paginate(10);
-
-    return view(
-        'riwayat-donasi',
-        compact('donasi')
-    );
-}
-
-public function paymentSuccess($id)
-{
-    $donasi = Donasi::with([
-        'streamer',
-        'user'
-    ])->findOrFail($id);
-
-    return view(
-        'payment-success',
-        compact('donasi')
-    );
-}
-
-public function qrPayment($id)
-{
-    $donasi = Donasi::with([
-        'streamer',
-        'user'
-    ])->findOrFail($id);
-
-    return view(
-        'payment-qr',
-        compact('donasi')
-    );
-}
-
-public function checkPayment($id)
-{
-    $donasi = Donasi::findOrFail($id);
-
-    if ($donasi->status == 'pending') {
-
-        return back()->with(
-            'error',
-            'Pembayaran belum diterima'
-        );
-    }
-
-    return redirect()->route(
-        'payment.success',
-        $donasi->id
-    );
-}
-
-public function simulateQris($id)
-{
-    $donasi = Donasi::findOrFail($id);
-
-    if ($donasi->status == 'pending') {
-
-        $donasi->update([
-            'status' => 'success',
-            'qris_status' => 'paid'
-        ]);
-
-        $streamer = User::find(
-            $donasi->streamer_id
-        );
-
-        if ($streamer) {
-
-            $streamer->balance +=
-                $donasi->nominal;
-
-            $streamer->total_donasi +=
-                $donasi->nominal;
-
-            $streamer->save();
-        }
-    }
-
-    return redirect()->route(
-        'payment.success',
-        $donasi->id
-    );
-}
-
-public function payOnopay($id)
-{
-    $donasi = Donasi::findOrFail($id);
-
-    if ($donasi->status == 'success') {
-
-        return redirect()->route(
-            'payment.success',
-            $donasi->id
-        );
-    }
-
-if (Auth::check()) {
-
-    $payerPhone = Auth::user()->onopay_phone;
-
-} else {
-
-    $payerPhone = $donasi->guest_phone;
-}
-
-if (!$payerPhone) {
-
-    return back()->with(
-        'error',
-        'Nomor OnoPay tidak ditemukan.'
-    );
-}
-
-    if (!$donasi->qr_code) {
-
-        return back()->with(
-            'error',
-            'QR Code OnoPay tidak ditemukan.'
-        );
-    }
-
+  Future<Map<String, dynamic>> donateQris({
+    required int streamerId,
+    required int nominal,
+    required String pesan,
+  }) async {
     try {
+      final authController = Get.find<AuthController>();
+      final token = authController.token.value;
 
-        $response = Http::post(
-            'https://www.onopay.web.id/api/v1/payment/qr/pay',
-            [
-                'qr_code'     => $donasi->qr_code,
-                'payer_phone' => $payerPhone,
-            ]
-        );
+      final response = await http.post(
+        Uri.parse('$baseUrl/api/donasi/qris'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({
+          'streamer_id': streamerId,
+          'nominal': nominal,
+          'pesan': pesan,
+        }),
+      );
 
-        \Log::info('ONOPAY PAY', [
-            'status' => $response->status(),
-            'body' => $response->body(),
-        ]);
+      print('=== QRIS DONASI RESPONSE ===');
+      print('Status: ${response.statusCode}');
+      print('Body: ${response.body}');
 
-        $result = $response->json();
-
-        if (
-            !$response->successful() ||
-            !isset($result['success']) ||
-            !$result['success']
-        ) {
-
-            return back()->with(
-                'error',
-                $result['message']
-                    ?? 'Pembayaran OnoPay gagal.'
-            );
-        }
-
-        DB::beginTransaction();
-
-        $donasi->update([
-            'status'      => 'success',
-            'qris_status' => 'paid'
-        ]);
-
-        $streamer = User::findOrFail(
-            $donasi->streamer_id
-        );
-
-        $streamer->balance +=
-            $donasi->nominal;
-
-        $streamer->total_donasi +=
-            $donasi->nominal;
-
-        $streamer->save();
-
-        DB::commit();
-
-        return redirect()->route(
-            'payment.success',
-            $donasi->id
-        );
-
-    } catch (\Exception $e) {
-
-        DB::rollBack();
-
-        \Log::error('ONOPAY ERROR', [
-            'message' => $e->getMessage()
-        ]);
-
-        return back()->with(
-            'error',
-            $e->getMessage()
-        );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = jsonDecode(response.body);
+        return {
+          'success': true,
+          'data': data['data'],
+        };
+      } else {
+        return {
+          'success': false,
+          'message': 'Gagal membuat QRIS',
+        };
+      }
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Terjadi kesalahan: $e',
+      };
     }
-}
+  }
+
+  Future<Map<String, dynamic>> checkPaymentStatus(int donationId) async {
+    try {
+      final authController = Get.find<AuthController>();
+      final token = authController.token.value;
+
+      final response = await http.get(
+        Uri.parse('$baseUrl/api/donasi/check-payment/$donationId'),
+        headers: {
+          'Accept': 'application/json',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return {
+          'success': true,
+          'data': data,
+        };
+      } else {
+        return {
+          'success': false,
+          'message': 'Gagal cek status',
+        };
+      }
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Terjadi kesalahan: $e',
+      };
+    }
+  }
+
+  Future<Map<String, dynamic>> simulateQris(int donationId) async {
+    try {
+      final authController = Get.find<AuthController>();
+      final token = authController.token.value;
+
+      final response = await http.get(
+        Uri.parse('$baseUrl/api/donasi/simulate-qris/$donationId'),
+        headers: {
+          'Accept': 'application/json',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 302) {
+        return {
+          'success': true,
+        };
+      } else {
+        return {
+          'success': false,
+          'message': 'Gagal simulasi QRIS',
+        };
+      }
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Terjadi kesalahan: $e',
+      };
+    }
+  }
+
+  Future<Map<String, dynamic>> getDonationHistory({int page = 1}) async {
+    try {
+      final authController = Get.find<AuthController>();
+      final token = authController.token.value;
+
+      final response = await http.get(
+        Uri.parse('$baseUrl/api/donasi/history?page=$page'),
+        headers: {
+          'Accept': 'application/json',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return {
+          'success': true,
+          'data': data['donasi'] ?? data,
+        };
+      } else {
+        return {
+          'success': false,
+          'message': 'Gagal mengambil riwayat',
+        };
+      }
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Terjadi kesalahan: $e',
+      };
+    }
+  }
 }

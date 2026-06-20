@@ -107,4 +107,86 @@ class DonasiApiController extends Controller
             'data' => $data
         ]);
     }
+
+    public function donateQris(Request $request)
+{
+    $request->validate([
+        'streamer_id' => 'required',
+        'nominal' => 'required|numeric|min:1000',
+        'pesan' => 'nullable'
+    ]);
+
+    $streamer = User::findOrFail(
+        $request->streamer_id
+    );
+
+    $adminFee = 1500;
+
+    $grandTotal =
+        $request->nominal +
+        $adminFee;
+
+    $donasi = Donasi::create([
+        'user_id' => auth()->id(),
+        'streamer_id' => $streamer->id,
+        'nominal' => $request->nominal,
+        'pesan' => $request->pesan,
+        'admin_fee' => $adminFee,
+        'grand_total' => $grandTotal,
+        'payment_method' => 'qris',
+        'status' => 'pending',
+    ]);
+
+    $response = Http::post(
+        'https://www.onopay.web.id/api/v1/payment/qr/generate',
+        [
+            'phone_number' =>
+                $streamer->onopay_phone,
+
+            'amount' =>
+                $grandTotal,
+
+            'description' =>
+                'Donasi KAistream #' .
+                $donasi->id,
+
+            'customer_name' =>
+                auth()->user()->name,
+
+            'customer_phone' =>
+                auth()->user()->onopay_phone,
+
+            'qr_mode' =>
+                'single_use'
+        ]
+    );
+
+    if (!$response->successful()) {
+
+        return response()->json([
+            'success' => false
+        ],500);
+    }
+
+    $result = $response->json();
+
+    $donasi->update([
+
+        'qr_code' =>
+            $result['data']['qr_code']
+                ?? null,
+
+        'qr_image' =>
+            $result['data']['qr_image']
+                ?? null,
+
+        'onopay_receiver' =>
+            $streamer->onopay_phone,
+    ]);
+
+    return response()->json([
+        'success' => true,
+        'data' => $donasi
+    ]);
+}
 }
