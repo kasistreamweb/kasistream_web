@@ -399,6 +399,18 @@ class DonasiApiController extends Controller
         ]);
     }
 
+    // ── GUEST PAYMENT DETAIL ──
+    public function guestPaymentDetail($id)
+    {
+        return $this->paymentDetail($id);
+    }
+
+    // ── GUEST CHECK PAYMENT ──
+    public function guestCheckPayment($id)
+    {
+        return $this->checkPayment($id);
+    }
+
     // ── GUEST PAY ONOPAY ──
     public function guestPayOnopay($id)
     {

@@ -34,6 +34,16 @@ Route::post('/guest/donate-qris', [
     'guestDonateQris'
 ]);
 
+Route::get('/guest/payment-detail/{id}', [
+    DonasiApiController::class,
+    'guestPaymentDetail'
+]);
+
+Route::get('/guest/check-payment/{id}', [
+    DonasiApiController::class,
+    'guestCheckPayment'
+]);
+
 Route::post('/guest/pay-onopay/{id}', [
     DonasiApiController::class,
     'guestPayOnopay'
@@ -98,13 +108,13 @@ Route::middleware('auth:sanctum')->group(function () {
         'donateQris'
     ]);
 
-    // ── PAYMENT DETAIL ──
+    // ── PAYMENT DETAIL (User Login) ──
     Route::get('/payment-detail/{id}', [
         DonasiApiController::class,
         'paymentDetail'
     ]);
 
-    // ── CHECK PAYMENT ──
+    // ── CHECK PAYMENT (User Login) ──
     Route::get('/check-payment/{id}', [
         DonasiApiController::class,
         'checkPayment'
