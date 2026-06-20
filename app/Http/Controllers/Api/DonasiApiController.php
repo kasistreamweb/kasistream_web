@@ -7,6 +7,7 @@ use App\Models\Donasi;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 class DonasiApiController extends Controller
 {
@@ -109,84 +110,122 @@ class DonasiApiController extends Controller
     }
 
     public function donateQris(Request $request)
-{
-    $request->validate([
-        'streamer_id' => 'required',
-        'nominal' => 'required|numeric|min:1000',
-        'pesan' => 'nullable'
-    ]);
+    {
+        $request->validate([
+            'streamer_id' => 'required',
+            'nominal' => 'required|numeric|min:1000',
+            'pesan' => 'nullable'
+        ]);
 
-    $streamer = User::findOrFail(
-        $request->streamer_id
-    );
+        $streamer = User::findOrFail(
+            $request->streamer_id
+        );
 
-    $adminFee = 1500;
+        $adminFee = 1500;
 
-    $grandTotal =
-        $request->nominal +
-        $adminFee;
+        $grandTotal =
+            $request->nominal +
+            $adminFee;
 
-    $donasi = Donasi::create([
-        'user_id' => auth()->id(),
-        'streamer_id' => $streamer->id,
-        'nominal' => $request->nominal,
-        'pesan' => $request->pesan,
-        'admin_fee' => $adminFee,
-        'grand_total' => $grandTotal,
-        'payment_method' => 'qris',
-        'status' => 'pending',
-    ]);
+        $donasi = Donasi::create([
+            'user_id' => auth()->id(),
+            'streamer_id' => $streamer->id,
+            'nominal' => $request->nominal,
+            'pesan' => $request->pesan,
+            'admin_fee' => $adminFee,
+            'grand_total' => $grandTotal,
+            'payment_method' => 'qris',
+            'status' => 'pending',
+        ]);
 
-    $response = Http::post(
-        'https://www.onopay.web.id/api/v1/payment/qr/generate',
-        [
-            'phone_number' =>
+        $response = Http::post(
+            'https://www.onopay.web.id/api/v1/payment/qr/generate',
+            [
+                'phone_number' =>
+                    $streamer->onopay_phone,
+
+                'amount' =>
+                    $grandTotal,
+
+                'description' =>
+                    'Donasi KAistream #' .
+                    $donasi->id,
+
+                'customer_name' =>
+                    auth()->user()->name,
+
+                'customer_phone' =>
+                    auth()->user()->onopay_phone,
+
+                'qr_mode' =>
+                    'single_use'
+            ]
+        );
+
+        if (!$response->successful()) {
+
+            return response()->json([
+                'success' => false
+            ],500);
+        }
+
+        $result = $response->json();
+
+        $donasi->update([
+
+            'qr_code' =>
+                $result['data']['qr_code']
+                    ?? null,
+
+            'qr_image' =>
+                $result['data']['qr_image']
+                    ?? null,
+
+            'onopay_receiver' =>
                 $streamer->onopay_phone,
-
-            'amount' =>
-                $grandTotal,
-
-            'description' =>
-                'Donasi KAistream #' .
-                $donasi->id,
-
-            'customer_name' =>
-                auth()->user()->name,
-
-            'customer_phone' =>
-                auth()->user()->onopay_phone,
-
-            'qr_mode' =>
-                'single_use'
-        ]
-    );
-
-    if (!$response->successful()) {
+        ]);
 
         return response()->json([
-            'success' => false
-        ],500);
+            'success' => true,
+            'data' => $donasi
+        ]);
     }
 
-    $result = $response->json();
+    // ── PAYMENT DETAIL ──
+    public function paymentDetail($id)
+    {
+        $donasi = Donasi::with([
+            'streamer',
+            'user'
+        ])->findOrFail($id);
 
-    $donasi->update([
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'id' => $donasi->id,
+                'streamer_name' => $donasi->streamer->name,
+                'nominal' => $donasi->nominal,
+                'fitur_total' => $donasi->fitur_total,
+                'admin_fee' => $donasi->admin_fee,
+                'grand_total' => $donasi->grand_total,
+                'status' => $donasi->status,
+                'payment_method' => $donasi->payment_method,
+                'created_at' => $donasi->created_at,
+                'qr_image' => $donasi->qr_image,
+                'qr_code' => $donasi->qr_code,
+            ]
+        ]);
+    }
 
-        'qr_code' =>
-            $result['data']['qr_code']
-                ?? null,
+    // ── CHECK PAYMENT ──
+    public function checkPayment($id)
+    {
+        $donasi = Donasi::findOrFail($id);
 
-        'qr_image' =>
-            $result['data']['qr_image']
-                ?? null,
-
-        'onopay_receiver' =>
-            $streamer->onopay_phone,
-    ]);
-
-    return response()->json([
-        'success' => true,
-        'data' => $donasi
-    ]);
-}
+        return response()->json([
+            'success' => true,
+            'status' => $donasi->status,
+            'qris_status' => $donasi->qris_status,
+        ]);
+    }
 }

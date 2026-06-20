@@ -7,101 +7,93 @@ use App\Http\Controllers\Api\StreamerApiController;
 use App\Http\Controllers\Api\DonasiApiController;
 use App\Http\Controllers\Api\WithdrawApiController;
 
-Route::post('/register',
-[
+Route::post('/register', [
     AuthApiController::class,
     'register'
 ]);
 
-Route::post('/login',
-[
+Route::post('/login', [
     AuthApiController::class,
     'login'
 ]);
 
-Route::get('/streamers',
-[
+Route::get('/streamers', [
     StreamerApiController::class,
     'index'
 ]);
 
-Route::get('/streamers/{id}',
-[
+Route::get('/streamers/{id}', [
     StreamerApiController::class,
     'show'
 ]);
 
-Route::middleware('auth:sanctum')
-->group(function(){
+Route::middleware('auth:sanctum')->group(function () {
 
-    Route::get('/dashboard-summary',
-    [
+    Route::get('/dashboard-summary', [
         AuthApiController::class,
         'dashboardSummary'
     ]);
 
-    Route::get('/profile',
-    [
+    Route::get('/profile', [
         AuthApiController::class,
         'profile'
     ]);
 
-    Route::post('/logout',
-    [
+    Route::post('/logout', [
         AuthApiController::class,
         'logout'
     ]);
 
-    Route::post('/follow/{id}',
-    [
+    Route::post('/follow/{id}', [
         StreamerApiController::class,
         'follow'
     ]);
 
-    Route::post('/unfollow/{id}',
-    [
+    Route::post('/unfollow/{id}', [
         StreamerApiController::class,
         'unfollow'
     ]);
 
-    Route::post('/donate',
-    [
+    Route::post('/donate', [
         DonasiApiController::class,
         'store'
     ]);
 
-    Route::get('/donation-history',
-    [
+    Route::get('/donation-history', [
         DonasiApiController::class,
         'history'
     ]);
 
-    Route::get('/wallet-summary',
-    [
+    Route::get('/wallet-summary', [
         WithdrawApiController::class,
         'summary'
     ]);
 
-    Route::post('/withdraw',
-    [
+    Route::post('/withdraw', [
         WithdrawApiController::class,
         'store'
     ]);
 
-    Route::get('/withdraw-history',
-    [
+    Route::get('/withdraw-history', [
         WithdrawApiController::class,
         'history'
     ]);
 
-    Route::post(
-    '/donate-qris',
-    [DonasiApiController::class, 'donateQris']
-    );
+    // ── QRIS DONATION ──
+    Route::post('/donate-qris', [
+        DonasiApiController::class,
+        'donateQris'
+    ]);
 
-    Route::get(
-        '/check-payment/{id}',
-        [DonasiApiController::class, 'checkPayment']
-    );
+    // ── PAYMENT DETAIL ──
+    Route::get('/payment-detail/{id}', [
+        DonasiApiController::class,
+        'paymentDetail'
+    ]);
 
+    // ── CHECK PAYMENT ──
+    Route::get('/check-payment/{id}', [
+        DonasiApiController::class,
+        'checkPayment'
+    ]);
 });
