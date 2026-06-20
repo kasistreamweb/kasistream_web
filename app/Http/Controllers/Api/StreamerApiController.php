@@ -5,87 +5,181 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Follower;
-use App\Models\Donasi;
 use Illuminate\Http\Request;
 
 class StreamerApiController extends Controller
 {
     public function index()
     {
-        return response()->json(
-            User::where(
-                'is_streamer',
-                1
-            )->get()
-        );
+        $streamers = User::where('is_streamer', 1)
+            ->get()
+            ->map(function ($streamer) {
+
+                // Hitung jumlah followers untuk setiap streamer
+                $streamer->followers = Follower::where(
+                    'streamer_id',
+                    $streamer->id
+                )->count();
+
+                // Tambahkan foto_url
+                $streamer->foto_url = $streamer->foto
+                    ? asset('uploads/profile/' . $streamer->foto)
+                    : null;
+
+                return $streamer;
+            });
+
+        return response()->json($streamers);
     }
 
     public function show($id)
     {
-        $streamer = User::findOrFail($id);
+        $streamer = User::where('is_streamer', 1)
+            ->where('id', $id)
+            ->first();
 
-        $topDonatur = Donasi::where(
+        if (!$streamer) {
+            return response()->json([
+                'message' => 'Streamer tidak ditemukan'
+            ], 404);
+        }
+
+        // Hitung jumlah followers
+        $streamer->followers = Follower::where(
             'streamer_id',
-            $id
-        )
-        ->selectRaw(
-            'guest_name, user_id, SUM(nominal) as total_donasi'
-        )
-        ->groupBy(
-            'guest_name',
-            'user_id'
-        )
-        ->orderByDesc(
-            'total_donasi'
-        )
-        ->take(10)
-        ->get();
+            $streamer->id
+        )->count();
 
-        $isFollowing = auth()->check()
-            ? Follower::where(
-                'user_id',
-                auth()->id()
-            )
-            ->where(
-                'streamer_id',
-                $id
-            )
-            ->exists()
-            : false;
+        // Tambahkan foto_url
+        $streamer->foto_url = $streamer->foto
+            ? asset('uploads/profile/' . $streamer->foto)
+            : null;
+
+        return response()->json($streamer);
+    }
+
+    public function follow(Request $request, $id)
+    {
+        $user = $request->user();
+        $streamer = User::where('is_streamer', 1)
+            ->where('id', $id)
+            ->first();
+
+        if (!$streamer) {
+            return response()->json([
+                'message' => 'Streamer tidak ditemukan'
+            ], 404);
+        }
+
+        if ($user->id == $streamer->id) {
+            return response()->json([
+                'message' => 'Tidak bisa follow diri sendiri'
+            ], 400);
+        }
+
+        // Cek apakah sudah follow
+        $existingFollow = Follower::where('user_id', $user->id)
+            ->where('streamer_id', $streamer->id)
+            ->first();
+
+        if ($existingFollow) {
+            return response()->json([
+                'message' => 'Sudah mengikuti streamer ini'
+            ], 400);
+        }
+
+        // Create follow
+        Follower::create([
+            'user_id' => $user->id,
+            'streamer_id' => $streamer->id,
+        ]);
+
+        // Hitung followers terbaru
+        $followersCount = Follower::where('streamer_id', $streamer->id)->count();
 
         return response()->json([
-            'streamer' => $streamer,
-            'is_following' => $isFollowing,
-            'top_donatur' => $topDonatur,
+            'message' => 'Berhasil mengikuti streamer',
+            'followers' => $followersCount
         ]);
     }
 
-    public function follow($id)
+    public function unfollow(Request $request, $id)
     {
-        Follower::firstOrCreate([
-            'user_id' => auth()->id(),
-            'streamer_id' => $id,
-        ]);
+        $user = $request->user();
+        $streamer = User::where('is_streamer', 1)
+            ->where('id', $id)
+            ->first();
+
+        if (!$streamer) {
+            return response()->json([
+                'message' => 'Streamer tidak ditemukan'
+            ], 404);
+        }
+
+        // Cek apakah sudah follow
+        $existingFollow = Follower::where('user_id', $user->id)
+            ->where('streamer_id', $streamer->id)
+            ->first();
+
+        if (!$existingFollow) {
+            return response()->json([
+                'message' => 'Belum mengikuti streamer ini'
+            ], 400);
+        }
+
+        // Delete follow
+        $existingFollow->delete();
+
+        // Hitung followers terbaru
+        $followersCount = Follower::where('streamer_id', $streamer->id)->count();
 
         return response()->json([
-            'success' => true,
+            'message' => 'Berhasil unfollow streamer',
+            'followers' => $followersCount
         ]);
     }
 
-    public function unfollow($id)
+    public function checkFollow(Request $request, $id)
     {
-        Follower::where(
-            'user_id',
-            auth()->id()
-        )
-        ->where(
-            'streamer_id',
-            $id
-        )
-        ->delete();
+        $user = $request->user();
+        $streamer = User::where('is_streamer', 1)
+            ->where('id', $id)
+            ->first();
+
+        if (!$streamer) {
+            return response()->json([
+                'message' => 'Streamer tidak ditemukan'
+            ], 404);
+        }
+
+        $isFollowing = Follower::where('user_id', $user->id)
+            ->where('streamer_id', $streamer->id)
+            ->exists();
 
         return response()->json([
-            'success' => true,
+            'is_following' => $isFollowing
         ]);
+    }
+
+    public function getFollowers($id)
+    {
+        $streamer = User::where('is_streamer', 1)
+            ->where('id', $id)
+            ->first();
+
+        if (!$streamer) {
+            return response()->json([
+                'message' => 'Streamer tidak ditemukan'
+            ], 404);
+        }
+
+        $followers = Follower::where('streamer_id', $streamer->id)
+            ->with('user')
+            ->get()
+            ->map(function ($follower) {
+                return $follower->user;
+            });
+
+        return response()->json($followers);
     }
 }
