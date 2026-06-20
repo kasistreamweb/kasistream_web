@@ -488,54 +488,34 @@ class DonasiApiController extends Controller
         }
     }
 
+    // ── STREAMER DASHBOARD ──
     public function streamerDashboard()
-{
-    $streamer = auth()->user();
+    {
+        $streamer = auth()->user();
 
-    $donations = Donasi::query()
-        ->where(
-            'streamer_id',
-            $streamer->id
-        )
-        ->where(
-            'status',
-            'success'
-        );
+        // ── BASE QUERY ──
+        $baseQuery = Donasi::query()
+            ->where('streamer_id', $streamer->id)
+            ->where('status', 'success');
 
-    $totalDonasi =
-        (int) $donations->sum('nominal');
+        $totalDonasi = (int) (clone $baseQuery)->sum('nominal');
 
-    $totalTransaksi =
-        (int) $donations->count();
+        $totalTransaksi = (int) (clone $baseQuery)->count();
 
-    $totalDonatur =
-        (int) $donations
+        $totalDonatur = (int) (clone $baseQuery)
             ->select('guest_phone', 'user_id')
             ->distinct()
             ->count();
 
-    $donasiTerbesar =
-        (int) $donations
-            ->max('nominal');
+        $donasiTerbesar = (int) (clone $baseQuery)->max('nominal');
 
-    $rataRata =
-        $totalTransaksi > 0
-            ? intval(
-                $totalDonasi /
-                $totalTransaksi
-            )
+        $rataRata = $totalTransaksi > 0
+            ? intval($totalDonasi / $totalTransaksi)
             : 0;
 
-    $topDonaturRow =
-        Donasi::query()
-            ->where(
-                'streamer_id',
-                $streamer->id
-            )
-            ->where(
-                'status',
-                'success'
-            )
+        $topDonaturRow = Donasi::query()
+            ->where('streamer_id', $streamer->id)
+            ->where('status', 'success')
             ->selectRaw(
                 '
                 COALESCE(
@@ -553,68 +533,33 @@ class DonasiApiController extends Controller
             ->orderByDesc('total')
             ->first();
 
-    $recentDonations =
-        Donasi::with('user')
-            ->where(
-                'streamer_id',
-                $streamer->id
-            )
-            ->where(
-                'status',
-                'success'
-            )
+        $recentDonations = Donasi::with('user')
+            ->where('streamer_id', $streamer->id)
+            ->where('status', 'success')
             ->latest()
             ->take(10)
             ->get()
             ->map(function ($d) {
                 return [
                     'id' => $d->id,
-                    'donor' =>
-                        $d->guest_name ??
-                        $d->user?->name ??
-                        'Guest',
-
-                    'pesan' =>
-                        $d->pesan,
-
-                    'nominal' =>
-                        $d->nominal,
-
-                    'created_at' =>
-                        $d->created_at
-                            ->format(
-                                'd M Y H:i'
-                            ),
+                    'donor' => $d->guest_name ?? $d->user?->name ?? 'Guest',
+                    'pesan' => $d->pesan,
+                    'nominal' => $d->nominal,
+                    'created_at' => $d->created_at->format('d M Y H:i'),
                 ];
             });
 
-    return response()->json([
-        'success' => true,
-        'data' => [
-            'total_donasi' =>
-                $totalDonasi,
-
-            'total_transaksi' =>
-                $totalTransaksi,
-
-            'total_donatur' =>
-                $totalDonatur,
-
-            'donasi_terbesar' =>
-                $donasiTerbesar,
-
-            'rata_rata' =>
-                $rataRata,
-
-            'top_donatur' =>
-                $topDonaturRow
-                    ? $topDonaturRow
-                        ->donor_name
-                    : '-',
-
-            'recent_donations' =>
-                $recentDonations,
-        ]
-    ]);
-}
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'total_donasi' => $totalDonasi,
+                'total_transaksi' => $totalTransaksi,
+                'total_donatur' => $totalDonatur,
+                'donasi_terbesar' => $donasiTerbesar,
+                'rata_rata' => $rataRata,
+                'top_donatur' => $topDonaturRow ? $topDonaturRow->donor_name : '-',
+                'recent_donations' => $recentDonations,
+            ]
+        ]);
+    }
 }
