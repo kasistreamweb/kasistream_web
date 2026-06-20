@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\DB;
 use App\Models\Donasi;
 use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
 
 class DonasiApiController extends Controller
 {
@@ -227,5 +227,87 @@ class DonasiApiController extends Controller
             'status' => $donasi->status,
             'qris_status' => $donasi->qris_status,
         ]);
+    }
+
+    // ── PAY ONOPAY ──
+    public function payOnopay($id)
+    {
+        $donasi = Donasi::findOrFail($id);
+
+        // Cek apakah sudah dibayar
+        if ($donasi->status == 'success') {
+            return response()->json([
+                'success' => true,
+                'message' => 'Sudah dibayar'
+            ]);
+        }
+
+        // Cek nomor OnoPay user
+        $payerPhone = auth()->user()->onopay_phone;
+
+        if (!$payerPhone) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Nomor OnoPay tidak ditemukan'
+            ], 400);
+        }
+
+        // Panggil API OnoPay untuk pembayaran
+        $response = Http::post(
+            'https://www.onopay.web.id/api/v1/payment/qr/pay',
+            [
+                'qr_code'     => $donasi->qr_code,
+                'payer_phone' => $payerPhone,
+            ]
+        );
+
+        $result = $response->json();
+
+        // Cek response OnoPay
+        if (
+            !$response->successful() ||
+            !isset($result['success']) ||
+            !$result['success']
+        ) {
+            return response()->json([
+                'success' => false,
+                'message' => $result['message'] ?? 'Pembayaran gagal'
+            ], 400);
+        }
+
+        // Mulai transaksi database
+        DB::beginTransaction();
+
+        try {
+            // Update status donasi
+            $donasi->update([
+                'status'      => 'success',
+                'qris_status' => 'paid'
+            ]);
+
+            // Tambah saldo streamer
+            $streamer = User::findOrFail(
+                $donasi->streamer_id
+            );
+
+            $streamer->balance += $donasi->nominal;
+            $streamer->total_donasi += $donasi->nominal;
+            $streamer->save();
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'data' => $donasi
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 }

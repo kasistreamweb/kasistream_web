@@ -96,4 +96,10 @@ Route::middleware('auth:sanctum')->group(function () {
         DonasiApiController::class,
         'checkPayment'
     ]);
+
+    // ── PAY ONOPAY ──
+    Route::post('/pay-onopay/{id}', [
+        DonasiApiController::class,
+        'payOnopay'
+    ]);
 });
