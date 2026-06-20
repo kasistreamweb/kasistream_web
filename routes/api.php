@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\StreamerApiController;
 use App\Http\Controllers\Api\DonasiApiController;
 use App\Http\Controllers\Api\WithdrawApiController;
 
+// ── GUEST ROUTES (Tanpa Auth) ──
 Route::post('/register', [
     AuthApiController::class,
     'register'
@@ -27,9 +28,18 @@ Route::get('/streamers/{id}', [
     'show'
 ]);
 
-Route::post('/guest/donate-qris', [DonasiApiController::class, 'guestDonateQris']);
-Route::post('/guest/pay-onopay/{id}', [DonasiApiController::class, 'guestPayOnopay']);
+// ── GUEST QRIS ROUTES ──
+Route::post('/guest/donate-qris', [
+    DonasiApiController::class,
+    'guestDonateQris'
+]);
 
+Route::post('/guest/pay-onopay/{id}', [
+    DonasiApiController::class,
+    'guestPayOnopay'
+]);
+
+// ── AUTHENTICATED ROUTES ──
 Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/dashboard-summary', [
@@ -82,7 +92,7 @@ Route::middleware('auth:sanctum')->group(function () {
         'history'
     ]);
 
-    // ── QRIS DONATION ──
+    // ── QRIS DONATION (User Login) ──
     Route::post('/donate-qris', [
         DonasiApiController::class,
         'donateQris'
@@ -100,7 +110,7 @@ Route::middleware('auth:sanctum')->group(function () {
         'checkPayment'
     ]);
 
-    // ── PAY ONOPAY ──
+    // ── PAY ONOPAY (User Login) ──
     Route::post('/pay-onopay/{id}', [
         DonasiApiController::class,
         'payOnopay'
