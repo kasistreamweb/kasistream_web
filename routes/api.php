@@ -57,6 +57,14 @@ Route::middleware('auth:sanctum')->group(function () {
         'dashboardSummary'
     ]);
 
+    Route::get(
+    '/streamer-dashboard',
+    [
+        DonasiApiController::class,
+        'streamerDashboard'
+    ]
+);
+
     Route::get('/profile', [
         AuthApiController::class,
         'profile'

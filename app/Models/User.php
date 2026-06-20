@@ -58,4 +58,20 @@ class User extends Authenticatable
 
     return asset('uploads/profile/' . $this->foto);
 }
+
+public function donationsReceived()
+{
+    return $this->hasMany(
+        \App\Models\Donasi::class,
+        'streamer_id'
+    );
+}
+
+public function donationsSent()
+{
+    return $this->hasMany(
+        \App\Models\Donasi::class,
+        'user_id'
+    );
+}
 }
