@@ -50,7 +50,8 @@
             <!-- SALDO -->
             <div class="row">
                 <div class="col-lg-7 mb-4">
-                    <div class="wallet-card h-100">
+                    <!-- Card Utama - Dinamis berdasarkan role -->
+                    <div class="{{ Auth::user()->is_streamer ? 'wallet-card h-100' : 'user-wallet-card h-100' }}">
                         <div>
                             <span class="wallet-label">
                                 @if(Auth::user()->is_streamer)
@@ -165,7 +166,7 @@
                 </div>
             </div>
 
-            <!-- STATISTIK UNTUK USER BIASA (DIUBAH) -->
+            <!-- STATISTIK UNTUK USER BIASA -->
             @unless(Auth::user()->is_streamer)
                 <div class="row mb-4">
                     <div class="col-md-4 mb-3">
@@ -201,7 +202,7 @@
             @endunless
 
             <!-- TRANSAKSI -->
-            <div class="transaction-card">
+            <div class="{{ Auth::user()->is_streamer ? 'transaction-card' : 'user-transaction-card' }}">
                 <h4>
                     <i class="fa-solid fa-receipt"></i>
                     @if(Auth::user()->is_streamer)
@@ -212,17 +213,17 @@
                 </h4>
 
                 @forelse($transaksi as $item)
-                    <div class="transaction-item">
+                    <div class="{{ Auth::user()->is_streamer ? 'transaction-item' : 'user-transaction-item' }}">
                         <div>
-                            <div class="transaction-title">
+                            <div class="{{ Auth::user()->is_streamer ? 'transaction-title' : 'user-transaction-title' }}">
                                 {{ $item['keterangan'] }}
                             </div>
-                            <small>
+                            <small class="{{ Auth::user()->is_streamer ? '' : 'user-transaction-date' }}">
                                 {{ \Carbon\Carbon::parse($item['tanggal'])->format('d M Y H:i') }}
                             </small>
                         </div>
                         <div class="text-end">
-                            <div class="transaction-amount">
+                            <div class="{{ Auth::user()->is_streamer ? 'transaction-amount' : 'user-transaction-amount' }}">
                                 Rp {{ number_format($item['nominal']) }}
                             </div>
                             
@@ -251,7 +252,7 @@
                         </div>
                     </div>
                 @empty
-                    <div class="empty-state">
+                    <div class="{{ Auth::user()->is_streamer ? 'empty-state' : 'user-empty' }}">
                         <i class="fa-solid fa-wallet"></i>
                         <h5>
                             @if(Auth::user()->is_streamer)
