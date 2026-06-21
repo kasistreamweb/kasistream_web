@@ -2,43 +2,7 @@
    USER WALLET
 ================================================== */
 
-.user-wallet-card {
-    position: relative;
-    overflow: hidden;
-    background: linear-gradient(
-        135deg,
-        #8B5CF6 0%,
-        #A855F7 35%,
-        #EC4899 100%
-    );
-    border-radius: 24px;
-    padding: 28px;
-    min-height: 180px;
-    color: white;
-    box-shadow: 0 15px 35px rgba(139, 92, 246, .25);
-}
-
-.user-wallet-card::before {
-    content: '';
-    position: absolute;
-    width: 220px;
-    height: 220px;
-    border-radius: 50%;
-    top: -100px;
-    right: -100px;
-    background: rgba(255, 255, 255, .08);
-}
-
-.user-wallet-card::after {
-    content: '';
-    position: absolute;
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    bottom: -50px;
-    left: -50px;
-    background: rgba(255, 255, 255, .05);
-}
+/* Hapus .user-wallet-card - kita pakai wallet-card saja untuk semua */
 
 .user-wallet-title {
     font-size: 15px;
@@ -217,11 +181,6 @@
 ========================== */
 
 @media (max-width: 768px) {
-    .user-wallet-card {
-        min-height: auto;
-        text-align: center;
-    }
-
     .user-wallet-amount {
         font-size: 34px;
     }
@@ -275,6 +234,7 @@
     font-weight: 600;
     padding: 12px 24px;
     border-radius: 14px;
+    min-width: 180px;
     box-shadow: 0 10px 25px rgba(139, 92, 246, .25);
     transition: .3s;
     width: 100%;
@@ -283,7 +243,6 @@
 .topup-wallet-btn:hover {
     color: white;
     transform: translateY(-2px);
-    box-shadow: 0 15px 35px rgba(139, 92, 246, .35);
 }
 
 .topup-wallet-btn i {

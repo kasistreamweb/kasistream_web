@@ -103,20 +103,6 @@
                         </div>
                         <i class="fa-solid fa-wallet wallet-icon"></i>
                     </div>
-
-                    <!-- Tombol Top Up untuk User Biasa - DI BAWAH CARD SALDO -->
-                    @if(!Auth::user()->is_streamer)
-                        <div class="mb-4">
-                            <a
-                                href="#"
-                                class="btn topup-wallet-btn"
-                                onclick="alert('Fitur Top Up akan segera hadir')"
-                            >
-                                <i class="fa-solid fa-plus me-2"></i>
-                                Top Up Saldo
-                            </a>
-                        </div>
-                    @endif
                 </div>
 
                 <!-- Kolom Kanan - HANYA UNTUK STREAMER -->
@@ -141,6 +127,22 @@
                     </div>
                 @endif
             </div>
+            <!-- END SALDO ROW -->
+
+            <!-- TOP UP ROW - KHUSUS USER BIASA -->
+            @if(!Auth::user()->is_streamer)
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <button
+                            class="btn topup-wallet-btn"
+                            onclick="alert('Fitur Top Up akan segera hadir')"
+                        >
+                            <i class="fa-solid fa-plus me-2"></i>
+                            Top Up Saldo
+                        </button>
+                    </div>
+                </div>
+            @endif
 
             <!-- ACTION ROW - HANYA UNTUK STREAMER -->
             @if(Auth::user()->is_streamer)
