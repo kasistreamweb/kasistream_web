@@ -241,7 +241,7 @@
 }
 
 /* =================================
-   TOPUP BUTTON
+   TOPUP BUTTON (Small - Inside Wallet)
 ================================= */
 
 .topup-btn {
@@ -258,6 +258,36 @@
     transform: translateY(-2px);
     background: #f8fafc;
     box-shadow: 0 10px 25px rgba(255, 255, 255, .15);
+}
+
+/* =================================
+   TOPUP WALLET BUTTON (Full Width - Below Card)
+================================= */
+
+.topup-wallet-btn {
+    background: linear-gradient(
+        135deg,
+        #8B5CF6,
+        #6D5BFF
+    );
+    border: none;
+    color: white;
+    font-weight: 600;
+    padding: 12px 24px;
+    border-radius: 14px;
+    box-shadow: 0 10px 25px rgba(139, 92, 246, .25);
+    transition: .3s;
+    width: 100%;
+}
+
+.topup-wallet-btn:hover {
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 15px 35px rgba(139, 92, 246, .35);
+}
+
+.topup-wallet-btn i {
+    font-size: 16px;
 }
 
 /* =================================

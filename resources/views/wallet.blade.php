@@ -76,6 +76,7 @@
                                 @endif
                             </div>
 
+                            <!-- Wallet Meta - Status Saldo -->
                             <div class="wallet-meta">
                                 @if(Auth::user()->is_streamer)
                                     @if(Auth::user()->balance >= 15000)
@@ -93,22 +94,29 @@
                                         </div>
                                     @endif
                                 @else
-                                    <!-- Tombol Top Up untuk User Biasa -->
-                                    <div class="mt-3">
-                                        <a
-                                            href="#"
-                                            class="btn btn-light btn-sm topup-btn"
-                                            onclick="alert('Fitur Top Up akan segera hadir')"
-                                        >
-                                            <i class="fa-solid fa-plus me-2"></i>
-                                            Top Up Saldo
-                                        </a>
-                                    </div>
+                                    <span class="withdraw-status success">
+                                        <i class="fa-solid fa-circle"></i>
+                                        Saldo siap digunakan
+                                    </span>
                                 @endif
                             </div>
                         </div>
                         <i class="fa-solid fa-wallet wallet-icon"></i>
                     </div>
+
+                    <!-- Tombol Top Up untuk User Biasa - DI BAWAH CARD SALDO -->
+                    @if(!Auth::user()->is_streamer)
+                        <div class="mb-4">
+                            <a
+                                href="#"
+                                class="btn topup-wallet-btn"
+                                onclick="alert('Fitur Top Up akan segera hadir')"
+                            >
+                                <i class="fa-solid fa-plus me-2"></i>
+                                Top Up Saldo
+                            </a>
+                        </div>
+                    @endif
                 </div>
 
                 <!-- Kolom Kanan - HANYA UNTUK STREAMER -->
