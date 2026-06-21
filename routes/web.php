@@ -418,16 +418,12 @@ Route::post('/become-streamer', function (Illuminate\Http\Request $request) {
             ]);
         }
 
-        $withdrawPending = 0;
-
-        $saldoTersedia = $totalDonasi;
+        // User tidak punya withdraw, jadi tidak perlu $withdrawPending dan $saldoTersedia
 
         return view(
-            'wallet',
+            'user-wallet', // <-- INI PERUBAHANNYA
             compact(
                 'transaksi',
-                'withdrawPending',
-                'saldoTersedia',
                 'totalDonasi',
                 'totalStreamerDidukung'
             )
