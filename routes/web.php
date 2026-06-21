@@ -289,94 +289,147 @@ Route::post('/become-streamer', function (Illuminate\Http\Request $request) {
     [AdminController::class, 'donationDetail']
 )->middleware('auth');
 
+    /*
+    |--------------------------------------------------------------------------
+    | WALLET - STREAMER & USER
+    |--------------------------------------------------------------------------
+    */
+
     Route::get('/wallet', function () {
 
-        if(!auth()->user()->is_streamer){
-            abort(403);
+        $user = auth()->user();
+
+        // ==========================
+        // STREAMER WALLET
+        // ==========================
+        if ($user->is_streamer) {
+
+            $donasi = \App\Models\Donasi::with('user')
+                ->where('streamer_id', $user->id)
+                ->get();
+
+            $withdraws = \App\Models\Withdraw::where(
+                'user_id',
+                $user->id
+            )->get();
+
+            $withdrawPending = \App\Models\Withdraw::where(
+                'user_id',
+                $user->id
+            )
+            ->where(
+                'status',
+                'pending'
+            )
+            ->sum('nominal');
+
+            $saldoTersedia =
+                $user->balance -
+                $withdrawPending;
+
+            $transaksi = collect();
+
+            foreach ($donasi as $item) {
+
+                $transaksi->push([
+
+                    'tanggal' => $item->created_at,
+
+                    'keterangan' =>
+                        'Donasi dari ' .
+                        (
+                            optional($item->user)->name
+                            ?? $item->guest_name
+                        ),
+
+                    'nominal' => $item->nominal,
+
+                    'status' => 'success',
+
+                    'jenis' => 'donasi',
+                ]);
+            }
+
+            foreach ($withdraws as $item) {
+
+                $transaksi->push([
+
+                    'tanggal' => $item->created_at,
+
+                    'keterangan' =>
+                        'Withdraw Request',
+
+                    'nominal' => $item->nominal,
+
+                    'status' => $item->status,
+
+                    'jenis' => 'withdraw',
+                ]);
+            }
+
+            $transaksi = $transaksi
+                ->sortByDesc('tanggal')
+                ->take(10);
+
+            return view(
+                'wallet',
+                compact(
+                    'transaksi',
+                    'withdrawPending',
+                    'saldoTersedia'
+                )
+            );
         }
 
-        $donasi = \App\Models\Donasi::with('user')
-            ->where(
-                'streamer_id',
-                auth()->id()
-            )
+        // ==========================
+        // USER WALLET
+        // ==========================
+
+        $donasiSaya = \App\Models\Donasi::with('streamer')
+            ->where('user_id', $user->id)
+            ->where('status', 'success')
+            ->latest()
             ->get();
 
-        $withdraws = \App\Models\Withdraw::where(
-            'user_id',
-            auth()->id()
-        )->get();
+        $totalDonasi = $donasiSaya->sum('nominal');
 
-        $withdrawPending = \App\Models\Withdraw::where(
-            'user_id',
-            auth()->id()
-        )
-        ->where(
-            'status',
-            'pending'
-        )
-        ->sum('nominal');
-
-        $saldoTersedia =
-            auth()->user()->balance
-            - $withdrawPending;
+        $totalStreamerDidukung = $donasiSaya
+            ->pluck('streamer_id')
+            ->unique()
+            ->count();
 
         $transaksi = collect();
 
-        foreach($donasi as $item){
+        foreach ($donasiSaya as $item) {
 
             $transaksi->push([
 
                 'tanggal' => $item->created_at,
 
                 'keterangan' =>
-                    'Donasi dari ' .
-                    optional($item->user)->name
-                    ?? $item->guest_name,
+                    'Donasi ke ' .
+                    optional($item->streamer)->name,
 
-                'nominal' =>
-                    $item->nominal,
+                'nominal' => $item->nominal,
 
-                'status' =>
-                    'success',
+                'status' => 'success',
 
-                'jenis' =>
-                    'donasi'
-
+                'jenis' => 'donasi',
             ]);
         }
 
-        foreach($withdraws as $item){
+        $withdrawPending = 0;
 
-            $transaksi->push([
-
-                'tanggal' => $item->created_at,
-
-                'keterangan' =>
-                    'Withdraw Request',
-
-                'nominal' =>
-                    $item->nominal,
-
-                'status' =>
-                    $item->status,
-
-                'jenis' =>
-                    'withdraw'
-
-            ]);
-        }
-
-        $transaksi = $transaksi
-            ->sortByDesc('tanggal')
-            ->take(10);
+        $saldoTersedia = $totalDonasi;
 
         return view(
             'wallet',
             compact(
                 'transaksi',
                 'withdrawPending',
-                'saldoTersedia'
+                'saldoTersedia',
+                'totalDonasi',
+                'totalStreamerDidukung'
             )
         );
 

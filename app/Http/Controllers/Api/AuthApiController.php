@@ -197,4 +197,31 @@ class AuthApiController extends Controller
             'user' => $user
         ]);
     }
+
+    public function becomeStreamer(Request $request)
+{
+    $request->validate([
+        'bio'  => 'required',
+        'game' => 'required',
+    ]);
+
+    $user = $request->user();
+
+    $user->bio = $request->bio;
+    $user->game = $request->game;
+    $user->instagram = $request->instagram;
+    $user->youtube = $request->youtube;
+    $user->tiktok = $request->tiktok;
+    $user->discord = $request->discord;
+
+    $user->is_streamer = true;
+
+    $user->save();
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Berhasil menjadi streamer',
+        'user' => $user,
+    ]);
+}
 }

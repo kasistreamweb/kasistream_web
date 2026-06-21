@@ -57,6 +57,11 @@ Route::middleware('auth:sanctum')->group(function () {
         'dashboardSummary'
     ]);
 
+    Route::post('/become-streamer', [
+    AuthApiController::class,
+    'becomeStreamer'
+    ]);
+
     Route::get(
     '/streamer-dashboard',
     [
