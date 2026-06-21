@@ -79,6 +79,15 @@
 
         </a>
 
+        <!-- MENU WALLET - TAMBAHKAN DISINI (SETELAH RIWAYAT DONASI) -->
+        <a href="/wallet"
+           class="menu-item {{ request()->is('wallet') || request()->is('wallet-history') ? 'active-menu' : '' }}">
+
+            <i class="fa-solid fa-wallet me-2"></i>
+            Wallet
+
+        </a>
+
         @if(auth()->user()->is_streamer)
 
             <hr class="sidebar-divider">
@@ -113,13 +122,7 @@
 
             </a>
 
-            <a href="/wallet"
-               class="menu-item {{ request()->is('wallet') ? 'active-menu' : '' }}">
-
-                <i class="fa-solid fa-wallet me-2"></i>
-                Wallet
-
-            </a>
+            <!-- MENU WALLET DI STREAMER CENTER DIHAPUS -->
 
         @endif
 
