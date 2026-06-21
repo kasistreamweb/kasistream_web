@@ -1,389 +1,241 @@
-
-
 /* ==================================================
    USER WALLET
 ================================================== */
 
-.user-wallet-card{
-
+.user-wallet-card {
     position: relative;
-
     overflow: hidden;
-
     background: linear-gradient(
         135deg,
         #8B5CF6 0%,
         #A855F7 35%,
         #EC4899 100%
     );
-
     border-radius: 24px;
-
     padding: 28px;
-
     min-height: 180px;
-
     color: white;
-
-    box-shadow:
-        0 15px 35px rgba(139,92,246,.25);
+    box-shadow: 0 15px 35px rgba(139, 92, 246, .25);
 }
 
-.user-wallet-card::before{
-
-    content:'';
-
-    position:absolute;
-
-    width:220px;
-    height:220px;
-
-    border-radius:50%;
-
-    top:-100px;
-    right:-100px;
-
-    background:rgba(255,255,255,.08);
+.user-wallet-card::before {
+    content: '';
+    position: absolute;
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    top: -100px;
+    right: -100px;
+    background: rgba(255, 255, 255, .08);
 }
 
-.user-wallet-card::after{
-
-    content:'';
-
-    position:absolute;
-
-    width:120px;
-    height:120px;
-
-    border-radius:50%;
-
-    bottom:-50px;
-    left:-50px;
-
-    background:rgba(255,255,255,.05);
+.user-wallet-card::after {
+    content: '';
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    bottom: -50px;
+    left: -50px;
+    background: rgba(255, 255, 255, .05);
 }
 
-.user-wallet-title{
-
-    font-size:15px;
-
-    font-weight:600;
-
-    opacity:.95;
+.user-wallet-title {
+    font-size: 15px;
+    font-weight: 600;
+    opacity: .95;
 }
 
-.user-wallet-amount{
-
-    font-size:48px;
-
-    font-weight:800;
-
-    margin-top:10px;
-
-    margin-bottom:15px;
+.user-wallet-amount {
+    font-size: 48px;
+    font-weight: 800;
+    margin-top: 10px;
+    margin-bottom: 15px;
 }
 
-.user-wallet-support{
-
-    display:inline-flex;
-
-    align-items:center;
-
-    gap:8px;
-
-    color:#22c55e;
-
-    font-size:14px;
-
-    font-weight:600;
+.user-wallet-support {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #22c55e;
+    font-size: 14px;
+    font-weight: 600;
 }
 
 /* ==========================
    USER INFO CARD
 ========================== */
 
-.user-info-card{
-
-    background:rgba(15,23,42,.75);
-
-    border:1px solid rgba(255,255,255,.08);
-
-    border-radius:20px;
-
-    padding:22px;
-
-    height:100%;
-
-    backdrop-filter:blur(12px);
-
-    transition:.3s;
+.user-info-card {
+    background: rgba(15, 23, 42, .75);
+    border: 1px solid rgba(255, 255, 255, .08);
+    border-radius: 20px;
+    padding: 22px;
+    height: 100%;
+    backdrop-filter: blur(12px);
+    transition: .3s;
 }
 
-.user-info-card:hover{
-
-    border-color:rgba(139,92,246,.35);
-
-    transform:translateY(-3px);
+.user-info-card:hover {
+    border-color: rgba(139, 92, 246, .35);
+    transform: translateY(-3px);
 }
 
-.user-info-card .label{
-
-    color:#94a3b8;
-
-    font-size:14px;
+.user-info-card .label {
+    color: #94a3b8;
+    font-size: 14px;
 }
 
-.user-info-card .value{
-
-    color:white;
-
-    font-size:34px;
-
-    font-weight:800;
-
-    margin-top:8px;
+.user-info-card .value {
+    color: white;
+    font-size: 34px;
+    font-weight: 800;
+    margin-top: 8px;
 }
 
 /* ==========================
    USER MINI STAT
 ========================== */
 
-.user-stat-card{
-
-    background:rgba(15,23,42,.75);
-
-    border:1px solid rgba(255,255,255,.08);
-
-    border-radius:20px;
-
-    padding:22px;
-
-    text-align:center;
-
-    height:100%;
-
-    backdrop-filter:blur(12px);
-
-    transition:.3s;
+.user-stat-card {
+    background: rgba(15, 23, 42, .75);
+    border: 1px solid rgba(255, 255, 255, .08);
+    border-radius: 20px;
+    padding: 24px;
+    text-align: center;
+    min-height: 140px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(12px);
+    transition: .3s;
 }
 
-.user-stat-card:hover{
-
-    border-color:rgba(139,92,246,.35);
-
-    transform:translateY(-4px);
+.user-stat-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(139, 92, 246, .35);
+    box-shadow: 0 12px 30px rgba(139, 92, 246, .15);
 }
 
-.user-stat-card i{
-
-    font-size:24px;
-
-    color:#8B5CF6;
-
-    margin-bottom:12px;
+.user-stat-card i {
+    font-size: 28px;
+    color: #8B5CF6;
+    margin-bottom: 12px;
 }
 
-.user-stat-card h6{
-
-    color:#cbd5e1;
-
-    margin-bottom:8px;
-
-    font-weight:600;
+.user-stat-card h6 {
+    color: #cbd5e1;
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.user-stat-card strong{
-
-    color:white;
-
-    font-size:22px;
-
-    font-weight:800;
+.user-stat-card strong {
+    color: white;
+    font-size: 22px;
+    font-weight: 800;
+    display: block;
 }
 
 /* ==========================
    USER TRANSACTION CARD
 ========================== */
 
-.user-transaction-card{
-
-    background:rgba(15,23,42,.75);
-
-    border:1px solid rgba(255,255,255,.08);
-
-    border-radius:24px;
-
-    padding:24px;
-
-    backdrop-filter:blur(12px);
+.user-transaction-card {
+    background: rgba(15, 23, 42, .75);
+    border: 1px solid rgba(255, 255, 255, .08);
+    border-radius: 24px;
+    padding: 24px;
+    backdrop-filter: blur(12px);
 }
 
-.user-transaction-card h4{
-
-    color:white;
-
-    font-weight:700;
-
-    margin-bottom:20px;
+.user-transaction-card h4 {
+    color: white;
+    font-weight: 700;
+    margin-bottom: 20px;
 }
 
-.user-transaction-item{
-
-    padding:18px;
-
-    border-radius:16px;
-
-    margin-bottom:12px;
-
-    background:rgba(255,255,255,.03);
-
-    border:1px solid rgba(255,255,255,.05);
-
-    transition:.3s;
+.user-transaction-item {
+    padding: 18px;
+    border-radius: 16px;
+    margin-bottom: 12px;
+    background: rgba(255, 255, 255, .03);
+    border: 1px solid rgba(255, 255, 255, .05);
+    transition: .3s;
 }
 
-.user-transaction-item:hover{
-
-    background:rgba(139,92,246,.08);
-
-    border-color:rgba(139,92,246,.25);
+.user-transaction-item:hover {
+    background: rgba(139, 92, 246, .08);
+    border-color: rgba(139, 92, 246, .25);
 }
 
-.user-transaction-title{
-
-    color:white;
-
-    font-weight:600;
+.user-transaction-title {
+    color: white;
+    font-weight: 600;
 }
 
-.user-transaction-date{
-
-    color:#94a3b8;
-
-    font-size:13px;
+.user-transaction-date {
+    color: #94a3b8;
+    font-size: 13px;
 }
 
-.user-transaction-amount{
-
-    color:#22c55e;
-
-    font-size:18px;
-
-    font-weight:800;
+.user-transaction-amount {
+    color: #22c55e;
+    font-size: 18px;
+    font-weight: 800;
 }
 
 /* ==========================
    USER EMPTY STATE
 ========================== */
 
-.user-empty{
-
-    padding:60px 20px;
-
-    text-align:center;
+.user-empty {
+    padding: 60px 20px;
+    text-align: center;
 }
 
-.user-empty i{
-
-    font-size:60px;
-
-    color:#8B5CF6;
-
-    margin-bottom:15px;
+.user-empty i {
+    font-size: 60px;
+    color: #8B5CF6;
+    margin-bottom: 15px;
 }
 
-.user-empty h5{
-
-    color:white;
-
-    margin-bottom:10px;
+.user-empty h5 {
+    color: white;
+    margin-bottom: 10px;
 }
 
-.user-empty p{
-
-    color:#94a3b8;
+.user-empty p {
+    color: #94a3b8;
 }
 
 /* ==========================
    RESPONSIVE
 ========================== */
 
-@media(max-width:768px){
-
-    .user-wallet-card{
-
-        min-height:auto;
-
-        text-align:center;
+@media (max-width: 768px) {
+    .user-wallet-card {
+        min-height: auto;
+        text-align: center;
     }
 
-    .user-wallet-amount{
-
-        font-size:34px;
+    .user-wallet-amount {
+        font-size: 34px;
     }
 
-    .user-info-card .value{
-
-        font-size:28px;
+    .user-info-card .value {
+        font-size: 28px;
     }
-}
 
-/* =================================
-   USER WALLET STATS
-================================= */
+    .user-stat-card {
+        min-height: 120px;
+        padding: 18px;
+    }
 
-.user-stat-card{
-
-    background: rgba(15,23,42,.75);
-
-    border: 1px solid rgba(255,255,255,.08);
-
-    border-radius: 20px;
-
-    padding: 24px;
-
-    text-align: center;
-
-    height: 100%;
-
-    backdrop-filter: blur(12px);
-
-    transition: .3s;
-}
-
-.user-stat-card:hover{
-
-    transform: translateY(-4px);
-
-    border-color: rgba(139,92,246,.35);
-
-    box-shadow:
-        0 12px 30px rgba(139,92,246,.15);
-}
-
-.user-stat-card i{
-
-    font-size: 24px;
-
-    color: #8B5CF6;
-
-    margin-bottom: 12px;
-}
-
-.user-stat-card h6{
-
-    color: #cbd5e1;
-
-    margin-bottom: 8px;
-
-    font-weight: 600;
-}
-
-.user-stat-card strong{
-
-    color: white;
-
-    font-size: 24px;
-
-    font-weight: 800;
+    .user-stat-card strong {
+        font-size: 18px;
+    }
 }
