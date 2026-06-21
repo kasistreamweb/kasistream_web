@@ -47,27 +47,19 @@
                 </div>
             </div>
 
-            <!-- SALDO -->
+            <!-- SALDO ROW -->
             <div class="row">
-                <!-- Card Utama - Full width untuk user biasa -->
-                @if(Auth::user()->is_streamer)
-                    <div class="col-lg-7 mb-4">
-                @else
-                    <div class="col-lg-12 mb-4">
-                @endif
-                    <!-- Card Utama - tetap pakai wallet-card sebagai base -->
-                    @if(Auth::user()->is_streamer)
-                        <div class="wallet-card h-100">
-                    @else
-                        <div class="wallet-card user-wallet-card h-100">
-                    @endif
+                <!-- Card Utama - Full width untuk semua user -->
+                <div class="col-lg-12 mb-4">
+                    <!-- Card Utama - pakai wallet-card untuk semua -->
+                    <div class="wallet-card h-100">
                         <div>
-                            <!-- Label Saldo - SAMA UNTUK STREAMER DAN USER -->
+                            <!-- Label Saldo -->
                             <span class="wallet-label">
                                 Saldo Wallet
                             </span>
 
-                            <!-- Jumlah Saldo - PAKAI wallet_balance UNTUK USER -->
+                            <!-- Jumlah Saldo -->
                             <div class="wallet-amount">
                                 @if(Auth::user()->is_streamer)
                                     Rp {{ number_format(Auth::user()->balance) }}
@@ -108,22 +100,7 @@
                 <!-- Kolom Kanan - HANYA UNTUK STREAMER -->
                 @if(Auth::user()->is_streamer)
                     <div class="col-lg-5 wallet-side-column">
-                        <div class="info-card mb-4">
-                            <span>Saldo Tersedia</span>
-                            <h3>
-                                Rp {{ number_format(Auth::user()->balance) }}
-                            </h3>
-                        </div>
-
-                        <!-- Card Menunggu Verifikasi - Hanya untuk Streamer -->
-                        <div class="info-card verification-card">
-                            <span>
-                                Menunggu Verifikasi
-                            </span>
-                            <h3>
-                                Rp {{ number_format($withdrawPending) }}
-                            </h3>
-                        </div>
+                        <!-- Ini hanya untuk streamer, tidak muncul untuk user biasa -->
                     </div>
                 @endif
             </div>
