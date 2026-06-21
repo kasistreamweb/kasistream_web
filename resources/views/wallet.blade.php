@@ -52,7 +52,6 @@
                 <div class="col-lg-7 mb-4">
                     <div class="wallet-card h-100">
                         <div>
-                            <!-- Label saldo dinamis -->
                             <span class="wallet-label">
                                 @if(Auth::user()->is_streamer)
                                     Saldo Wallet
@@ -61,7 +60,6 @@
                                 @endif
                             </span>
 
-                            <!-- Jumlah saldo dinamis -->
                             <div class="wallet-amount">
                                 @if(Auth::user()->is_streamer)
                                     Rp {{ number_format(Auth::user()->balance) }}
@@ -70,7 +68,6 @@
                                 @endif
                             </div>
 
-                            <!-- Status saldo dinamis -->
                             <div class="wallet-meta">
                                 @if(Auth::user()->is_streamer)
                                     @if(Auth::user()->balance >= 15000)
@@ -101,22 +98,15 @@
 
                 <!-- PERBAIKAN SPACING -->
                 <div class="col-lg-5 wallet-side-column">
-                    <div class="info-card mb-4">
-                        <span>
-                            @if(Auth::user()->is_streamer)
-                                Saldo Tersedia
-                            @else
-                                Total Donasi
-                            @endif
-                        </span>
-                        <h3>
-                            @if(Auth::user()->is_streamer)
+                    <!-- HANYA UNTUK STREAMER -->
+                    @if(Auth::user()->is_streamer)
+                        <div class="info-card mb-4">
+                            <span>Saldo Tersedia</span>
+                            <h3>
                                 Rp {{ number_format(Auth::user()->balance) }}
-                            @else
-                                Rp {{ number_format($totalDonasi ?? 0) }}
-                            @endif
-                        </h3>
-                    </div>
+                            </h3>
+                        </div>
+                    @endif
 
                     <!-- Card Menunggu Verifikasi - Hanya untuk Streamer -->
                     @if(Auth::user()->is_streamer)
@@ -175,21 +165,36 @@
                 </div>
             </div>
 
-            <!-- STATISTIK UNTUK USER BIASA -->
+            <!-- STATISTIK UNTUK USER BIASA (DIUBAH) -->
             @unless(Auth::user()->is_streamer)
                 <div class="row mb-4">
-                    <div class="col-md-6">
-                        <div class="action-card">
+                    <div class="col-md-4 mb-3">
+                        <div class="user-stat-card">
                             <i class="fa-solid fa-heart"></i>
-                            <span>Total Donasi</span>
-                            <small>Rp {{ number_format($totalDonasi ?? 0) }}</small>
+                            <h6>Total Donasi</h6>
+                            <strong>
+                                Rp {{ number_format($totalDonasi ?? 0) }}
+                            </strong>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="action-card">
+
+                    <div class="col-md-4 mb-3">
+                        <div class="user-stat-card">
                             <i class="fa-solid fa-users"></i>
-                            <span>Streamer Didukung</span>
-                            <small>{{ $totalStreamerDidukung ?? 0 }} Streamer</small>
+                            <h6>Streamer Didukung</h6>
+                            <strong>
+                                {{ $totalStreamerDidukung ?? 0 }}
+                            </strong>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <div class="user-stat-card">
+                            <i class="fa-solid fa-clock"></i>
+                            <h6>Total Aktivitas</h6>
+                            <strong>
+                                {{ count($transaksi) }}
+                            </strong>
                         </div>
                     </div>
                 </div>
