@@ -40,7 +40,7 @@
                             @if(Auth::user()->is_streamer)
                                 Kelola saldo dan transaksi hasil donasi Anda.
                             @else
-                                Lihat riwayat donasi dan streamer yang Anda dukung.
+                                Kelola saldo dan riwayat transaksi Anda.
                             @endif
                         </p>
                     </div>          
@@ -49,7 +49,12 @@
 
             <!-- SALDO -->
             <div class="row">
-                <div class="col-lg-7 mb-4">
+                <!-- Card Utama - Full width untuk user biasa -->
+                @if(Auth::user()->is_streamer)
+                    <div class="col-lg-7 mb-4">
+                @else
+                    <div class="col-lg-12 mb-4">
+                @endif
                     <!-- Card Utama - tetap pakai wallet-card sebagai base -->
                     @if(Auth::user()->is_streamer)
                         <div class="wallet-card h-100">
@@ -57,12 +62,12 @@
                         <div class="wallet-card user-wallet-card h-100">
                     @endif
                         <div>
-                            <!-- Label Saldo - SEKARANG SAMA UNTUK STREAMER DAN USER -->
+                            <!-- Label Saldo - SAMA UNTUK STREAMER DAN USER -->
                             <span class="wallet-label">
                                 Saldo Wallet
                             </span>
 
-                            <!-- Jumlah Saldo - SEKARANG PAKAI wallet_balance UNTUK USER -->
+                            <!-- Jumlah Saldo - PAKAI wallet_balance UNTUK USER -->
                             <div class="wallet-amount">
                                 @if(Auth::user()->is_streamer)
                                     Rp {{ number_format(Auth::user()->balance) }}
@@ -106,20 +111,17 @@
                     </div>
                 </div>
 
-                <!-- PERBAIKAN SPACING -->
-                <div class="col-lg-5 wallet-side-column">
-                    <!-- HANYA UNTUK STREAMER -->
-                    @if(Auth::user()->is_streamer)
+                <!-- Kolom Kanan - HANYA UNTUK STREAMER -->
+                @if(Auth::user()->is_streamer)
+                    <div class="col-lg-5 wallet-side-column">
                         <div class="info-card mb-4">
                             <span>Saldo Tersedia</span>
                             <h3>
                                 Rp {{ number_format(Auth::user()->balance) }}
                             </h3>
                         </div>
-                    @endif
 
-                    <!-- Card Menunggu Verifikasi - Hanya untuk Streamer -->
-                    @if(Auth::user()->is_streamer)
+                        <!-- Card Menunggu Verifikasi - Hanya untuk Streamer -->
                         <div class="info-card verification-card">
                             <span>
                                 Menunggu Verifikasi
@@ -128,25 +130,14 @@
                                 Rp {{ number_format($withdrawPending) }}
                             </h3>
                         </div>
-                    @endif
-
-                    <!-- Untuk User Biasa - Tampilkan Info Donasi -->
-                    @unless(Auth::user()->is_streamer)
-                        <div class="info-card mb-4">
-                            <span>Total Donasi Diberikan</span>
-                            <h3>
-                                Rp {{ number_format($totalDonasi ?? 0) }}
-                            </h3>
-                        </div>
-                    @endunless
-                </div>
+                    </div>
+                @endif
             </div>
 
-            <!-- ACTION -->
-            <div class="row action-row">
-                <div class="col-md-6 mb-4">
-                    <!-- Tombol Tarik Dana - Hanya untuk Streamer -->
-                    @if(Auth::user()->is_streamer)
+            <!-- ACTION ROW - HANYA UNTUK STREAMER -->
+            @if(Auth::user()->is_streamer)
+                <div class="row action-row">
+                    <div class="col-md-6 mb-4">
                         @if(Auth::user()->balance >= 15000)
                             <a href="/withdraw" class="action-link">
                                 <div class="action-card">
@@ -162,71 +153,18 @@
                                 <small>Minimal Rp 15.000</small>
                             </div>
                         @endif
-                    @else
-                        <!-- Tombol Top Up untuk User Biasa di Action Row -->
-                        <a href="#" class="action-link" onclick="alert('Fitur Top Up akan segera hadir')">
-                            <div class="action-card">
-                                <i class="fa-solid fa-plus"></i>
-                                <span>Top Up Saldo</span>
-                            </div>
-                        </a>
-                    @endif
-                </div>
+                    </div>
 
-                <div class="col-md-6 mb-4">
-                    <!-- Tombol Riwayat Transaksi / Riwayat Donasi -->
-                    @if(Auth::user()->is_streamer)
+                    <div class="col-md-6 mb-4">
                         <a href="/wallet-history" class="action-link">
                             <div class="action-card">
                                 <i class="fa-solid fa-clock-rotate-left"></i>
                                 <span>Riwayat Transaksi</span>
                             </div>
                         </a>
-                    @else
-                        <a href="/riwayat-donasi" class="action-link">
-                            <div class="action-card">
-                                <i class="fa-solid fa-heart"></i>
-                                <span>Riwayat Donasi</span>
-                            </div>
-                        </a>
-                    @endif
-                </div>
-            </div>
-
-            <!-- STATISTIK UNTUK USER BIASA -->
-            @unless(Auth::user()->is_streamer)
-                <div class="row mb-4">
-                    <div class="col-md-4 mb-3">
-                        <div class="user-stat-card">
-                            <i class="fa-solid fa-heart"></i>
-                            <h6>Total Donasi</h6>
-                            <strong>
-                                Rp {{ number_format($totalDonasi ?? 0) }}
-                            </strong>
-                        </div>
-                    </div>
-
-                    <div class="col-md-4 mb-3">
-                        <div class="user-stat-card">
-                            <i class="fa-solid fa-users"></i>
-                            <h6>Streamer Didukung</h6>
-                            <strong>
-                                {{ $totalStreamerDidukung ?? 0 }}
-                            </strong>
-                        </div>
-                    </div>
-
-                    <div class="col-md-4 mb-3">
-                        <div class="user-stat-card">
-                            <i class="fa-solid fa-clock"></i>
-                            <h6>Total Aktivitas</h6>
-                            <strong>
-                                {{ count($transaksi) }}
-                            </strong>
-                        </div>
                     </div>
                 </div>
-            @endunless
+            @endif
 
             <!-- TRANSAKSI -->
             <!-- Transaction Card - tetap pakai transaction-card sebagai base -->
@@ -240,7 +178,7 @@
                     @if(Auth::user()->is_streamer)
                         Transaksi Terakhir
                     @else
-                        Donasi Terakhir
+                        Riwayat Transaksi
                     @endif
                 </h4>
 
@@ -283,7 +221,7 @@
                                     <span class="status-badge info">Donasi</span>
                                 @endif
                             @else
-                                <!-- Untuk user biasa, status donasi -->
+                                <!-- Untuk user biasa, status transaksi -->
                                 @if($item['status'] == 'pending')
                                     <span class="status-badge pending">Menunggu</span>
                                 @elseif($item['status'] == 'approved' || $item['status'] == 'success')
@@ -308,14 +246,14 @@
                             @if(Auth::user()->is_streamer)
                                 Belum Ada Transaksi
                             @else
-                                Belum Ada Donasi
+                                Belum Ada Transaksi
                             @endif
                         </h5>
                         <p>
                             @if(Auth::user()->is_streamer)
                                 Riwayat transaksi akan muncul di sini.
                             @else
-                                Mulai donasi ke streamer favorit Anda!
+                                Transaksi akan muncul di sini setelah Anda melakukan top up atau donasi.
                             @endif
                         </p>
                     </div>
