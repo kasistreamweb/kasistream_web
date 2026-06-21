@@ -200,10 +200,10 @@ body{
 
 .hero-logo{
     position:relative;
-    width:150%;
+    width:110%;
     max-width:750px;
-    left:70px;
-    top:30px;
+    left:140px;
+    top:20px;
     animation:
     floatLogo 5s ease-in-out infinite;
 }
