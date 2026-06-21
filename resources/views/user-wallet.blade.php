@@ -60,16 +60,15 @@
             </div>
 
             <!-- TOP UP BUTTON -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <button
-                        class="btn topup-wallet-btn"
-                        onclick="alert('Fitur Top Up Segera Hadir')"
-                    >
-                        <i class="fa-solid fa-plus me-2"></i>
-                        Top Up Saldo
-                    </button>
-                </div>
+            <div class="mt-4">
+                <button
+                    type="button"
+                    class="user-topup-btn"
+                    onclick="alert('Fitur Top Up akan segera hadir')"
+                >
+                    <i class="fa-solid fa-plus me-2"></i>
+                    Top Up Saldo
+                </button>
             </div>
 
             <!-- TRANSAKSI -->

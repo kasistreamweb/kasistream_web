@@ -558,3 +558,49 @@
 
     align-items:center;
 }
+
+/* ==========================
+   TOP UP BUTTON
+========================== */
+
+.user-topup-btn{
+
+    width:100%;
+
+    height:58px;
+
+    border:none;
+
+    border-radius:18px;
+
+    font-size:18px;
+
+    font-weight:700;
+
+    color:#ffffff;
+
+    background:linear-gradient(
+        135deg,
+        #6366F1,
+        #8B5CF6
+    );
+
+    box-shadow:
+        0 10px 25px rgba(139,92,246,.35);
+
+    transition:.3s;
+}
+
+.user-topup-btn:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:
+        0 15px 35px rgba(139,92,246,.45);
+
+    background:linear-gradient(
+        135deg,
+        #7C3AED,
+        #A855F7
+    );
+}
