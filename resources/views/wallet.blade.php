@@ -57,19 +57,17 @@
                         <div class="wallet-card user-wallet-card h-100">
                     @endif
                         <div>
+                            <!-- Label Saldo - SEKARANG SAMA UNTUK STREAMER DAN USER -->
                             <span class="wallet-label">
-                                @if(Auth::user()->is_streamer)
-                                    Saldo Wallet
-                                @else
-                                    Total Donasi Diberikan
-                                @endif
+                                Saldo Wallet
                             </span>
 
+                            <!-- Jumlah Saldo - SEKARANG PAKAI wallet_balance UNTUK USER -->
                             <div class="wallet-amount">
                                 @if(Auth::user()->is_streamer)
                                     Rp {{ number_format(Auth::user()->balance) }}
                                 @else
-                                    Rp {{ number_format($totalDonasi ?? 0) }}
+                                    Rp {{ number_format(Auth::user()->wallet_balance ?? 0) }}
                                 @endif
                             </div>
 
@@ -90,10 +88,17 @@
                                         </div>
                                     @endif
                                 @else
-                                    <span class="withdraw-status success">
-                                        <i class="fa-solid fa-heart"></i>
-                                        Mendukung {{ $totalStreamerDidukung ?? 0 }} streamer
-                                    </span>
+                                    <!-- Tombol Top Up untuk User Biasa -->
+                                    <div class="mt-3">
+                                        <a
+                                            href="#"
+                                            class="btn btn-light btn-sm topup-btn"
+                                            onclick="alert('Fitur Top Up akan segera hadir')"
+                                        >
+                                            <i class="fa-solid fa-plus me-2"></i>
+                                            Top Up Saldo
+                                        </a>
+                                    </div>
                                 @endif
                             </div>
                         </div>
@@ -124,6 +129,16 @@
                             </h3>
                         </div>
                     @endif
+
+                    <!-- Untuk User Biasa - Tampilkan Info Donasi -->
+                    @unless(Auth::user()->is_streamer)
+                        <div class="info-card mb-4">
+                            <span>Total Donasi Diberikan</span>
+                            <h3>
+                                Rp {{ number_format($totalDonasi ?? 0) }}
+                            </h3>
+                        </div>
+                    @endunless
                 </div>
             </div>
 
@@ -147,6 +162,14 @@
                                 <small>Minimal Rp 15.000</small>
                             </div>
                         @endif
+                    @else
+                        <!-- Tombol Top Up untuk User Biasa di Action Row -->
+                        <a href="#" class="action-link" onclick="alert('Fitur Top Up akan segera hadir')">
+                            <div class="action-card">
+                                <i class="fa-solid fa-plus"></i>
+                                <span>Top Up Saldo</span>
+                            </div>
+                        </a>
                     @endif
                 </div>
 

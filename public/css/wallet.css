@@ -239,3 +239,49 @@
         font-size: 18px;
     }
 }
+
+/* =================================
+   TOPUP BUTTON
+================================= */
+
+.topup-btn {
+    border: none;
+    border-radius: 14px;
+    padding: 10px 18px;
+    font-weight: 600;
+    color: #171533 !important;
+    background: white;
+    transition: .3s;
+}
+
+.topup-btn:hover {
+    transform: translateY(-2px);
+    background: #f8fafc;
+    box-shadow: 0 10px 25px rgba(255, 255, 255, .15);
+}
+
+/* =================================
+   ACTION CARD - TOP UP
+================================= */
+
+.action-card .fa-plus {
+    color: #8B5CF6;
+}
+
+.action-card .fa-plus:hover {
+    transform: scale(1.1);
+    transition: transform .3s ease;
+}
+
+/* =================================
+   WALLET META - TOP UP BUTTON
+================================= */
+
+.wallet-meta .topup-btn {
+    font-size: 14px;
+    padding: 8px 20px;
+}
+
+.wallet-meta .topup-btn i {
+    font-size: 14px;
+}
