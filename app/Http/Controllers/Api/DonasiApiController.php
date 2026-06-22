@@ -154,15 +154,13 @@ class DonasiApiController extends Controller
             'status' => 'pending',
         ]);
 
-        // ── PANGGIL API ONOPAY ──
+        // ── PANGGIL API ONOPAY (TANPA customer_name & customer_phone) ──
         $response = Http::post(
             'https://www.onopay.web.id/api/v1/payment/qr/generate',
             [
                 'phone_number' => $streamer->onopay_phone,
                 'amount' => $grandTotal,
                 'description' => 'Donasi KAistream #' . $donasi->id,
-                'customer_name' => $user->name,
-                'customer_phone' => $user->onopay_phone,
                 'qr_mode' => 'single_use'
             ]
         );
@@ -181,7 +179,7 @@ class DonasiApiController extends Controller
                 'onopay_response' => $onopayResponse,
                 'streamer_phone' => $streamer->onopay_phone,
                 'amount' => $grandTotal,
-            ], 500);
+            ], $response->status()); // ── PERUBAHAN: status code dari OnoPay
         }
 
         $result = $response->json();
@@ -370,15 +368,13 @@ class DonasiApiController extends Controller
             'status' => 'pending',
         ]);
 
-        // ── PANGGIL API ONOPAY ──
+        // ── PANGGIL API ONOPAY (TANPA customer_name & customer_phone) ──
         $response = Http::post(
             'https://www.onopay.web.id/api/v1/payment/qr/generate',
             [
                 'phone_number' => $streamer->onopay_phone,
                 'amount' => $grandTotal,
                 'description' => 'Donasi KAistream #' . $donasi->id,
-                'customer_name' => $request->guest_name,
-                'customer_phone' => $request->guest_phone,
                 'qr_mode' => 'single_use'
             ]
         );
@@ -397,7 +393,7 @@ class DonasiApiController extends Controller
                 'onopay_response' => $onopayResponse,
                 'streamer_phone' => $streamer->onopay_phone,
                 'amount' => $grandTotal,
-            ], 500);
+            ], $response->status()); // ── PERUBAHAN: status code dari OnoPay
         }
 
         $result = $response->json();
