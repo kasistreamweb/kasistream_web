@@ -109,26 +109,42 @@ class DonasiApiController extends Controller
         ]);
     }
 
+    // ── DONATE QRIS (USER LOGIN) ──
     public function donateQris(Request $request)
     {
         $request->validate([
-            'streamer_id' => 'required',
+            'streamer_id' => 'required|exists:users,id',
             'nominal' => 'required|numeric|min:1000',
-            'pesan' => 'nullable'
+            'pesan' => 'nullable|string|max:150',
         ]);
+
+        $user = auth()->user();
+
+        // ── CEK ONOPAY PHONE USER ──
+        if (!$user->onopay_phone) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Nomor OnoPay user tidak ditemukan. Silakan daftarkan nomor OnoPay terlebih dahulu.'
+            ], 400);
+        }
 
         $streamer = User::findOrFail(
             $request->streamer_id
         );
 
-        $adminFee = 1500;
+        // ── CEK ONOPAY PHONE STREAMER ──
+        if (!$streamer->onopay_phone) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Streamer belum memiliki nomor OnoPay yang terdaftar.'
+            ], 400);
+        }
 
-        $grandTotal =
-            $request->nominal +
-            $adminFee;
+        $adminFee = 1500;
+        $grandTotal = $request->nominal + $adminFee;
 
         $donasi = Donasi::create([
-            'user_id' => auth()->id(),
+            'user_id' => $user->id,
             'streamer_id' => $streamer->id,
             'nominal' => $request->nominal,
             'pesan' => $request->pesan,
@@ -138,36 +154,31 @@ class DonasiApiController extends Controller
             'status' => 'pending',
         ]);
 
+        // ── PANGGIL API ONOPAY ──
         $response = Http::post(
             'https://www.onopay.web.id/api/v1/payment/qr/generate',
             [
-                'phone_number' =>
-                    $streamer->onopay_phone,
-
-                'amount' =>
-                    $grandTotal,
-
-                'description' =>
-                    'Donasi KAistream #' .
-                    $donasi->id,
-
-                'customer_name' =>
-                    auth()->user()->name,
-
-                'customer_phone' =>
-                    auth()->user()->onopay_phone,
-
-                'qr_mode' =>
-                    'single_use'
+                'phone_number' => $streamer->onopay_phone,
+                'amount' => $grandTotal,
+                'description' => 'Donasi KAistream #' . $donasi->id,
+                'customer_name' => $user->name,
+                'customer_phone' => $user->onopay_phone,
+                'qr_mode' => 'single_use'
             ]
         );
 
-        // ── PERUBAHAN: Tambahkan debug detail ──
+        // ── CEK RESPONSE ONOPAY ──
         if (!$response->successful()) {
+            $onopayResponse = $response->json();
+
+            // Hapus donasi yang gagal
+            $donasi->delete();
+
             return response()->json([
                 'success' => false,
+                'message' => 'Gagal membuat QRIS dari OnoPay',
                 'status_code' => $response->status(),
-                'onopay_response' => $response->json(),
+                'onopay_response' => $onopayResponse,
                 'streamer_phone' => $streamer->onopay_phone,
                 'amount' => $grandTotal,
             ], 500);
@@ -175,22 +186,27 @@ class DonasiApiController extends Controller
 
         $result = $response->json();
 
+        // ── CEK APAKAH DATA QRIS ADA ──
+        if (!isset($result['data']) || empty($result['data']['qr_code'])) {
+            $donasi->delete();
+
+            return response()->json([
+                'success' => false,
+                'message' => 'QR Code tidak ditemukan dalam response OnoPay',
+                'onopay_response' => $result,
+            ], 500);
+        }
+
+        // ── UPDATE DONASI DENGAN QR CODE ──
         $donasi->update([
-
-            'qr_code' =>
-                $result['data']['qr_code']
-                    ?? null,
-
-            'qr_image' =>
-                $result['data']['qr_image']
-                    ?? null,
-
-            'onopay_receiver' =>
-                $streamer->onopay_phone,
+            'qr_code' => $result['data']['qr_code'] ?? null,
+            'qr_image' => $result['data']['qr_image'] ?? null,
+            'onopay_receiver' => $streamer->onopay_phone,
         ]);
 
         return response()->json([
             'success' => true,
+            'message' => 'QRIS berhasil dibuat',
             'data' => $donasi
         ]);
     }
@@ -330,58 +346,55 @@ class DonasiApiController extends Controller
             $request->streamer_id
         );
 
-        $adminFee = 1500;
+        // ── CEK ONOPAY PHONE STREAMER ──
+        if (!$streamer->onopay_phone) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Streamer belum memiliki nomor OnoPay yang terdaftar.'
+            ], 400);
+        }
 
-        $grandTotal =
-            $request->nominal +
-            $adminFee;
+        $adminFee = 1500;
+        $grandTotal = $request->nominal + $adminFee;
 
         $donasi = Donasi::create([
             'user_id' => null,
             'guest_name' => $request->guest_name,
             'guest_phone' => $request->guest_phone,
-
             'streamer_id' => $streamer->id,
             'nominal' => $request->nominal,
             'pesan' => $request->pesan,
-
             'admin_fee' => $adminFee,
             'grand_total' => $grandTotal,
-
             'payment_method' => 'qris',
             'status' => 'pending',
         ]);
 
+        // ── PANGGIL API ONOPAY ──
         $response = Http::post(
             'https://www.onopay.web.id/api/v1/payment/qr/generate',
             [
-                'phone_number' =>
-                    $streamer->onopay_phone,
-
-                'amount' =>
-                    $grandTotal,
-
-                'description' =>
-                    'Donasi KAistream #' .
-                    $donasi->id,
-
-                'customer_name' =>
-                    $request->guest_name,
-
-                'customer_phone' =>
-                    $request->guest_phone,
-
-                'qr_mode' =>
-                    'single_use'
+                'phone_number' => $streamer->onopay_phone,
+                'amount' => $grandTotal,
+                'description' => 'Donasi KAistream #' . $donasi->id,
+                'customer_name' => $request->guest_name,
+                'customer_phone' => $request->guest_phone,
+                'qr_mode' => 'single_use'
             ]
         );
 
-        // ── PERUBAHAN: Tambahkan debug detail ──
+        // ── CEK RESPONSE ONOPAY ──
         if (!$response->successful()) {
+            $onopayResponse = $response->json();
+
+            // Hapus donasi yang gagal
+            $donasi->delete();
+
             return response()->json([
                 'success' => false,
+                'message' => 'Gagal membuat QRIS dari OnoPay',
                 'status_code' => $response->status(),
-                'onopay_response' => $response->json(),
+                'onopay_response' => $onopayResponse,
                 'streamer_phone' => $streamer->onopay_phone,
                 'amount' => $grandTotal,
             ], 500);
@@ -389,21 +402,27 @@ class DonasiApiController extends Controller
 
         $result = $response->json();
 
+        // ── CEK APAKAH DATA QRIS ADA ──
+        if (!isset($result['data']) || empty($result['data']['qr_code'])) {
+            $donasi->delete();
+
+            return response()->json([
+                'success' => false,
+                'message' => 'QR Code tidak ditemukan dalam response OnoPay',
+                'onopay_response' => $result,
+            ], 500);
+        }
+
+        // ── UPDATE DONASI DENGAN QR CODE ──
         $donasi->update([
-            'qr_code' =>
-                $result['data']['qr_code']
-                    ?? null,
-
-            'qr_image' =>
-                $result['data']['qr_image']
-                    ?? null,
-
-            'onopay_receiver' =>
-                $streamer->onopay_phone,
+            'qr_code' => $result['data']['qr_code'] ?? null,
+            'qr_image' => $result['data']['qr_image'] ?? null,
+            'onopay_receiver' => $streamer->onopay_phone,
         ]);
 
         return response()->json([
             'success' => true,
+            'message' => 'QRIS berhasil dibuat',
             'data' => $donasi
         ]);
     }
