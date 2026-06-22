@@ -355,6 +355,22 @@ class DonasiApiController extends Controller
         $adminFee = 1500;
         $grandTotal = $request->nominal + $adminFee;
 
+        // ── TAMBAHKAN: Ambil saldo streamer sebelum QR dibuat ──
+        $balanceResponse = Http::post(
+            'https://onopay.web.id/api/v1/merchant/check-balance',
+            [
+                'phone_number' => $streamer->onopay_phone,
+            ]
+        );
+
+        $balanceBefore = 0;
+
+        if ($balanceResponse->successful()) {
+            $balanceBefore = (int)(
+                $balanceResponse->json()['data']['balance'] ?? 0
+            );
+        }
+
         // ── PERUBAHAN: Hapus guest_phone dari create ──
         $donasi = Donasi::create([
             'user_id' => null,
@@ -409,11 +425,12 @@ class DonasiApiController extends Controller
             ], 500);
         }
 
-        // ── UPDATE DONASI DENGAN QR CODE ──
+        // ── PERUBAHAN: UPDATE DONASI DENGAN QR CODE DAN SALDO SEBELUM ──
         $donasi->update([
             'qr_code' => $result['data']['qr_code'] ?? null,
             'qr_image' => $result['data']['qr_image'] ?? null,
             'onopay_receiver' => $streamer->onopay_phone,
+            'onopay_balance_before' => $balanceBefore, // ── TAMBAHKAN INI ──
         ]);
 
         return response()->json([
@@ -434,7 +451,6 @@ class DonasiApiController extends Controller
     {
         $donasi = Donasi::findOrFail($id);
 
-        // jika sudah success
         if (
             $donasi->status === 'success' ||
             $donasi->qris_status === 'paid'
@@ -446,24 +462,69 @@ class DonasiApiController extends Controller
             ]);
         }
 
-        // update status transaksi guest
-        $donasi->status = 'success';
-        $donasi->qris_status = 'paid';
-        $donasi->save();
-
-        // Tambah saldo streamer
-        $streamer = User::findOrFail(
-            $donasi->streamer_id
+        $balanceResponse = Http::post(
+            'https://onopay.web.id/api/v1/merchant/check-balance',
+            [
+                'phone_number' => $donasi->onopay_receiver,
+            ]
         );
 
-        $streamer->balance += $donasi->nominal;
-        $streamer->total_donasi += $donasi->nominal;
-        $streamer->save();
+        if (!$balanceResponse->successful()) {
+            return response()->json([
+                'success' => true,
+                'status' => 'pending',
+                'qris_status' => 'pending',
+            ]);
+        }
+
+        $currentBalance = (int)(
+            $balanceResponse->json()['data']['balance'] ?? 0
+        );
+
+        $beforeBalance = (int)(
+            $donasi->onopay_balance_before ?? 0
+        );
+
+        $diff = $currentBalance - $beforeBalance;
+
+        if ($diff >= $donasi->nominal) {
+            DB::beginTransaction();
+
+            try {
+                $donasi->status = 'success';
+                $donasi->qris_status = 'paid';
+                $donasi->save();
+
+                $streamer = User::findOrFail(
+                    $donasi->streamer_id
+                );
+
+                $streamer->balance += $donasi->nominal;
+                $streamer->total_donasi += $donasi->nominal;
+                $streamer->save();
+
+                DB::commit();
+
+                return response()->json([
+                    'success' => true,
+                    'status' => 'success',
+                    'qris_status' => 'paid',
+                ]);
+
+            } catch (\Exception $e) {
+                DB::rollBack();
+
+                return response()->json([
+                    'success' => false,
+                    'message' => $e->getMessage(),
+                ], 500);
+            }
+        }
 
         return response()->json([
             'success' => true,
-            'status' => 'success',
-            'qris_status' => 'paid',
+            'status' => 'pending',
+            'qris_status' => 'pending',
         ]);
     }
 
