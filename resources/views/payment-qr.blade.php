@@ -215,35 +215,40 @@
                         </div>
 
                         @if(isset($isGuest) && $isGuest)
+                        <!-- ── INFO GUEST ── -->
                         <div class="mt-3 alert alert-info">
                             <i class="fa-solid fa-info-circle me-2"></i>
-                            <strong>Info Guest:</strong> Setelah melakukan pembayaran, klik tombol 
-                            "Cek Status Pembayaran" untuk memperbarui status donasi Anda.
+                            <strong>Info Guest:</strong> 
+                            Klik tombol <strong>"Bayar Sekarang"</strong> untuk melakukan pembayaran.
+                            <br>
+                            <small>
+                                <i class="fa-solid fa-wallet me-1"></i>
+                                Dana akan langsung ditarik dari saldo OnoPay Anda.
+                                Pastikan saldo mencukupi.
+                            </small>
                         </div>
-                        @endif
 
                         <div class="mt-4">
-
-                            <!-- ── TOMBOL CEK STATUS PEMBAYARAN ── -->
-                            <button
-                                onclick="checkPayment()"
-                                id="btnCheckPayment"
-                                class="btn btn-primary w-100 mb-2"
+                            <button 
+                                onclick="guestPayNow()" 
+                                id="btnGuestPay"
+                                class="btn btn-success w-100 mb-2"
                             >
-                                <i class="fa-solid fa-rotate me-2"></i>
-                                Cek Status Pembayaran
+                                <i class="fa-solid fa-wallet me-2"></i>
+                                Bayar Sekarang (Rp {{ number_format($donasi->grand_total) }})
                             </button>
-
-                            <a
-                                href="/riwayat-donasi"
-                                class="btn btn-outline-light w-100"
-                            >
-
-                                Kembali
-
-                            </a>
-
+                            
+                            <a href="/riwayat-donasi" class="btn btn-outline-light w-100">Kembali</a>
                         </div>
+                        @else
+                        <!-- ── USER LOGIN PAYMENT ── -->
+                        <div class="mt-4">
+                            <button onclick="checkPayment()" id="btnCheckPayment" class="btn btn-primary w-100 mb-2">
+                                <i class="fa-solid fa-rotate me-2"></i>Cek Status Pembayaran
+                            </button>
+                            <a href="/riwayat-donasi" class="btn btn-outline-light w-100">Kembali</a>
+                        </div>
+                        @endif
 
                     </div>
 
@@ -295,9 +300,7 @@ async function getBalance() {
 
 // ── AUTO CHECK PAYMENT (HANYA UNTUK USER LOGIN) ──
 async function checkPaymentAuto() {
-    // ── GUEST: SKIP AUTO CHECK ──
     if (isGuest) return;
-    
     if (baselineBalance === 0) return;
 
     const result = await getBalance();
@@ -334,7 +337,65 @@ async function checkPaymentAuto() {
     }
 }
 
-// ── CEK STATUS PEMBAYARAN ──
+// ── GUEST PAY NOW (TANPA SCAN QR - LANGSUNG DEBIT) ──
+let isProcessing = false;
+
+async function guestPayNow() {
+    if (isProcessing) return;
+    isProcessing = true;
+
+    const btn = document.getElementById('btnGuestPay');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i>Memproses Pembayaran...';
+    btn.disabled = true;
+
+    try {
+        const response = await fetch('/guest/pay-onopay/' + donasiId, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const result = await response.json();
+
+        console.log('GUEST Pay Result:', result);
+
+        if (result.success) {
+            // ── STATUS BERHASIL ──
+            const statusEl = document.getElementById('paymentStatus');
+            const statusText = document.getElementById('statusText');
+            
+            if (statusEl) {
+                statusEl.className = 'badge bg-success';
+                statusEl.innerText = 'PEMBAYARAN BERHASIL';
+            }
+            if (statusText) {
+                statusText.innerText = 'PEMBAYARAN BERHASIL';
+            }
+            
+            alert('✅ ' + result.message);
+            window.location.href = '/payment-success/' + donasiId;
+        } else {
+            // ── GAGAL ──
+            alert('❌ ' + (result.message || 'Pembayaran gagal. Silakan coba lagi.'));
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }
+
+    } catch (e) {
+        console.error('Error:', e);
+        alert('❌ Terjadi kesalahan. Silakan coba lagi.');
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }
+
+    isProcessing = false;
+}
+
+// ── CEK STATUS PEMBAYARAN (USER LOGIN) ──
 let checking = false;
 
 async function checkPayment() {
@@ -342,65 +403,33 @@ async function checkPayment() {
     checking = true;
 
     const btn = document.getElementById('btnCheckPayment');
-    const originalText = btn.innerHTML;
-    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i>Memeriksa...';
-    btn.disabled = true;
+    if (btn) {
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i>Memeriksa...';
+        btn.disabled = true;
+    }
 
     try {
-        let response;
-        let result;
+        const response = await fetch('/check-payment/' + donasiId);
+        const result = await response.json();
 
-        if (isGuest) {
-            // ── GUEST: PAKAI guest-pay-onopay ──
-            console.log('GUEST: Calling guest-pay-onopay...');
-            
-            response = await fetch('/guest/pay-onopay/' + donasiId, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            });
-            result = await response.json();
+        console.log('Check Payment Result:', result);
 
-            console.log('GUEST Pay Onopay Result:', result);
+        const statusEl = document.getElementById('paymentStatus');
+        const statusText = document.getElementById('statusText');
 
-            if (result.success) {
-                // ── STATUS BERHASIL ──
-                document.getElementById('paymentStatus').className = 'badge bg-success';
-                document.getElementById('paymentStatus').innerText = 'PEMBAYARAN BERHASIL';
-                document.getElementById('statusText').innerText = 'PEMBAYARAN BERHASIL';
-                
-                // Redirect ke halaman sukses
-                window.location.href = '/payment-success/' + donasiId;
-                return;
-            } else {
-                // ── GAGAL / PENDING ──
-                alert(result.message || 'Pembayaran masih pending. Silakan coba lagi.');
-            }
-
-        } else {
-            // ── USER LOGIN: PAKAI check-payment ──
-            console.log('USER: Calling check-payment...');
-            
-            response = await fetch('/check-payment/' + donasiId);
-            result = await response.json();
-
-            console.log('USER Check Payment Result:', result);
-
-            const statusEl = document.getElementById('paymentStatus');
-            const statusText = document.getElementById('statusText');
-
-            if (result.data && (result.data.status === 'success' || result.data.status === 'paid')) {
+        if (result.data && (result.data.status === 'success' || result.data.status === 'paid')) {
+            if (statusEl) {
                 statusEl.className = 'badge bg-success';
                 statusEl.innerText = 'PEMBAYARAN BERHASIL';
-                statusText.innerText = 'PEMBAYARAN BERHASIL';
-                window.location.href = '/payment-success/' + donasiId;
-                return;
-            } else {
-                alert('Pembayaran masih pending. Silakan coba lagi.');
             }
+            if (statusText) {
+                statusText.innerText = 'PEMBAYARAN BERHASIL';
+            }
+            window.location.href = '/payment-success/' + donasiId;
+            return;
+        } else {
+            alert('Pembayaran masih pending. Silakan coba lagi.');
         }
 
     } catch (e) {
@@ -408,8 +437,10 @@ async function checkPayment() {
         alert('Terjadi kesalahan. Silakan coba lagi.');
     } finally {
         checking = false;
-        btn.innerHTML = originalText;
-        btn.disabled = false;
+        if (btn) {
+            btn.innerHTML = '<i class="fa-solid fa-rotate me-2"></i>Cek Status Pembayaran';
+            btn.disabled = false;
+        }
     }
 }
 
@@ -420,10 +451,8 @@ async function checkInitialStatus() {
         let result;
 
         if (isGuest) {
-            // ── GUEST: PAKAI guest-check-payment ──
             response = await fetch('/guest/check-payment/' + donasiId);
         } else {
-            // ── USER: PAKAI check-payment ──
             response = await fetch('/check-payment/' + donasiId);
         }
         
@@ -444,12 +473,7 @@ checkInitialStatus();
 if (!isGuest) {
     console.log('USER LOGIN: Auto check enabled (every 5 seconds)');
     setInterval(checkPaymentAuto, 5000);
-} else {
-    console.log('GUEST: Auto check disabled (manual only)');
-}
-
-// ── AUTO CHECK STATUS SETIAP 5 DETIK (HANYA UNTUK USER LOGIN) ──
-if (!isGuest) {
+    
     setInterval(async function() {
         try {
             const response = await fetch('/check-payment/' + donasiId);
@@ -462,6 +486,8 @@ if (!isGuest) {
             console.error('Auto check error:', e);
         }
     }, 5000);
+} else {
+    console.log('GUEST: Auto check disabled (manual payment only)');
 }
 </script>
 

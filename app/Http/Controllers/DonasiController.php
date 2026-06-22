@@ -472,7 +472,7 @@ class DonasiController extends Controller
         }
     }
 
-    // ── GUEST PAY ONOPAY (MANUAL CHECK) ──
+    // ── GUEST PAY ONOPAY (TANPA SCAN QR - LANGSUNG DEBIT) ──
     public function guestPayOnopay($id)
     {
         $donasi = Donasi::findOrFail($id);
@@ -481,7 +481,7 @@ class DonasiController extends Controller
         if ($donasi->status == 'success') {
             return response()->json([
                 'success' => true,
-                'message' => 'Sudah dibayar'
+                'message' => 'Pembayaran sudah berhasil'
             ]);
         }
 
@@ -495,16 +495,49 @@ class DonasiController extends Controller
             ], 400);
         }
 
-        if (!$donasi->qr_code) {
+        // ── AMBIL STREAMER ──
+        $streamer = User::findOrFail($donasi->streamer_id);
+        $receiverPhone = $streamer->onopay_phone;
+
+        if (!$receiverPhone) {
             return response()->json([
                 'success' => false,
-                'message' => 'QR Code tidak ditemukan.'
+                'message' => 'Nomor OnoPay streamer tidak ditemukan.'
             ], 400);
         }
 
         try {
-            // ── PANGGIL API ONOPAY ──
-            $response = Http::post(
+            // ── 1. CEK SALDO GUEST SEBELUM ──
+            $balanceBefore = $this->getOnoPayBalance($payerPhone);
+            
+            \Log::info('GUEST PAY - BALANCE BEFORE', [
+                'guest_phone' => $payerPhone,
+                'balance' => $balanceBefore,
+                'donasi_id' => $donasi->id
+            ]);
+
+            // ── 2. CEK APAKAH SALDO MENCUKUPI ──
+            if ($balanceBefore < $donasi->grand_total) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Saldo OnoPay tidak mencukupi. Saldo: Rp ' . number_format($balanceBefore)
+                ], 400);
+            }
+
+            // ── 3. CEK APAKAH QR CODE MASIH VALID ──
+            $createdAt = $donasi->created_at;
+            $expiredAt = $createdAt->addMinutes(15);
+            $now = now();
+
+            if ($now > $expiredAt) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'QR Code sudah kedaluwarsa (15 menit). Silakan donasi ulang.'
+                ], 400);
+            }
+
+            // ── 4. LAKUKAN PEMBAYARAN VIA ONOPAY ──
+            $response = Http::timeout(30)->post(
                 'https://www.onopay.web.id/api/v1/payment/qr/pay',
                 [
                     'qr_code' => $donasi->qr_code,
@@ -512,52 +545,117 @@ class DonasiController extends Controller
                 ]
             );
 
-            \Log::info('GUEST ONOPAY PAY', [
+            \Log::info('GUEST ONOPAY PAY RESPONSE', [
                 'status' => $response->status(),
                 'body' => $response->body(),
+                'donasi_id' => $donasi->id
             ]);
 
             $result = $response->json();
 
-            // ── CEK RESPONSE ONOPAY ──
-            if (!$response->successful() || !isset($result['success']) || !$result['success']) {
-                return response()->json([
-                    'success' => false,
-                    'message' => $result['message'] ?? 'Pembayaran gagal. Silakan coba lagi.'
-                ], 400);
+            // ── 5. CEK RESPONSE ONOPAY ──
+            $isPaid = false;
+
+            if ($response->successful() && isset($result['success']) && $result['success'] === true) {
+                $isPaid = true;
             }
 
-            // ── KONFIRMASI PEMBAYARAN ──
-            DB::beginTransaction();
+            if (isset($result['data']['status']) && 
+                ($result['data']['status'] === 'paid' || $result['data']['status'] === 'success')) {
+                $isPaid = true;
+            }
 
-            $donasi->update([
-                'status' => 'success',
-                'qris_status' => 'paid'
+            // ── 6. CEK SALDO SETELAH PEMBAYARAN ──
+            $balanceAfter = $this->getOnoPayBalance($payerPhone);
+            
+            $diff = $balanceBefore - $balanceAfter;
+            
+            \Log::info('GUEST PAY - BALANCE CHECK', [
+                'guest_phone' => $payerPhone,
+                'balance_before' => $balanceBefore,
+                'balance_after' => $balanceAfter,
+                'diff' => $diff,
+                'expected' => $donasi->grand_total,
+                'donasi_id' => $donasi->id
             ]);
 
-            $streamer = User::findOrFail($donasi->streamer_id);
-            $streamer->balance += $donasi->nominal;
-            $streamer->total_donasi += $donasi->nominal;
-            $streamer->save();
+            // ── 7. VALIDASI: PASTIKAN SALDO BERKURANG ──
+            if ($diff >= $donasi->grand_total || $isPaid) {
+                
+                // ── KONFIRMASI PEMBAYARAN ──
+                DB::beginTransaction();
 
-            DB::commit();
+                $donasi->update([
+                    'status' => 'success',
+                    'qris_status' => 'paid'
+                ]);
 
+                // Tambah saldo streamer
+                $streamer->balance += $donasi->nominal;
+                $streamer->total_donasi += $donasi->nominal;
+                $streamer->save();
+
+                DB::commit();
+
+                \Log::info('GUEST PAY - SUCCESS', [
+                    'donasi_id' => $donasi->id,
+                    'guest_phone' => $payerPhone,
+                    'amount' => $donasi->nominal
+                ]);
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Pembayaran berhasil! Saldo OnoPay Anda telah berkurang Rp ' . number_format($donasi->grand_total)
+                ]);
+            }
+
+            // ── 8. BELUM TERDETEKSI ──
             return response()->json([
-                'success' => true,
-                'message' => 'Pembayaran berhasil!'
-            ]);
+                'success' => false,
+                'message' => 'Pembayaran belum terdeteksi. Silakan coba lagi.'
+            ], 400);
 
         } catch (\Exception $e) {
             DB::rollBack();
 
-            \Log::error('GUEST ONOPAY ERROR', [
-                'message' => $e->getMessage()
+            \Log::error('GUEST PAY ERROR', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'donasi_id' => $donasi->id
             ]);
 
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage()
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
             ], 500);
+        }
+    }
+
+    // ── HELPER: GET ONOPAY BALANCE ──
+    private function getOnoPayBalance($phoneNumber)
+    {
+        try {
+            $response = Http::timeout(10)->withHeaders([
+                'Accept' => 'application/json',
+                'Content-Type' => 'application/json',
+            ])->post(
+                'https://onopay.web.id/api/v1/merchant/check-balance',
+                ['phone_number' => $phoneNumber]
+            );
+
+            $result = $response->json();
+            
+            if (isset($result['data']['balance'])) {
+                return (int) $result['data']['balance'];
+            }
+            
+            return 0;
+        } catch (\Exception $e) {
+            \Log::error('GET ONOPAY BALANCE ERROR', [
+                'phone' => $phoneNumber,
+                'error' => $e->getMessage()
+            ]);
+            return 0;
         }
     }
 
