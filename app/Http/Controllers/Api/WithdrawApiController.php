@@ -107,7 +107,7 @@ class WithdrawApiController extends Controller
         ]);
     }
 
-    // ── METHOD: CEK SALDO ONOPAY (UPDATED) ──
+    // ── METHOD: CEK SALDO ONOPAY ──
     public function onopayBalance(Request $request)
     {
         $user = $request->user();
@@ -130,10 +130,10 @@ class WithdrawApiController extends Controller
                 ]
             );
 
-            return response()->json([
-                'user_phone' => $user->onopay_phone,
-                'onopay_response' => $response->json(),
-            ]);
+            // ── KEMBALIKAN RESPONSE BERSIH ──
+            return response()->json(
+                $response->json()
+            );
 
         } catch (\Exception $e) {
             return response()->json([
