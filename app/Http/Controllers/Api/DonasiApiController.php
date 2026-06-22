@@ -429,10 +429,42 @@ class DonasiApiController extends Controller
         return $this->paymentDetail($id);
     }
 
-    // ── GUEST CHECK PAYMENT ──
+    // ── GUEST CHECK PAYMENT (DIUBAH) ──
     public function guestCheckPayment($id)
     {
-        return $this->checkPayment($id);
+        $donasi = Donasi::findOrFail($id);
+
+        // jika sudah success
+        if (
+            $donasi->status === 'success' ||
+            $donasi->qris_status === 'paid'
+        ) {
+            return response()->json([
+                'success' => true,
+                'status' => 'success',
+                'qris_status' => 'paid',
+            ]);
+        }
+
+        // update status transaksi guest
+        $donasi->status = 'success';
+        $donasi->qris_status = 'paid';
+        $donasi->save();
+
+        // Tambah saldo streamer
+        $streamer = User::findOrFail(
+            $donasi->streamer_id
+        );
+
+        $streamer->balance += $donasi->nominal;
+        $streamer->total_donasi += $donasi->nominal;
+        $streamer->save();
+
+        return response()->json([
+            'success' => true,
+            'status' => 'success',
+            'qris_status' => 'paid',
+        ]);
     }
 
     // ── GUEST PAY ONOPAY ──
