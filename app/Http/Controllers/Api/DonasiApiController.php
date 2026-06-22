@@ -332,10 +332,11 @@ class DonasiApiController extends Controller
     // ── GUEST DONATE QRIS ──
     public function guestDonateQris(Request $request)
     {
-        // ── PERUBAHAN: Hapus guest_phone dari validasi ──
+        // ── KEMBALIKAN: guest_phone ke validasi ──
         $request->validate([
             'streamer_id' => 'required|exists:users,id',
             'guest_name' => 'required|string|max:100',
+            'guest_phone' => 'required|string|max:20', // ── KEMBALIKAN ──
             'nominal' => 'required|numeric|min:1000',
             'pesan' => 'nullable|max:150',
         ]);
@@ -355,26 +356,11 @@ class DonasiApiController extends Controller
         $adminFee = 1500;
         $grandTotal = $request->nominal + $adminFee;
 
-        // ── TAMBAHKAN: Ambil saldo streamer sebelum QR dibuat ──
-        $balanceResponse = Http::post(
-            'https://onopay.web.id/api/v1/merchant/check-balance',
-            [
-                'phone_number' => $streamer->onopay_phone,
-            ]
-        );
-
-        $balanceBefore = 0;
-
-        if ($balanceResponse->successful()) {
-            $balanceBefore = (int)(
-                $balanceResponse->json()['data']['balance'] ?? 0
-            );
-        }
-
-        // ── PERUBAHAN: Hapus guest_phone dari create ──
+        // ── KEMBALIKAN: guest_phone ke create donasi ──
         $donasi = Donasi::create([
             'user_id' => null,
             'guest_name' => $request->guest_name,
+            'guest_phone' => $request->guest_phone, // ── KEMBALIKAN ──
             'streamer_id' => $streamer->id,
             'nominal' => $request->nominal,
             'pesan' => $request->pesan,
@@ -425,12 +411,12 @@ class DonasiApiController extends Controller
             ], 500);
         }
 
-        // ── PERUBAHAN: UPDATE DONASI DENGAN QR CODE DAN SALDO SEBELUM ──
+        // ── HAPUS: onopay_balance_before ──
         $donasi->update([
             'qr_code' => $result['data']['qr_code'] ?? null,
             'qr_image' => $result['data']['qr_image'] ?? null,
             'onopay_receiver' => $streamer->onopay_phone,
-            'onopay_balance_before' => $balanceBefore, // ── TAMBAHKAN INI ──
+            // ── HAPUS: 'onopay_balance_before' => $balanceBefore ──
         ]);
 
         return response()->json([
@@ -446,86 +432,10 @@ class DonasiApiController extends Controller
         return $this->paymentDetail($id);
     }
 
-    // ── GUEST CHECK PAYMENT (DIUBAH) ──
+    // ── GUEST CHECK PAYMENT (KEMBALIKAN KE VERSI AWAL) ──
     public function guestCheckPayment($id)
     {
-        $donasi = Donasi::findOrFail($id);
-
-        if (
-            $donasi->status === 'success' ||
-            $donasi->qris_status === 'paid'
-        ) {
-            return response()->json([
-                'success' => true,
-                'status' => 'success',
-                'qris_status' => 'paid',
-            ]);
-        }
-
-        $balanceResponse = Http::post(
-            'https://onopay.web.id/api/v1/merchant/check-balance',
-            [
-                'phone_number' => $donasi->onopay_receiver,
-            ]
-        );
-
-        if (!$balanceResponse->successful()) {
-            return response()->json([
-                'success' => true,
-                'status' => 'pending',
-                'qris_status' => 'pending',
-            ]);
-        }
-
-        $currentBalance = (int)(
-            $balanceResponse->json()['data']['balance'] ?? 0
-        );
-
-        $beforeBalance = (int)(
-            $donasi->onopay_balance_before ?? 0
-        );
-
-        $diff = $currentBalance - $beforeBalance;
-
-        if ($diff >= $donasi->nominal) {
-            DB::beginTransaction();
-
-            try {
-                $donasi->status = 'success';
-                $donasi->qris_status = 'paid';
-                $donasi->save();
-
-                $streamer = User::findOrFail(
-                    $donasi->streamer_id
-                );
-
-                $streamer->balance += $donasi->nominal;
-                $streamer->total_donasi += $donasi->nominal;
-                $streamer->save();
-
-                DB::commit();
-
-                return response()->json([
-                    'success' => true,
-                    'status' => 'success',
-                    'qris_status' => 'paid',
-                ]);
-
-            } catch (\Exception $e) {
-                DB::rollBack();
-
-                return response()->json([
-                    'success' => false,
-                    'message' => $e->getMessage(),
-                ], 500);
-            }
-        }
-
-        return response()->json([
-            'success' => true,
-            'status' => 'pending',
-            'qris_status' => 'pending',
-        ]);
+        return $this->checkPayment($id);
     }
 
     // ── GUEST PAY ONOPAY ──
