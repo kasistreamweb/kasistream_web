@@ -154,7 +154,7 @@ class DonasiApiController extends Controller
             'status' => 'pending',
         ]);
 
-        // ── PANGGIL API ONOPAY (TANPA customer_name & customer_phone) ──
+        // ── PANGGIL API ONOPAY ──
         $response = Http::post(
             'https://www.onopay.web.id/api/v1/payment/qr/generate',
             [
@@ -179,7 +179,7 @@ class DonasiApiController extends Controller
                 'onopay_response' => $onopayResponse,
                 'streamer_phone' => $streamer->onopay_phone,
                 'amount' => $grandTotal,
-            ], $response->status()); // ── PERUBAHAN: status code dari OnoPay
+            ], $response->status());
         }
 
         $result = $response->json();
@@ -332,10 +332,10 @@ class DonasiApiController extends Controller
     // ── GUEST DONATE QRIS ──
     public function guestDonateQris(Request $request)
     {
+        // ── PERUBAHAN: Hapus guest_phone dari validasi ──
         $request->validate([
             'streamer_id' => 'required|exists:users,id',
             'guest_name' => 'required|string|max:100',
-            'guest_phone' => 'required|string|max:20',
             'nominal' => 'required|numeric|min:1000',
             'pesan' => 'nullable|max:150',
         ]);
@@ -355,10 +355,10 @@ class DonasiApiController extends Controller
         $adminFee = 1500;
         $grandTotal = $request->nominal + $adminFee;
 
+        // ── PERUBAHAN: Hapus guest_phone dari create ──
         $donasi = Donasi::create([
             'user_id' => null,
             'guest_name' => $request->guest_name,
-            'guest_phone' => $request->guest_phone,
             'streamer_id' => $streamer->id,
             'nominal' => $request->nominal,
             'pesan' => $request->pesan,
@@ -368,7 +368,7 @@ class DonasiApiController extends Controller
             'status' => 'pending',
         ]);
 
-        // ── PANGGIL API ONOPAY (TANPA customer_name & customer_phone) ──
+        // ── PANGGIL API ONOPAY ──
         $response = Http::post(
             'https://www.onopay.web.id/api/v1/payment/qr/generate',
             [
@@ -393,7 +393,7 @@ class DonasiApiController extends Controller
                 'onopay_response' => $onopayResponse,
                 'streamer_phone' => $streamer->onopay_phone,
                 'amount' => $grandTotal,
-            ], $response->status()); // ── PERUBAHAN: status code dari OnoPay
+            ], $response->status());
         }
 
         $result = $response->json();
