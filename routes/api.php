@@ -58,17 +58,14 @@ Route::middleware('auth:sanctum')->group(function () {
     ]);
 
     Route::post('/become-streamer', [
-    AuthApiController::class,
-    'becomeStreamer'
+        AuthApiController::class,
+        'becomeStreamer'
     ]);
 
-    Route::get(
-    '/streamer-dashboard',
-    [
+    Route::get('/streamer-dashboard', [
         DonasiApiController::class,
         'streamerDashboard'
-    ]
-);
+    ]);
 
     Route::get('/profile', [
         AuthApiController::class,
@@ -137,5 +134,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/pay-onopay/{id}', [
         DonasiApiController::class,
         'payOnopay'
+    ]);
+
+    // ── TAMBAHKAN INI: CEK SALDO ONOPAY ──
+    Route::get('/onopay-balance', [
+        WithdrawApiController::class,
+        'onopayBalance'
     ]);
 });

@@ -72,38 +72,74 @@ class WithdrawApiController extends Controller
     }
 
     public function summary(Request $request)
-{
-    $user = $request->user();
+    {
+        $user = $request->user();
 
-    $totalDonasi =
-        \App\Models\Donasi::where(
-            'streamer_id',
-            $user->id
-        )
-        ->where('status', 'paid')
-        ->sum('nominal');
+        $totalDonasi =
+            \App\Models\Donasi::where(
+                'streamer_id',
+                $user->id
+            )
+            ->where('status', 'paid')
+            ->sum('nominal');
 
-    $totalWithdraw =
-        \App\Models\Withdraw::where(
-            'user_id',
-            $user->id
-        )
-        ->where('status', 'approved')
-        ->sum('nominal');
+        $totalWithdraw =
+            \App\Models\Withdraw::where(
+                'user_id',
+                $user->id
+            )
+            ->where('status', 'approved')
+            ->sum('nominal');
 
-    $pendingWithdraw =
-        \App\Models\Withdraw::where(
-            'user_id',
-            $user->id
-        )
-        ->where('status', 'pending')
-        ->sum('nominal');
+        $pendingWithdraw =
+            \App\Models\Withdraw::where(
+                'user_id',
+                $user->id
+            )
+            ->where('status', 'pending')
+            ->sum('nominal');
 
-    return response()->json([
-        'balance' => $user->balance,
-        'total_donasi' => $totalDonasi,
-        'total_withdraw' => $totalWithdraw,
-        'pending_withdraw' => $pendingWithdraw,
-    ]);
-}
+        return response()->json([
+            'balance' => $user->balance,
+            'total_donasi' => $totalDonasi,
+            'total_withdraw' => $totalWithdraw,
+            'pending_withdraw' => $pendingWithdraw,
+        ]);
+    }
+
+    // ── METHOD: CEK SALDO ONOPAY (UPDATED) ──
+    public function onopayBalance(Request $request)
+    {
+        $user = $request->user();
+
+        if (!$user->onopay_phone) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Nomor OnoPay belum terhubung'
+            ]);
+        }
+
+        try {
+            $response = \Illuminate\Support\Facades\Http::withHeaders([
+                'Accept' => 'application/json',
+                'Content-Type' => 'application/json',
+            ])->post(
+                'https://onopay.web.id/api/v1/merchant/check-balance',
+                [
+                    'phone_number' => $user->onopay_phone
+                ]
+            );
+
+            return response()->json([
+                'user_phone' => $user->onopay_phone,
+                'onopay_response' => $response->json(),
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
 }
