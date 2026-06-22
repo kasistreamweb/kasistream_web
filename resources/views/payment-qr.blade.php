@@ -329,7 +329,7 @@ async function getBalance() {
 // ── HAPUS: initBaseline() dipanggil ──
 
 async function checkPaymentAuto() {
-    if (baselineBalance === null || isExpired) return;
+    if (baselineBalance === 0 || isExpired) return;
 
     const result = await getBalance();
 
