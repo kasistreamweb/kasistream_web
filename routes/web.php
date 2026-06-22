@@ -436,29 +436,35 @@ Route::get('/payment-method', function () {
 
 Route::post('/konfirmasi-pembayaran', [DonasiController::class, 'store']);
 
+// ── QRIS PAYMENT ROUTES ──
 Route::get('/payment-success/{id}', [DonasiController::class, 'paymentSuccess'])
     ->name('payment.success');
 
 Route::get('/payment-qr/{id}', [DonasiController::class, 'qrPayment'])
     ->name('payment.qr');
 
-Route::post('/payment-onopay/{id}', [DonasiController::class, 'payOnopay'])
-    ->name('payment.onopay');
+// ── USER LOGIN ROUTES (AUTO CHECK + BASELINE) ──
+Route::middleware('auth')->group(function () {
+    Route::post('/payment-onopay/{id}', [DonasiController::class, 'payOnopay'])
+        ->name('payment.onopay');
 
-Route::get('/payment-check/{id}', [DonasiController::class, 'checkPayment'])
-    ->name('payment.check');
+    Route::get('/payment-check/{id}', [DonasiController::class, 'checkPayment'])
+        ->name('payment.check');
 
-Route::get('/check-payment/{id}', [DonasiController::class, 'checkPayment'])
-    ->name('check.payment');
+    Route::get('/check-payment/{id}', [DonasiController::class, 'checkPayment'])
+        ->name('check.payment');
 
+    Route::get('/onopay-balance', [DonasiController::class, 'onopayBalance']);
+
+    Route::post('/confirm-payment/{id}', [DonasiController::class, 'confirmPayment']);
+});
+
+// ── GUEST ROUTES (MANUAL CHECK, TANPA AUTH) ──
+Route::get('/guest/check-payment/{id}', [DonasiController::class, 'guestCheckPayment']);
+Route::post('/guest/pay-onopay/{id}', [DonasiController::class, 'guestPayOnopay']);
+
+// ── SIMULATE ──
 Route::get('/payment-success-manual/{id}', [DonasiController::class, 'simulateQris']);
-
-// ── ROUTE BARU UNTUK ONOPAY BALANCE DAN CONFIRM PAYMENT ──
-Route::get('/onopay-balance', [DonasiController::class, 'onopayBalance'])
-    ->middleware('auth');
-
-Route::post('/confirm-payment/{id}', [DonasiController::class, 'confirmPayment'])
-    ->middleware('auth');
 
 /*
 |--------------------------------------------------------------------------

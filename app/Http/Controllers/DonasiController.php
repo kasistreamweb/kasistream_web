@@ -294,14 +294,15 @@ class DonasiController extends Controller
             'user'
         ])->findOrFail($id);
 
+        // ── CEK APAKAH GUEST ──
+        $isGuest = $donasi->user_id === null;
+
         $baselineBalance = 0;
 
-        try {
+        // ── USER LOGIN: AMBIL BASELINE BALANCE ──
+        if (!$isGuest && auth()->check() && auth()->user()->onopay_phone) {
 
-            if (
-                auth()->check() &&
-                auth()->user()->onopay_phone
-            ) {
+            try {
 
                 $response = Http::withHeaders([
                     'Accept' => 'application/json',
@@ -325,26 +326,27 @@ class DonasiController extends Controller
                     $baselineBalance =
                         (int) $data['data']['balance'];
                 }
+
+            } catch (\Exception $e) {
+
+                \Log::error(
+                    'QR PAYMENT BASELINE ERROR : '
+                    . $e->getMessage()
+                );
             }
-
-        } catch (\Exception $e) {
-
-            \Log::error(
-                'QR PAYMENT BASELINE ERROR : '
-                . $e->getMessage()
-            );
         }
 
         return view(
             'payment-qr',
             compact(
                 'donasi',
-                'baselineBalance'
+                'baselineBalance',
+                'isGuest'
             )
         );
     }
 
-    // ── CHECK PAYMENT (API) ──
+    // ── CHECK PAYMENT (USER LOGIN) ──
     public function checkPayment($id)
     {
         $donasi = Donasi::findOrFail($id);
@@ -357,6 +359,21 @@ class DonasiController extends Controller
                 'qris_status' => $donasi->qris_status,
                 'nominal' => $donasi->nominal,
                 'grand_total' => $donasi->grand_total,
+            ]
+        ]);
+    }
+
+    // ── GUEST CHECK PAYMENT ──
+    public function guestCheckPayment($id)
+    {
+        $donasi = Donasi::findOrFail($id);
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'id' => $donasi->id,
+                'status' => $donasi->status,
+                'qris_status' => $donasi->qris_status,
             ]
         ]);
     }
@@ -400,7 +417,7 @@ class DonasiController extends Controller
         }
     }
 
-    // ── CONFIRM PAYMENT (API) ──
+    // ── CONFIRM PAYMENT (USER LOGIN) ──
     public function confirmPayment($id)
     {
         $donasi = Donasi::findOrFail($id);
@@ -447,6 +464,95 @@ class DonasiController extends Controller
         } catch (\Exception $e) {
 
             DB::rollBack();
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    // ── GUEST PAY ONOPAY (MANUAL CHECK) ──
+    public function guestPayOnopay($id)
+    {
+        $donasi = Donasi::findOrFail($id);
+
+        // ── CEK APAKAH SUDAH SUCCESS ──
+        if ($donasi->status == 'success') {
+            return response()->json([
+                'success' => true,
+                'message' => 'Sudah dibayar'
+            ]);
+        }
+
+        // ── AMBIL NOMOR HP GUEST ──
+        $payerPhone = $donasi->guest_phone;
+
+        if (!$payerPhone) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Nomor OnoPay guest tidak ditemukan.'
+            ], 400);
+        }
+
+        if (!$donasi->qr_code) {
+            return response()->json([
+                'success' => false,
+                'message' => 'QR Code tidak ditemukan.'
+            ], 400);
+        }
+
+        try {
+            // ── PANGGIL API ONOPAY ──
+            $response = Http::post(
+                'https://www.onopay.web.id/api/v1/payment/qr/pay',
+                [
+                    'qr_code' => $donasi->qr_code,
+                    'payer_phone' => $payerPhone,
+                ]
+            );
+
+            \Log::info('GUEST ONOPAY PAY', [
+                'status' => $response->status(),
+                'body' => $response->body(),
+            ]);
+
+            $result = $response->json();
+
+            // ── CEK RESPONSE ONOPAY ──
+            if (!$response->successful() || !isset($result['success']) || !$result['success']) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $result['message'] ?? 'Pembayaran gagal. Silakan coba lagi.'
+                ], 400);
+            }
+
+            // ── KONFIRMASI PEMBAYARAN ──
+            DB::beginTransaction();
+
+            $donasi->update([
+                'status' => 'success',
+                'qris_status' => 'paid'
+            ]);
+
+            $streamer = User::findOrFail($donasi->streamer_id);
+            $streamer->balance += $donasi->nominal;
+            $streamer->total_donasi += $donasi->nominal;
+            $streamer->save();
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Pembayaran berhasil!'
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            \Log::error('GUEST ONOPAY ERROR', [
+                'message' => $e->getMessage()
+            ]);
 
             return response()->json([
                 'success' => false,

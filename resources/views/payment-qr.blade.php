@@ -87,8 +87,6 @@
 
                         </div>
 
-                        <!-- ── TOMBOL DI BAWAH QR DIHAPUS ── -->
-
                     </div>
 
                 </div>
@@ -216,12 +214,20 @@
 
                         </div>
 
+                        @if(isset($isGuest) && $isGuest)
+                        <div class="mt-3 alert alert-info">
+                            <i class="fa-solid fa-info-circle me-2"></i>
+                            <strong>Info Guest:</strong> Setelah melakukan pembayaran, klik tombol 
+                            "Cek Status Pembayaran" untuk memperbarui status donasi Anda.
+                        </div>
+                        @endif
+
                         <div class="mt-4">
 
-                            <!-- ── TOMBOL CEK STATUS PEMBAYARAN (AJAX) ── -->
+                            <!-- ── TOMBOL CEK STATUS PEMBAYARAN ── -->
                             <button
                                 onclick="checkPayment()"
-                                id="btnCheckPaymentBottom"
+                                id="btnCheckPayment"
                                 class="btn btn-primary w-100 mb-2"
                             >
                                 <i class="fa-solid fa-rotate me-2"></i>
@@ -253,12 +259,19 @@
 
 <!-- ── SCRIPTS ── -->
 <script>
-// ── ONOPAY BALANCE CHECK ──
-// ── Baseline langsung dari server ──
-let baselineBalance = {{ $baselineBalance ?? 0 }};
-
+// ── VARIABEL ──
+const isGuest = {{ isset($isGuest) && $isGuest ? 'true' : 'false' }};
+const donasiId = {{ $donasi->id }};
+const baselineBalance = {{ $baselineBalance ?? 0 }};
 const total = {{ $donasi->grand_total }};
 
+console.log('=== PAYMENT QRIS ===');
+console.log('isGuest:', isGuest);
+console.log('donasiId:', donasiId);
+console.log('baselineBalance:', baselineBalance);
+console.log('total:', total);
+
+// ── ONOPAY BALANCE CHECK (HANYA UNTUK USER LOGIN) ──
 async function getBalance() {
     try {
         const response = await fetch('/onopay-balance', {
@@ -280,7 +293,11 @@ async function getBalance() {
     }
 }
 
+// ── AUTO CHECK PAYMENT (HANYA UNTUK USER LOGIN) ──
 async function checkPaymentAuto() {
+    // ── GUEST: SKIP AUTO CHECK ──
+    if (isGuest) return;
+    
     if (baselineBalance === 0) return;
 
     const result = await getBalance();
@@ -290,15 +307,14 @@ async function checkPaymentAuto() {
     const current = parseInt(result.data.balance);
     const diff = baselineBalance - current;
 
-    // ── DEBUG ──
-    console.log('TOTAL:', total);
-    console.log('BASELINE:', baselineBalance);
-    console.log('CURRENT:', current);
-    console.log('DIFF:', diff);
+    console.log('AUTO CHECK - TOTAL:', total);
+    console.log('AUTO CHECK - BASELINE:', baselineBalance);
+    console.log('AUTO CHECK - CURRENT:', current);
+    console.log('AUTO CHECK - DIFF:', diff);
 
     if (diff >= total) {
         try {
-            const confirm = await fetch('/confirm-payment/{{ $donasi->id }}', {
+            const confirm = await fetch('/confirm-payment/' + donasiId, {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
@@ -310,7 +326,7 @@ async function checkPaymentAuto() {
             const confirmResult = await confirm.json();
 
             if (confirmResult.success) {
-                window.location.href = '/payment-success/{{ $donasi->id }}';
+                window.location.href = '/payment-success/' + donasiId;
             }
         } catch (e) {
             console.error('Error confirming payment:', e);
@@ -318,14 +334,103 @@ async function checkPaymentAuto() {
     }
 }
 
+// ── CEK STATUS PEMBAYARAN ──
+let checking = false;
+
+async function checkPayment() {
+    if (checking) return;
+    checking = true;
+
+    const btn = document.getElementById('btnCheckPayment');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i>Memeriksa...';
+    btn.disabled = true;
+
+    try {
+        let response;
+        let result;
+
+        if (isGuest) {
+            // ── GUEST: PAKAI guest-pay-onopay ──
+            console.log('GUEST: Calling guest-pay-onopay...');
+            
+            response = await fetch('/guest/pay-onopay/' + donasiId, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            });
+            result = await response.json();
+
+            console.log('GUEST Pay Onopay Result:', result);
+
+            if (result.success) {
+                // ── STATUS BERHASIL ──
+                document.getElementById('paymentStatus').className = 'badge bg-success';
+                document.getElementById('paymentStatus').innerText = 'PEMBAYARAN BERHASIL';
+                document.getElementById('statusText').innerText = 'PEMBAYARAN BERHASIL';
+                
+                // Redirect ke halaman sukses
+                window.location.href = '/payment-success/' + donasiId;
+                return;
+            } else {
+                // ── GAGAL / PENDING ──
+                alert(result.message || 'Pembayaran masih pending. Silakan coba lagi.');
+            }
+
+        } else {
+            // ── USER LOGIN: PAKAI check-payment ──
+            console.log('USER: Calling check-payment...');
+            
+            response = await fetch('/check-payment/' + donasiId);
+            result = await response.json();
+
+            console.log('USER Check Payment Result:', result);
+
+            const statusEl = document.getElementById('paymentStatus');
+            const statusText = document.getElementById('statusText');
+
+            if (result.data && (result.data.status === 'success' || result.data.status === 'paid')) {
+                statusEl.className = 'badge bg-success';
+                statusEl.innerText = 'PEMBAYARAN BERHASIL';
+                statusText.innerText = 'PEMBAYARAN BERHASIL';
+                window.location.href = '/payment-success/' + donasiId;
+                return;
+            } else {
+                alert('Pembayaran masih pending. Silakan coba lagi.');
+            }
+        }
+
+    } catch (e) {
+        console.error('Error:', e);
+        alert('Terjadi kesalahan. Silakan coba lagi.');
+    } finally {
+        checking = false;
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }
+}
+
 // ── CEK APAKAH STATUS SUDAH SUCCESS SAAT LOAD ──
 async function checkInitialStatus() {
     try {
-        const response = await fetch('/check-payment/{{ $donasi->id }}');
-        const result = await response.json();
+        let response;
+        let result;
+
+        if (isGuest) {
+            // ── GUEST: PAKAI guest-check-payment ──
+            response = await fetch('/guest/check-payment/' + donasiId);
+        } else {
+            // ── USER: PAKAI check-payment ──
+            response = await fetch('/check-payment/' + donasiId);
+        }
+        
+        result = await response.json();
         
         if (result.data && (result.data.status === 'success' || result.data.status === 'paid')) {
-            window.location.href = '/payment-success/{{ $donasi->id }}';
+            window.location.href = '/payment-success/' + donasiId;
         }
     } catch (e) {
         console.error('Error checking initial status:', e);
@@ -335,72 +440,29 @@ async function checkInitialStatus() {
 // ── INISIALISASI ──
 checkInitialStatus();
 
-// ── AUTO CHECK SETIAP 5 DETIK ──
-setInterval(checkPaymentAuto, 5000);
-
-// ── CEK STATUS PEMBAYARAN ──
-let checking = false;
-
-async function checkPayment() {
-    if (checking) return;
-    checking = true;
-
-    try {
-        const response = await fetch(
-            '/check-payment/{{ $donasi->id }}'
-        );
-
-        const result = await response.json();
-
-        console.log('Check Payment Result:', result);
-
-        // ── UPDATE STATUS BADGE ──
-        const statusEl = document.getElementById('paymentStatus');
-        const statusText = document.getElementById('statusText');
-
-        if (
-            result.data &&
-            (result.data.status === 'success' || result.data.status === 'paid')
-        ) {
-            // ── STATUS BERHASIL ──
-            if (statusEl) {
-                statusEl.className = 'badge bg-success';
-                statusEl.innerText = 'PEMBAYARAN BERHASIL';
-            }
-
-            if (statusText) {
-                statusText.innerText = 'PEMBAYARAN BERHASIL';
-            }
-
-            // ── REDIRECT KE HALAMAN SUKSES ──
-            window.location.href =
-                '/payment-success/{{ $donasi->id }}';
-
-            return;
-        } else {
-            // ── STATUS PENDING ──
-            if (statusEl) {
-                statusEl.className = 'badge bg-warning text-dark';
-                statusEl.innerText = 'MENUNGGU PEMBAYARAN';
-            }
-
-            if (statusText) {
-                statusText.innerText = 'MENUNGGU PEMBAYARAN';
-            }
-        }
-
-    } catch (e) {
-        console.error('Error checking payment:', e);
-    }
-
-    checking = false;
+// ── AUTO CHECK SETIAP 5 DETIK (HANYA UNTUK USER LOGIN) ──
+if (!isGuest) {
+    console.log('USER LOGIN: Auto check enabled (every 5 seconds)');
+    setInterval(checkPaymentAuto, 5000);
+} else {
+    console.log('GUEST: Auto check disabled (manual only)');
 }
 
-// ── AUTO CHECK STATUS SETIAP 5 DETIK ──
-setInterval(checkPayment, 5000);
+// ── AUTO CHECK STATUS SETIAP 5 DETIK (HANYA UNTUK USER LOGIN) ──
+if (!isGuest) {
+    setInterval(async function() {
+        try {
+            const response = await fetch('/check-payment/' + donasiId);
+            const result = await response.json();
 
-// ── PANGGIL PERTAMA KALI ──
-checkPayment();
+            if (result.data && (result.data.status === 'success' || result.data.status === 'paid')) {
+                window.location.href = '/payment-success/' + donasiId;
+            }
+        } catch (e) {
+            console.error('Auto check error:', e);
+        }
+    }, 5000);
+}
 </script>
 
 </body>
