@@ -136,9 +136,15 @@ Route::middleware('auth:sanctum')->group(function () {
         'payOnopay'
     ]);
 
-    // ── TAMBAHKAN INI: CEK SALDO ONOPAY ──
+    // ── ONOPAY BALANCE ──
     Route::get('/onopay-balance', [
         WithdrawApiController::class,
         'onopayBalance'
+    ]);
+
+    // ── TAMBAHKAN INI: CONFIRM PAYMENT ──
+    Route::post('/confirm-payment/{id}', [
+        DonasiApiController::class,
+        'confirmPayment'
     ]);
 });

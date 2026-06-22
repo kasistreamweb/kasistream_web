@@ -562,4 +562,54 @@ class DonasiApiController extends Controller
             ]
         ]);
     }
+
+    // ── TAMBAHKAN METHOD INI: CONFIRM PAYMENT ──
+    public function confirmPayment($id)
+    {
+        $donasi = Donasi::findOrFail($id);
+
+        // Cek apakah sudah dibayar
+        if (
+            $donasi->status == 'success' ||
+            $donasi->status == 'paid'
+        ) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Sudah dibayar'
+            ]);
+        }
+
+        DB::beginTransaction();
+
+        try {
+            // Update status donasi
+            $donasi->status = 'success';
+            $donasi->qris_status = 'paid';
+            $donasi->save();
+
+            // Tambah saldo streamer
+            $streamer = User::findOrFail(
+                $donasi->streamer_id
+            );
+
+            $streamer->balance += $donasi->nominal;
+            $streamer->total_donasi += $donasi->nominal;
+            $streamer->save();
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Pembayaran berhasil dikonfirmasi'
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
 }
