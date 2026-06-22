@@ -10,12 +10,12 @@ use App\Http\Controllers\WithdrawController;
 use Illuminate\Http\Request;
 use App\Models\Donasi;
 use App\Models\Follower;
+
 /*
 |--------------------------------------------------------------------------
 | LANDING PAGE
 |--------------------------------------------------------------------------
 */
-
 
 Route::get('/', function () {
 
@@ -24,34 +24,18 @@ Route::get('/', function () {
         ->take(6)
         ->get();
 
-    $totalStreamer = User::where(
-        'is_streamer',
-        1
-    )->count();
-
+    $totalStreamer = User::where('is_streamer', 1)->count();
     $totalUser = User::count();
+    $totalDonasi = Donasi::where('status', 'success')->sum('nominal');
+    $totalFollower = User::where('is_streamer', 1)->sum('followers');
 
-    $totalDonasi = Donasi::where(
-        'status',
-        'success'
-    )->sum('nominal');
-
-    $totalFollower = User::where(
-        'is_streamer',
-        1
-    )->sum('followers');
-
-    return view(
-        'welcome',
-        compact(
-            'streamers',
-            'totalStreamer',
-            'totalUser',
-            'totalDonasi',
-            'totalFollower'
-        )
-    );
-
+    return view('welcome', compact(
+        'streamers',
+        'totalStreamer',
+        'totalUser',
+        'totalDonasi',
+        'totalFollower'
+    ));
 });
 
 /*
@@ -63,7 +47,6 @@ Route::get('/', function () {
 Route::get('/register', function () {
     return view('register');
 });
-
 Route::post('/register', [AuthController::class, 'register']);
 
 /*
@@ -75,7 +58,6 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::get('/login', function () {
     return view('login');
 })->name('login');
-
 Route::post('/login', [AuthController::class, 'login']);
 
 /*
@@ -84,10 +66,8 @@ Route::post('/login', [AuthController::class, 'login']);
 |--------------------------------------------------------------------------
 */
 
-Route::get(
-    '/admin-dashboard',
-    [AdminController::class, 'dashboard']
-)->middleware('auth');
+Route::get('/admin-dashboard', [AdminController::class, 'dashboard'])
+    ->middleware('auth');
 
 /*
 |--------------------------------------------------------------------------
@@ -96,15 +76,11 @@ Route::get(
 */
 
 Route::get('/user-dashboard', function () {
-
     $streamers = User::where('is_streamer', 1)
         ->orderByDesc('followers')
         ->get();
 
-    $totalFollowing = Follower::where(
-        'user_id',
-        auth()->id()
-    )->count();
+    $totalFollowing = Follower::where('user_id', auth()->id())->count();
 
     $recentDonations = Donasi::with('streamer')
         ->where('user_id', auth()->id())
@@ -113,15 +89,11 @@ Route::get('/user-dashboard', function () {
         ->take(5)
         ->get();
 
-    return view(
-        'user-dashboard',
-        compact(
-            'streamers',
-            'totalFollowing',
-            'recentDonations'
-        )
-    );
-
+    return view('user-dashboard', compact(
+        'streamers',
+        'totalFollowing',
+        'recentDonations'
+    ));
 })->middleware('auth');
 
 /*
@@ -140,22 +112,13 @@ Route::get('/streamer-dashboard', [StreamerController::class, 'dashboard'])
 */
 
 Route::get('/streamer/{id}', function ($id) {
-
     $streamer = User::findOrFail($id);
 
     $isFollowing = false;
-
-    if(auth()->check()){
-
-        $isFollowing = \App\Models\Follower::where(
-            'user_id',
-            auth()->id()
-        )
-        ->where(
-            'streamer_id',
-            $streamer->id
-        )
-        ->exists();
+    if (auth()->check()) {
+        $isFollowing = \App\Models\Follower::where('user_id', auth()->id())
+            ->where('streamer_id', $streamer->id)
+            ->exists();
     }
 
     $topDonatur = Donasi::with('user')
@@ -167,32 +130,21 @@ Route::get('/streamer/{id}', function ($id) {
         ->take(10)
         ->get();
 
-    return view(
-        'streamer-detail',
-        compact(
-            'streamer',
-            'isFollowing',
-            'topDonatur'
-        )
-    );
-
+    return view('streamer-detail', compact(
+        'streamer',
+        'isFollowing',
+        'topDonatur'
+    ));
 });
 
 /*
 |--------------------------------------------------------------------------
-| donate
+| DONATE
 |--------------------------------------------------------------------------
 */
 
-Route::get(
-    '/donasi/{id}',
-    [DonasiController::class, 'create']
-);
-
-Route::post(
-    '/donasi',
-    [DonasiController::class, 'store']
-);
+Route::get('/donasi/{id}', [DonasiController::class, 'create']);
+Route::post('/donasi', [DonasiController::class, 'store']);
 
 Route::get('/become-streamer', function () {
     return view('become-streamer');
@@ -200,460 +152,314 @@ Route::get('/become-streamer', function () {
 
 /*
 |--------------------------------------------------------------------------
-| user to streamer
+| USER TO STREAMER
 |--------------------------------------------------------------------------
 */
 
-
 Route::post('/become-streamer', function (Illuminate\Http\Request $request) {
-
     $request->validate([
         'bio' => 'required',
         'game' => 'required'
     ]);
 
     $user = Auth::user();
-
     $user->bio = $request->bio;
     $user->game = $request->game;
     $user->instagram = $request->instagram;
     $user->youtube = $request->youtube;
     $user->tiktok = $request->tiktok;
     $user->discord = $request->discord;
-
     $user->is_streamer = true;
-
     $user->save();
 
     return redirect('/user-dashboard')
-    ->with('success', 'Selamat! Akun Anda sekarang menjadi streamer.');
-    })->middleware('auth');
+        ->with('success', 'Selamat! Akun Anda sekarang menjadi streamer.');
+})->middleware('auth');
 
-    Route::get('/streamer-donations',
-    [StreamerController::class, 'donations']
-    )->middleware('auth');
+Route::get('/streamer-donations', [StreamerController::class, 'donations'])
+    ->middleware('auth');
 
+Route::get('/streamer-statistics', [StreamerController::class, 'statistics'])
+    ->middleware('auth');
 
-    Route::get(
-        '/streamer-statistics',
-        [StreamerController::class, 'statistics']
-    )->middleware('auth');
+Route::get('/riwayat-donasi', [DonasiController::class, 'history'])
+    ->middleware('auth');
 
-    Route::get(
-    '/riwayat-donasi',
-    [DonasiController::class, 'history']
-    )->middleware('auth');
+Route::get('/profile', [AuthController::class, 'profile'])
+    ->middleware('auth');
 
-    Route::get(
-        '/profile',
-        [AuthController::class, 'profile']
-    )->middleware('auth');
+Route::post('/profile', [AuthController::class, 'updateProfile'])
+    ->middleware('auth');
 
-    Route::post(
-        '/profile',
-        [AuthController::class, 'updateProfile']
-    )->middleware('auth');
+/*
+|--------------------------------------------------------------------------
+| ADMIN
+|--------------------------------------------------------------------------
+*/
 
-    Route::get(
-    '/admin-users',
-    [AdminController::class, 'users']
-    )->middleware('auth');
+Route::get('/admin-users', [AdminController::class, 'users'])
+    ->middleware('auth');
 
-    Route::delete(
-    '/admin-users/{id}',
-    [AdminController::class, 'deleteUser']
-    )->middleware('auth');
+Route::delete('/admin-users/{id}', [AdminController::class, 'deleteUser'])
+    ->middleware('auth');
 
-    Route::get(
-    '/admin-streamers',
-    [AdminController::class, 'streamers']
-    )->middleware('auth');
+Route::get('/admin-streamers', [AdminController::class, 'streamers'])
+    ->middleware('auth');
 
-    Route::get(
-    '/admin-streamers/{id}',
-    [AdminController::class,'streamerDetail']
-    )->middleware('auth');
+Route::get('/admin-streamers/{id}', [AdminController::class, 'streamerDetail'])
+    ->middleware('auth');
 
-    Route::post(
-    '/admin-streamers/remove/{id}',
-    [AdminController::class, 'removeStreamer']
-    )->middleware('auth');
+Route::post('/admin-streamers/remove/{id}', [AdminController::class, 'removeStreamer'])
+    ->middleware('auth');
 
-    Route::get(
-    '/admin-donations',
-    [AdminController::class, 'donations']
-    )->middleware('auth');
+Route::get('/admin-donations', [AdminController::class, 'donations'])
+    ->middleware('auth');
 
-    Route::get(
-    '/admin-donations/{id}',
-    [AdminController::class, 'donationDetail']
-)->middleware('auth');
+Route::get('/admin-donations/{id}', [AdminController::class, 'donationDetail'])
+    ->middleware('auth');
 
-    /*
-    |--------------------------------------------------------------------------
-    | WALLET - STREAMER & USER
-    |--------------------------------------------------------------------------
-    */
+Route::get('/admin-withdraws', [AdminController::class, 'withdraws'])
+    ->middleware('auth');
 
-    Route::get('/wallet', function () {
+Route::post('/admin-withdraws/{id}/approve', [AdminController::class, 'approveWithdraw'])
+    ->middleware('auth');
 
-        $user = auth()->user();
+Route::post('/admin-withdraws/{id}/reject', [AdminController::class, 'rejectWithdraw'])
+    ->middleware('auth');
 
-        // ==========================
-        // STREAMER WALLET
-        // ==========================
-        if ($user->is_streamer) {
+Route::get('/admin-reports', [AdminController::class, 'reports'])
+    ->middleware('auth');
 
-            $donasi = \App\Models\Donasi::with('user')
-                ->where('streamer_id', $user->id)
-                ->get();
+Route::get('/admin-streamer-ranking', [AdminController::class, 'streamerRanking'])
+    ->middleware('auth');
 
-            $withdraws = \App\Models\Withdraw::where(
-                'user_id',
-                $user->id
-            )->get();
+Route::get('/admin-gateway-transactions', [AdminController::class, 'gatewayTransactions'])
+    ->middleware('auth');
 
-            $withdrawPending = \App\Models\Withdraw::where(
-                'user_id',
-                $user->id
-            )
-            ->where(
-                'status',
-                'pending'
-            )
-            ->sum('nominal');
+Route::get('/admin-reports/excel', [AdminController::class, 'exportExcel'])
+    ->name('admin.reports.excel')
+    ->middleware('auth');
 
-            $saldoTersedia =
-                $user->balance -
-                $withdrawPending;
+Route::get('/admin-reports/print', [AdminController::class, 'printReport'])
+    ->name('admin.reports.print')
+    ->middleware('auth');
 
-            $transaksi = collect();
+/*
+|--------------------------------------------------------------------------
+| WALLET
+|--------------------------------------------------------------------------
+*/
 
-            foreach ($donasi as $item) {
+Route::get('/wallet', function () {
+    $user = auth()->user();
 
-                $transaksi->push([
-
-                    'tanggal' => $item->created_at,
-
-                    'keterangan' =>
-                        'Donasi dari ' .
-                        (
-                            optional($item->user)->name
-                            ?? $item->guest_name
-                        ),
-
-                    'nominal' => $item->nominal,
-
-                    'status' => 'success',
-
-                    'jenis' => 'donasi',
-                ]);
-            }
-
-            foreach ($withdraws as $item) {
-
-                $transaksi->push([
-
-                    'tanggal' => $item->created_at,
-
-                    'keterangan' =>
-                        'Withdraw Request',
-
-                    'nominal' => $item->nominal,
-
-                    'status' => $item->status,
-
-                    'jenis' => 'withdraw',
-                ]);
-            }
-
-            $transaksi = $transaksi
-                ->sortByDesc('tanggal')
-                ->take(10);
-
-            return view(
-                'wallet',
-                compact(
-                    'transaksi',
-                    'withdrawPending',
-                    'saldoTersedia'
-                )
-            );
-        }
-
-        // ==========================
-        // USER WALLET
-        // ==========================
-
-        $donasiSaya = \App\Models\Donasi::with('streamer')
-            ->where('user_id', $user->id)
-            ->where('status', 'success')
-            ->latest()
+    if ($user->is_streamer) {
+        $donasi = \App\Models\Donasi::with('user')
+            ->where('streamer_id', $user->id)
             ->get();
 
-        $totalDonasi = $donasiSaya->sum('nominal');
+        $withdraws = \App\Models\Withdraw::where('user_id', $user->id)->get();
 
-        $totalStreamerDidukung = $donasiSaya
-            ->pluck('streamer_id')
-            ->unique()
-            ->count();
+        $withdrawPending = \App\Models\Withdraw::where('user_id', $user->id)
+            ->where('status', 'pending')
+            ->sum('nominal');
+
+        $saldoTersedia = $user->balance - $withdrawPending;
 
         $transaksi = collect();
 
-        foreach ($donasiSaya as $item) {
-
+        foreach ($donasi as $item) {
             $transaksi->push([
-
                 'tanggal' => $item->created_at,
-
-                'keterangan' =>
-                    'Donasi ke ' .
-                    optional($item->streamer)->name,
-
+                'keterangan' => 'Donasi dari ' . (optional($item->user)->name ?? $item->guest_name),
                 'nominal' => $item->nominal,
-
                 'status' => 'success',
-
                 'jenis' => 'donasi',
             ]);
         }
 
-        // User tidak punya withdraw, jadi tidak perlu $withdrawPending dan $saldoTersedia
+        foreach ($withdraws as $item) {
+            $transaksi->push([
+                'tanggal' => $item->created_at,
+                'keterangan' => 'Withdraw Request',
+                'nominal' => $item->nominal,
+                'status' => $item->status,
+                'jenis' => 'withdraw',
+            ]);
+        }
 
-        return view(
-            'user-wallet', // <-- INI PERUBAHANNYA
-            compact(
-                'transaksi',
-                'totalDonasi',
-                'totalStreamerDidukung'
-            )
-        );
+        $transaksi = $transaksi->sortByDesc('tanggal')->take(10);
 
-    })->middleware('auth');
+        return view('wallet', compact('transaksi', 'withdrawPending', 'saldoTersedia'));
+    }
 
-    Route::get(
-    '/withdraw',
-    [WithdrawController::class,'create']
-    )->middleware('auth');
+    $donasiSaya = \App\Models\Donasi::with('streamer')
+        ->where('user_id', $user->id)
+        ->where('status', 'success')
+        ->latest()
+        ->get();
 
-    Route::post(
-    '/withdraw',
-    [WithdrawController::class,'store']
-    )->middleware('auth');
+    $totalDonasi = $donasiSaya->sum('nominal');
+    $totalStreamerDidukung = $donasiSaya->pluck('streamer_id')->unique()->count();
 
-    Route::get(
-    '/admin-withdraws',
-    [AdminController::class,'withdraws']
-    )->middleware('auth');
+    $transaksi = collect();
 
-    Route::post(
-    '/admin-withdraws/{id}/approve',
-    [AdminController::class,'approveWithdraw']
-    )->middleware('auth');
+    foreach ($donasiSaya as $item) {
+        $transaksi->push([
+            'tanggal' => $item->created_at,
+            'keterangan' => 'Donasi ke ' . optional($item->streamer)->name,
+            'nominal' => $item->nominal,
+            'status' => 'success',
+            'jenis' => 'donasi',
+        ]);
+    }
 
-    Route::post(
-    '/admin-withdraws/{id}/reject',
-    [AdminController::class,'rejectWithdraw']
-    )->middleware('auth');
+    return view('user-wallet', compact(
+        'transaksi',
+        'totalDonasi',
+        'totalStreamerDidukung'
+    ));
+})->middleware('auth');
 
-    Route::get(
-    '/admin-reports',
-    [AdminController::class,'reports']
-    )->middleware('auth');
+Route::get('/withdraw', [WithdrawController::class, 'create'])
+    ->middleware('auth');
 
-    Route::get(
-    '/admin-streamer-ranking',
-    [AdminController::class,'streamerRanking']
-    )->middleware('auth');
+Route::post('/withdraw', [WithdrawController::class, 'store'])
+    ->middleware('auth');
 
-    Route::get('/wallet-history', function () {
-
-    if(!auth()->user()->is_streamer){
+Route::get('/wallet-history', function () {
+    if (!auth()->user()->is_streamer) {
         abort(403);
     }
 
     $donasi = \App\Models\Donasi::with('user')
-        ->where(
-            'streamer_id',
-            auth()->id()
-        )
+        ->where('streamer_id', auth()->id())
         ->get();
 
-    $withdraws = \App\Models\Withdraw::where(
-        'user_id',
-        auth()->id()
-    )->get();
+    $withdraws = \App\Models\Withdraw::where('user_id', auth()->id())->get();
 
     $transaksi = collect();
 
-    foreach($donasi as $item){
-
+    foreach ($donasi as $item) {
         $transaksi->push([
-
             'tanggal' => $item->created_at,
             'jenis' => 'Donasi',
-            'keterangan' =>
-                'Donasi dari ' .
-                optional($item->user)->name
-             ?? $item->guest_name,
+            'keterangan' => 'Donasi dari ' . (optional($item->user)->name ?? $item->guest_name),
             'nominal' => $item->nominal,
             'status' => 'success'
-
         ]);
     }
 
-    foreach($withdraws as $item){
-
+    foreach ($withdraws as $item) {
         $transaksi->push([
-
             'tanggal' => $item->created_at,
             'jenis' => 'Withdraw',
-            'keterangan' =>
-                'Withdraw Request',
+            'keterangan' => 'Withdraw Request',
             'nominal' => $item->nominal,
             'status' => $item->status
-
         ]);
     }
 
-    $transaksi = $transaksi
-        ->sortByDesc('tanggal');
+    $transaksi = $transaksi->sortByDesc('tanggal');
 
-    return view(
-        'wallet-history',
-        compact('transaksi')
-    );
-
+    return view('wallet-history', compact('transaksi'));
 })->middleware('auth');
 
-    Route::post(
-    '/follow/{id}',
-    [StreamerController::class,'follow']
-    )->middleware('auth');
+/*
+|--------------------------------------------------------------------------
+| FOLLOW
+|--------------------------------------------------------------------------
+*/
 
-    Route::post(
-    '/unfollow/{id}',
-    [StreamerController::class,'unfollow']
-    )->middleware('auth');
+Route::post('/follow/{id}', [StreamerController::class, 'follow'])
+    ->middleware('auth');
 
-    Route::get(
-    '/streamers',
-    [StreamerController::class,'index']
-    );
+Route::post('/unfollow/{id}', [StreamerController::class, 'unfollow'])
+    ->middleware('auth');
 
-    Route::get(
-    '/following',
-    [StreamerController::class,'following']
-    )->middleware('auth');
+Route::get('/streamers', [StreamerController::class, 'index']);
+Route::get('/following', [StreamerController::class, 'following'])
+    ->middleware('auth');
 
-   Route::post('/payment-method', function (Request $request) {
+/*
+|--------------------------------------------------------------------------
+| PAYMENT
+|--------------------------------------------------------------------------
+*/
 
+Route::post('/payment-method', function (Request $request) {
     return view('payment-method', [
-    'streamer_id' => $request->streamer_id,
-    'nominal' => $request->nominal,
-    'pesan' => $request->pesan,
-    'fitur' => $request->fitur ?? [],
-    'guest_name' => $request->guest_name,
-    'guest_phone' => $request->guest_phone,
-]);
-
+        'streamer_id' => $request->streamer_id,
+        'nominal' => $request->nominal,
+        'pesan' => $request->pesan,
+        'fitur' => $request->fitur ?? [],
+        'guest_name' => $request->guest_name,
+        'guest_phone' => $request->guest_phone,
+    ]);
 });
 
 Route::post('/payment-detail', function (Request $request) {
-
     $streamer = User::find($request->streamer_id);
-
     $nominal = (int) $request->nominal;
-
     $fiturTotal = 0;
 
     if ($request->fitur) {
-
         foreach ($request->fitur as $fitur) {
-
             $fiturTotal += (int) $fitur;
         }
     }
 
     $adminFee = 1500;
+    $grandTotal = $nominal + $fiturTotal + $adminFee;
 
-    $grandTotal =
-        $nominal +
-        $fiturTotal +
-        $adminFee;
-        
-return view('payment-detail', [
-
-    'streamer'   => $streamer,
-    'nominal'    => $nominal,
-    'pesan'      => $request->pesan,
-    'metode'     => $request->metode,
-    'fitur'      => $request->fitur ?? [],
-    'fiturTotal' => $fiturTotal,
-    'adminFee'   => $adminFee,
-    'grandTotal' => $grandTotal,
-
-    'guest_name'  => $request->guest_name,
-    'guest_phone' => $request->guest_phone
-
-]);
-
+    return view('payment-detail', [
+        'streamer' => $streamer,
+        'nominal' => $nominal,
+        'pesan' => $request->pesan,
+        'metode' => $request->metode,
+        'fitur' => $request->fitur ?? [],
+        'fiturTotal' => $fiturTotal,
+        'adminFee' => $adminFee,
+        'grandTotal' => $grandTotal,
+        'guest_name' => $request->guest_name,
+        'guest_phone' => $request->guest_phone,
+    ]);
 });
 
 Route::get('/payment-detail', function () {
-
     return redirect('/user-dashboard');
-
 });
-    Route::get('/payment-method', function () {
+
+Route::get('/payment-method', function () {
     return view('payment-method');
-    });
+});
 
-Route::post(
-    '/konfirmasi-pembayaran',
-    [DonasiController::class, 'store']
-);
+Route::post('/konfirmasi-pembayaran', [DonasiController::class, 'store']);
 
-Route::get(
-    '/payment-success/{id}',
-    [DonasiController::class,'paymentSuccess']
-)->name('payment.success');
+Route::get('/payment-success/{id}', [DonasiController::class, 'paymentSuccess'])
+    ->name('payment.success');
 
-Route::get(
-    '/payment-qr/{id}',
-    [DonasiController::class, 'qrPayment']
-)->name('payment.qr');
+Route::get('/payment-qr/{id}', [DonasiController::class, 'qrPayment'])
+    ->name('payment.qr');
 
-Route::post(
-    '/payment-onopay/{id}',
-    [DonasiController::class, 'payOnopay']
-)->name('payment.onopay');
+Route::post('/payment-onopay/{id}', [DonasiController::class, 'payOnopay'])
+    ->name('payment.onopay');
 
-Route::get(
-    '/payment-check/{id}',
-    [DonasiController::class,'checkPayment']
-)->name('payment.check');
+Route::get('/payment-check/{id}', [DonasiController::class, 'checkPayment'])
+    ->name('payment.check');
 
-Route::get(
-    '/payment-success-manual/{id}',
-    [DonasiController::class,'simulateQris']
+Route::get('/check-payment/{id}', [DonasiController::class, 'checkPayment'])
+    ->name('check.payment');
 
-);
+Route::get('/payment-success-manual/{id}', [DonasiController::class, 'simulateQris']);
 
-Route::get(
-    '/admin-gateway-transactions',
-    [AdminController::class, 'gatewayTransactions']
-);
+// ── ROUTE BARU UNTUK ONOPAY BALANCE DAN CONFIRM PAYMENT ──
+Route::get('/onopay-balance', [DonasiController::class, 'onopayBalance'])
+    ->middleware('auth');
 
-Route::get(
-    '/admin-reports/excel',
-    [AdminController::class, 'exportExcel']
-)->name('admin.reports.excel');
+Route::post('/confirm-payment/{id}', [DonasiController::class, 'confirmPayment'])
+    ->middleware('auth');
 
-Route::get(
-    '/admin-reports/print',
-    [AdminController::class, 'printReport']
-)->name('admin.reports.print');
 /*
 |--------------------------------------------------------------------------
 | LOGOUT

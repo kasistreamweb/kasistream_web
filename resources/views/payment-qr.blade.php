@@ -8,6 +8,8 @@
 
 <title>Pembayaran QRIS - KAsistream</title>
 
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -74,6 +76,13 @@
                                 alt="QR OnoPay"
                             >
 
+                            @else
+
+                            <div class="text-center p-5">
+                                <i class="fa-solid fa-qrcode fa-5x text-muted"></i>
+                                <p class="mt-3 text-muted">QR Code belum tersedia</p>
+                            </div>
+
                             @endif
 
                         </div>
@@ -91,6 +100,7 @@
 
                             <button
                                 onclick="checkPayment()"
+                                id="btnCheckPayment"
                                 class="btn btn-primary btn-lg"
                             >
                                 <i class="fa-solid fa-rotate"></i>
@@ -255,6 +265,7 @@
                             <!-- ── TOMBOL CEK STATUS PEMBAYARAN (AJAX) ── -->
                             <button
                                 onclick="checkPayment()"
+                                id="btnCheckPaymentBottom"
                                 class="btn btn-primary w-100 mb-2"
                             >
                                 <i class="fa-solid fa-rotate me-2"></i>
@@ -286,11 +297,101 @@
 
 <!-- ── SCRIPTS ── -->
 <script>
+// ── ONOPAY BALANCE CHECK ──
+// ── PERUBAHAN: Baseline langsung dari server ──
+let baselineBalance = {{ $baselineBalance ?? 0 }};
+let isExpired = false;
+
+const total = {{ $donasi->grand_total }};
+
+async function getBalance() {
+    try {
+        const response = await fetch('/onopay-balance', {
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+        
+        if (!response.ok) {
+            console.error('Response not OK:', response.status);
+            return null;
+        }
+        
+        return await response.json();
+    } catch (e) {
+        console.error('Error fetching balance:', e);
+        return null;
+    }
+}
+
+// ── HAPUS: initBaseline() ──
+// ── HAPUS: initBaseline() dipanggil ──
+
+async function checkPaymentAuto() {
+    if (baselineBalance === null || isExpired) return;
+
+    const result = await getBalance();
+
+    if (!result || !result.success || !result.data) return;
+
+    const current = parseInt(result.data.balance);
+    const diff = baselineBalance - current;
+
+    // ── TAMBAHKAN DEBUG ──
+    console.log('TOTAL:', total);
+    console.log('BASELINE:', baselineBalance);
+    console.log('CURRENT:', current);
+    console.log('DIFF:', diff);
+
+    if (diff >= total) {
+        try {
+            const confirm = await fetch('/confirm-payment/{{ $donasi->id }}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const confirmResult = await confirm.json();
+
+            if (confirmResult.success) {
+                window.location.href = '/payment-success/{{ $donasi->id }}';
+            }
+        } catch (e) {
+            console.error('Error confirming payment:', e);
+        }
+    }
+}
+
+// ── CEK APAKAH STATUS SUDAH SUCCESS SAAT LOAD ──
+async function checkInitialStatus() {
+    try {
+        const response = await fetch('/check-payment/{{ $donasi->id }}');
+        const result = await response.json();
+        
+        if (result.data && (result.data.status === 'success' || result.data.status === 'paid')) {
+            window.location.href = '/payment-success/{{ $donasi->id }}';
+        }
+    } catch (e) {
+        console.error('Error checking initial status:', e);
+    }
+}
+
+// ── INISIALISASI ──
+// ── HAPUS: initBaseline() ──
+checkInitialStatus();
+
+// ── AUTO CHECK SETIAP 5 DETIK ──
+setInterval(checkPaymentAuto, 5000);
+
 // ── CEK STATUS PEMBAYARAN ──
 let checking = false;
 
 async function checkPayment() {
-    if (checking) return;
+    if (checking || isExpired) return;
     checking = true;
 
     try {
@@ -344,7 +445,7 @@ async function checkPayment() {
     checking = false;
 }
 
-// ── AUTO CHECK SETIAP 5 DETIK ──
+// ── AUTO CHECK STATUS SETIAP 5 DETIK ──
 setInterval(checkPayment, 5000);
 
 // ── PANGGIL PERTAMA KALI ──
@@ -368,16 +469,36 @@ setInterval(() => {
         }
 
         // ── PERINGATAN SAAT WAKTU HAMPIR HABIS ──
-        if (time <= 60) {
+        if (time <= 60 && time > 0) {
             countdownEl.style.color = '#dc3545';
             countdownEl.style.fontWeight = 'bold';
         }
 
         // ── SAAT WAKTU HABIS ──
         if (time <= 0) {
+            isExpired = true;
             countdownEl.innerText = 'Kedaluwarsa!';
             countdownEl.style.color = '#dc3545';
             countdownEl.style.fontWeight = 'bold';
+            
+            // ── NONAKTIFKAN TOMBOL ──
+            document.querySelectorAll('#btnCheckPayment, #btnCheckPaymentBottom').forEach(btn => {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fa-solid fa-hourglass-end me-2"></i>Kedaluwarsa';
+                btn.className = 'btn btn-secondary w-100 mb-2';
+            });
+            
+            // ── TAMPILKAN ALERT ──
+            const alertHtml = `
+                <div class="alert alert-danger mt-3">
+                    <i class="fa-solid fa-triangle-exclamation me-2"></i>
+                    QRIS telah kedaluwarsa. Silakan lakukan donasi ulang.
+                </div>
+            `;
+            const qrCard = document.querySelector('.qr-card');
+            if (!qrCard.querySelector('.alert-danger')) {
+                qrCard.insertAdjacentHTML('beforeend', alertHtml);
+            }
         }
     }
 }, 1000);

@@ -1,459 +1,508 @@
-<?php
+<!DOCTYPE html>
+<html lang="id">
+<head>
 
-namespace App\Http\Controllers;
+<meta charset="UTF-8">
 
-use Illuminate\Http\Request;
-use App\Models\User;
-use App\Models\Donasi;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-class DonasiController extends Controller
-{
-    public function create($id)
-    {
-        $streamer = User::findOrFail($id);
+<title>Pembayaran QRIS - KAsistream</title>
 
-        return view(
-            'donasi',
-            compact('streamer')
-        );
-    }
+<meta name="csrf-token" content="{{ csrf_token() }}">
 
-    public function store(Request $request)
-    {
-       
-       $request->validate([
-        'streamer_id' => 'required|exists:users,id',
-        'nominal' => 'required|numeric|min:1000',
-        'pesan' => 'nullable|max:150',
-        'guest_name' => 'nullable|max:100',
-        'guest_phone' => 'nullable|max:20'
-    ]);
+<link rel="preconnect" href="https://fonts.googleapis.com">
 
-        $fiturTotal = array_sum(
-            $request->fitur ?? []
-        );
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-        $adminFee = (int) (
-            $request->admin_fee ?? 1500
-        );
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-        $grandTotal = (int) (
-            $request->grand_total ??
-            (
-                $request->nominal +
-                $fiturTotal +
-                $adminFee
-            )
-        );
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-        /*
-        |--------------------------------------------------------------------------
-        | CEK SALDO WALLET
-        |--------------------------------------------------------------------------
-        */
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
 
-        if (
-            Auth::check() &&
-            strtolower($request->metode) != 'qris'
-        ) {
+<link rel="stylesheet" href="{{ asset('css/kasistream.css') }}">
 
-            $user = Auth::user();
+<link rel="stylesheet" href="{{ asset('css/payment-qr.css') }}">
 
-            if ($grandTotal > $user->balance) {
+</head>
 
-                return back()
-                    ->withInput()
-                    ->with(
-                        'error',
-                        'Saldo wallet tidak mencukupi.'
-                    );
+<body>
+
+<div class="container-fluid">
+
+    <div class="row">
+
+        @include('layouts.sidebar')
+
+        <div class="col-md-9 col-lg-10 p-4 content-area">
+
+            <div class="welcome-section mb-4">
+
+                <img
+                    src="{{ asset('images/logo.png') }}"
+                    class="header-logo"
+                    alt="Logo"
+                >
+
+                <h1>
+                    💳 Pembayaran QRIS
+                </h1>
+
+                <p>
+                    Scan QR Code berikut untuk menyelesaikan pembayaran donasi.
+                </p>
+
+            </div>
+
+            <div class="row">
+
+                <!-- QR SECTION -->
+                <div class="col-lg-6 mb-4">
+
+                    <div class="qr-card">
+
+                        <div class="status-badge">
+                            <i class="fa-solid fa-clock me-2"></i>
+                            <span id="statusText">MENUNGGU PEMBAYARAN</span>
+                        </div>
+
+                        <div class="qr-wrapper">
+
+                            @if($donasi->qr_image)
+
+                            <img
+                                src="{{ $donasi->qr_image }}"
+                                class="img-fluid rounded shadow"
+                                alt="QR OnoPay"
+                            >
+
+                            @else
+
+                            <div class="text-center p-5">
+                                <i class="fa-solid fa-qrcode fa-5x text-muted"></i>
+                                <p class="mt-3 text-muted">QR Code belum tersedia</p>
+                            </div>
+
+                            @endif
+
+                        </div>
+
+                        <!-- ── COUNTDOWN EXPIRED ── -->
+                        <div class="alert alert-warning mt-3">
+
+                            QRIS akan kedaluwarsa dalam
+                            <span id="countdown">15:00</span>
+
+                        </div>
+
+                        <!-- ── TOMBOL CEK STATUS MANUAL ── -->
+                        <div class="mt-4 text-center">
+
+                            <button
+                                onclick="checkPayment()"
+                                id="btnCheckPayment"
+                                class="btn btn-primary btn-lg"
+                            >
+                                <i class="fa-solid fa-rotate"></i>
+                                Cek Status Pembayaran
+                            </button>
+
+                        </div>
+
+                        <div class="payment-apps">
+
+                            <div>
+                                <i class="fa-solid fa-wallet"></i>
+                                DANA
+                            </div>
+
+                            <div>
+                                <i class="fa-solid fa-wallet"></i>
+                                OVO
+                            </div>
+
+                            <div>
+                                <i class="fa-solid fa-wallet"></i>
+                                GoPay
+                            </div>
+
+                            <div>
+                                <i class="fa-solid fa-building-columns"></i>
+                                M-Banking
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- DETAIL -->
+                <div class="col-lg-6">
+
+                    <div class="detail-card">
+
+                        <h3 class="section-title">
+
+                            Detail Transaksi
+
+                        </h3>
+
+                        <div class="detail-row">
+
+                            <span>ID Transaksi</span>
+
+                            <strong>
+
+                                #TRX{{ $donasi->id }}
+
+                            </strong>
+
+                        </div>
+
+                        <div class="detail-row">
+
+                            <span>Streamer</span>
+
+                            <strong>
+
+                                {{ $donasi->streamer->name ?? '-' }}
+
+                            </strong>
+
+                        </div>
+
+                        <div class="detail-row">
+
+                            <span>Nominal Donasi</span>
+
+                            <strong>
+
+                                Rp {{ number_format($donasi->nominal) }}
+
+                            </strong>
+
+                        </div>
+
+                        <div class="detail-row">
+
+                            <span>Fitur Tambahan</span>
+
+                            <strong>
+
+                                Rp {{ number_format($donasi->fitur_total ?? 0) }}
+
+                            </strong>
+
+                        </div>
+
+                        <div class="detail-row">
+
+                            <span>Biaya Admin</span>
+
+                            <strong>
+
+                                Rp {{ number_format($donasi->admin_fee ?? 0) }}
+
+                            </strong>
+
+                        </div>
+
+                        <hr>
+
+                        <div class="detail-row total-row">
+
+                            <span>Total Pembayaran</span>
+
+                            <strong>
+
+                                Rp {{ number_format($donasi->grand_total ?? $donasi->nominal) }}
+
+                            </strong>
+
+                        </div>
+
+                        <div class="detail-row">
+
+                            <span>Status</span>
+
+                            <!-- ── STATUS BADGE DINAMIS ── -->
+                            <span
+                                id="paymentStatus"
+                                class="badge bg-warning text-dark"
+                            >
+                                MENUNGGU PEMBAYARAN
+                            </span>
+
+                        </div>
+
+                        <div class="detail-row">
+
+                            <span>Metode</span>
+
+                            <strong>
+
+                                QRIS
+
+                            </strong>
+
+                        </div>
+
+                        <div class="detail-row">
+
+                            <span>Dibuat</span>
+
+                            <strong>
+
+                                {{ $donasi->created_at->format('d M Y H:i') }}
+
+                            </strong>
+
+                        </div>
+
+                        <div class="mt-4">
+
+                            <!-- ── TOMBOL CEK STATUS PEMBAYARAN (AJAX) ── -->
+                            <button
+                                onclick="checkPayment()"
+                                id="btnCheckPaymentBottom"
+                                class="btn btn-primary w-100 mb-2"
+                            >
+                                <i class="fa-solid fa-rotate me-2"></i>
+                                Cek Status Pembayaran
+                            </button>
+
+                            <a
+                                href="/riwayat-donasi"
+                                class="btn btn-outline-light w-100"
+                            >
+
+                                Kembali
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ── SCRIPTS ── -->
+<script>
+// ── ONOPAY BALANCE CHECK ──
+// ── PERUBAHAN: Baseline langsung dari server ──
+let baselineBalance = {{ $baselineBalance ?? 0 }};
+let isExpired = false;
+
+const total = {{ $donasi->grand_total }};
+
+async function getBalance() {
+    try {
+        const response = await fetch('/onopay-balance', {
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
             }
+        });
+        
+        if (!response.ok) {
+            console.error('Response not OK:', response.status);
+            return null;
         }
+        
+        return await response.json();
+    } catch (e) {
+        console.error('Error fetching balance:', e);
+        return null;
+    }
+}
 
+// ── HAPUS: initBaseline() ──
+// ── HAPUS: initBaseline() dipanggil ──
+
+async function checkPaymentAuto() {
+    if (baselineBalance === 0 || isExpired) return;
+
+    const result = await getBalance();
+
+    if (!result || !result.success || !result.data) return;
+
+    const current = parseInt(result.data.balance);
+    const diff = baselineBalance - current;
+
+    // ── TAMBAHKAN DEBUG ──
+    console.log('TOTAL:', total);
+    console.log('BASELINE:', baselineBalance);
+    console.log('CURRENT:', current);
+    console.log('DIFF:', diff);
+
+    if (diff >= total) {
         try {
+            const confirm = await fetch('/confirm-payment/{{ $donasi->id }}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            });
 
-            DB::beginTransaction();
+            const confirmResult = await confirm.json();
 
-            /*
-            |--------------------------------------------------------------------------
-            | SIMPAN DONASI
-            |--------------------------------------------------------------------------
-            */
-
-            $donasi = Donasi::create([
-
-                'user_id' => Auth::check()
-                    ? Auth::id()
-                    : null,
-
-                'guest_name' => $request->guest_name,
-                'guest_phone' => $request->guest_phone,
-
-                'streamer_id' => $request->streamer_id,
-
-                'nominal' => $request->nominal,
-
-                'fitur_total' => $fiturTotal,
-
-                'admin_fee' => $adminFee,
-
-                'grand_total' => $grandTotal,
-
-                'payment_method' => strtolower(
-                    $request->metode
-                ),
-
-                'pesan' => $request->pesan,
-
-                'status' => strtolower($request->metode) == 'qris'
-                    ? 'pending'
-                    : 'success',
-
-                'qris_status' => 'pending'
-            ]);
-
-            /*
-            |--------------------------------------------------------------------------
-            | WALLET
-            |--------------------------------------------------------------------------
-            */
-
-            if (
-                Auth::check() &&
-                strtolower($request->metode) != 'qris'
-            ) {
-
-                $user = User::findOrFail(
-                    Auth::id()
-                );
-
-                $user->balance -= $grandTotal;
-
-                $user->save();
+            if (confirmResult.success) {
+                window.location.href = '/payment-success/{{ $donasi->id }}';
             }
-
-            /*
-            |--------------------------------------------------------------------------
-            | TAMBAH SALDO STREAMER
-            |--------------------------------------------------------------------------
-            */
-
-
-
-            if (
-                strtolower($request->metode) != 'qris'
-            ) {
-
-                $streamer = User::findOrFail(
-                    $request->streamer_id
-                );
-
-                $streamer->balance +=
-                    $request->nominal;
-
-                $streamer->total_donasi +=
-                    $request->nominal;
-
-                $streamer->save();
-            }
-
-            DB::commit();
-
-        } catch (\Exception $e) {
-
-            DB::rollBack();
-
-            return back()
-                ->withInput()
-                ->with(
-                    'error',
-                    $e->getMessage()
-                );
-        }
-
-    /*
-    |--------------------------------------------------------------------------
-    | ONOPAY QR
-    |--------------------------------------------------------------------------
-    */
-
-    if (strtolower($request->metode) == 'qris') {
-
-        $streamer = User::findOrFail(
-            $request->streamer_id
-        );
-
-        if (!$streamer->onopay_phone) {
-
-            return back()->with(
-                'error',
-                'Nomor OnoPay streamer belum diatur.'
-            );
-        }
-
-        $response = Http::post(
-            'https://www.onopay.web.id/api/v1/payment/qr/generate',
-            [
-                'phone_number' => $streamer->onopay_phone,
-                'amount' => $grandTotal,
-                'description' => 'Donasi KAistream #' . $donasi->id,
-                'customer_name' => $request->guest_name ?? 'Guest',
-                'customer_phone' => $request->guest_phone,
-                'qr_mode' => 'single_use'
-            ]
-        );
-
-        \Log::info('ONOPAY GENERATE', [
-            'status' => $response->status(),
-            'body' => $response->body(),
-        ]);
-
-        if (!$response->successful()) {
-
-            return back()->with(
-                'error',
-                'Gagal membuat QR OnoPay.'
-            );
-        }
-
-        $result = $response->json();
-
-        if (
-            !isset($result['success']) ||
-            !$result['success']
-        ) {
-
-            return back()->with(
-                'error',
-                $result['message']
-                    ?? 'Generate QR gagal.'
-            );
-        }
-
-        $donasi->update([
-
-            'qr_code' =>
-                $result['data']['qr_code'] ?? null,
-
-            'qr_image' =>
-                $result['data']['qr_image'] ?? null,
-
-            'onopay_receiver' =>
-                $streamer->onopay_phone,
-
-            'status' =>
-                'pending'
-        ]);
-
-        return redirect()->route(
-            'payment.qr',
-            $donasi->id
-        );
-    }
-
-    return redirect()->route(
-        'payment.success',
-        $donasi->id
-    );
-    }
-
-    public function history()
-    {
-        $donasi = Donasi::with('streamer')
-            ->where('user_id', auth()->id())
-            ->latest()
-            ->paginate(10);
-
-        return view(
-            'riwayat-donasi',
-            compact('donasi')
-        );
-    }
-
-    public function paymentSuccess($id)
-    {
-        $donasi = Donasi::with([
-            'streamer',
-            'user'
-        ])->findOrFail($id);
-
-        return view(
-            'payment-success',
-            compact('donasi')
-        );
-    }
-
-    public function qrPayment($id)
-    {
-        $donasi = Donasi::with([
-            'streamer',
-            'user'
-        ])->findOrFail($id);
-
-        return view(
-            'payment-qr',
-            compact('donasi')
-        );
-    }
-
-    // ── CHECK PAYMENT (DIPERBAIKI UNTUK API) ──
-    public function checkPayment($id)
-    {
-        $donasi = Donasi::findOrFail($id);
-
-        return response()->json([
-            'success' => true,
-            'data' => [
-                'id' => $donasi->id,
-                'status' => $donasi->status,
-                'qris_status' => $donasi->qris_status,
-                'nominal' => $donasi->nominal,
-                'grand_total' => $donasi->grand_total,
-            ]
-        ]);
-    }
-
-    public function simulateQris($id)
-    {
-        $donasi = Donasi::findOrFail($id);
-
-        if ($donasi->status == 'pending') {
-
-            $donasi->update([
-                'status' => 'success',
-                'qris_status' => 'paid'
-            ]);
-
-            $streamer = User::find(
-                $donasi->streamer_id
-            );
-
-            if ($streamer) {
-
-                $streamer->balance +=
-                    $donasi->nominal;
-
-                $streamer->total_donasi +=
-                    $donasi->nominal;
-
-                $streamer->save();
-            }
-        }
-
-        return redirect()->route(
-            'payment.success',
-            $donasi->id
-        );
-    }
-
-    public function payOnopay($id)
-    {
-        $donasi = Donasi::findOrFail($id);
-
-        if ($donasi->status == 'success') {
-
-            return redirect()->route(
-                'payment.success',
-                $donasi->id
-            );
-        }
-
-        if (Auth::check()) {
-
-            $payerPhone = Auth::user()->onopay_phone;
-
-        } else {
-
-            $payerPhone = $donasi->guest_phone;
-        }
-
-        if (!$payerPhone) {
-
-            return back()->with(
-                'error',
-                'Nomor OnoPay tidak ditemukan.'
-            );
-        }
-
-        if (!$donasi->qr_code) {
-
-            return back()->with(
-                'error',
-                'QR Code OnoPay tidak ditemukan.'
-            );
-        }
-
-        try {
-
-            $response = Http::post(
-                'https://www.onopay.web.id/api/v1/payment/qr/pay',
-                [
-                    'qr_code'     => $donasi->qr_code,
-                    'payer_phone' => $payerPhone,
-                ]
-            );
-
-            \Log::info('ONOPAY PAY', [
-                'status' => $response->status(),
-                'body' => $response->body(),
-            ]);
-
-            $result = $response->json();
-
-            if (
-                !$response->successful() ||
-                !isset($result['success']) ||
-                !$result['success']
-            ) {
-
-                return back()->with(
-                    'error',
-                    $result['message']
-                        ?? 'Pembayaran OnoPay gagal.'
-                );
-            }
-
-            DB::beginTransaction();
-
-            $donasi->update([
-                'status'      => 'success',
-                'qris_status' => 'paid'
-            ]);
-
-            $streamer = User::findOrFail(
-                $donasi->streamer_id
-            );
-
-            $streamer->balance +=
-                $donasi->nominal;
-
-            $streamer->total_donasi +=
-                $donasi->nominal;
-
-            $streamer->save();
-
-            DB::commit();
-
-            return redirect()->route(
-                'payment.success',
-                $donasi->id
-            );
-
-        } catch (\Exception $e) {
-
-            DB::rollBack();
-
-            \Log::error('ONOPAY ERROR', [
-                'message' => $e->getMessage()
-            ]);
-
-            return back()->with(
-                'error',
-                $e->getMessage()
-            );
+        } catch (e) {
+            console.error('Error confirming payment:', e);
         }
     }
 }
+
+// ── CEK APAKAH STATUS SUDAH SUCCESS SAAT LOAD ──
+async function checkInitialStatus() {
+    try {
+        const response = await fetch('/check-payment/{{ $donasi->id }}');
+        const result = await response.json();
+        
+        if (result.data && (result.data.status === 'success' || result.data.status === 'paid')) {
+            window.location.href = '/payment-success/{{ $donasi->id }}';
+        }
+    } catch (e) {
+        console.error('Error checking initial status:', e);
+    }
+}
+
+// ── INISIALISASI ──
+// ── HAPUS: initBaseline() ──
+checkInitialStatus();
+
+// ── AUTO CHECK SETIAP 5 DETIK ──
+setInterval(checkPaymentAuto, 5000);
+
+// ── CEK STATUS PEMBAYARAN ──
+let checking = false;
+
+async function checkPayment() {
+    if (checking || isExpired) return;
+    checking = true;
+
+    try {
+        const response = await fetch(
+            '/check-payment/{{ $donasi->id }}'
+        );
+
+        const result = await response.json();
+
+        console.log('Check Payment Result:', result);
+
+        // ── UPDATE STATUS BADGE ──
+        const statusEl = document.getElementById('paymentStatus');
+        const statusText = document.getElementById('statusText');
+
+        if (
+            result.data &&
+            (result.data.status === 'success' || result.data.status === 'paid')
+        ) {
+            // ── STATUS BERHASIL ──
+            if (statusEl) {
+                statusEl.className = 'badge bg-success';
+                statusEl.innerText = 'PEMBAYARAN BERHASIL';
+            }
+
+            if (statusText) {
+                statusText.innerText = 'PEMBAYARAN BERHASIL';
+            }
+
+            // ── REDIRECT KE HALAMAN SUKSES ──
+            window.location.href =
+                '/payment-success/{{ $donasi->id }}';
+
+            return;
+        } else {
+            // ── STATUS PENDING ──
+            if (statusEl) {
+                statusEl.className = 'badge bg-warning text-dark';
+                statusEl.innerText = 'MENUNGGU PEMBAYARAN';
+            }
+
+            if (statusText) {
+                statusText.innerText = 'MENUNGGU PEMBAYARAN';
+            }
+        }
+
+    } catch (e) {
+        console.error('Error checking payment:', e);
+    }
+
+    checking = false;
+}
+
+// ── AUTO CHECK STATUS SETIAP 5 DETIK ──
+setInterval(checkPayment, 5000);
+
+// ── PANGGIL PERTAMA KALI ──
+checkPayment();
+
+// ── COUNTDOWN EXPIRED ──
+let time = 900; // 15 menit
+
+setInterval(() => {
+    let minutes = Math.floor(time / 60);
+    let seconds = time % 60;
+
+    const countdownEl = document.getElementById('countdown');
+
+    if (countdownEl) {
+        countdownEl.innerText =
+            `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+        if (time > 0) {
+            time--;
+        }
+
+        // ── PERINGATAN SAAT WAKTU HAMPIR HABIS ──
+        if (time <= 60 && time > 0) {
+            countdownEl.style.color = '#dc3545';
+            countdownEl.style.fontWeight = 'bold';
+        }
+
+        // ── SAAT WAKTU HABIS ──
+        if (time <= 0) {
+            isExpired = true;
+            countdownEl.innerText = 'Kedaluwarsa!';
+            countdownEl.style.color = '#dc3545';
+            countdownEl.style.fontWeight = 'bold';
+            
+            // ── NONAKTIFKAN TOMBOL ──
+            document.querySelectorAll('#btnCheckPayment, #btnCheckPaymentBottom').forEach(btn => {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fa-solid fa-hourglass-end me-2"></i>Kedaluwarsa';
+                btn.className = 'btn btn-secondary w-100 mb-2';
+            });
+            
+            // ── TAMPILKAN ALERT ──
+            const alertHtml = `
+                <div class="alert alert-danger mt-3">
+                    <i class="fa-solid fa-triangle-exclamation me-2"></i>
+                    QRIS telah kedaluwarsa. Silakan lakukan donasi ulang.
+                </div>
+            `;
+            const qrCard = document.querySelector('.qr-card');
+            if (!qrCard.querySelector('.alert-danger')) {
+                qrCard.insertAdjacentHTML('beforeend', alertHtml);
+            }
+        }
+    }
+}, 1000);
+</script>
+
+</body>
+</html>
