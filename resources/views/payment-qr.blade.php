@@ -60,11 +60,8 @@
                     <div class="qr-card">
 
                         <div class="status-badge">
-
                             <i class="fa-solid fa-clock me-2"></i>
-
-                            MENUNGGU PEMBAYARAN
-
+                            <span id="statusText">MENUNGGU PEMBAYARAN</span>
                         </div>
 
                         <div class="qr-wrapper">
@@ -78,6 +75,27 @@
                             >
 
                             @endif
+
+                        </div>
+
+                        <!-- ── COUNTDOWN EXPIRED ── -->
+                        <div class="alert alert-warning mt-3">
+
+                            QRIS akan kedaluwarsa dalam
+                            <span id="countdown">15:00</span>
+
+                        </div>
+
+                        <!-- ── TOMBOL CEK STATUS MANUAL ── -->
+                        <div class="mt-4 text-center">
+
+                            <button
+                                onclick="checkPayment()"
+                                class="btn btn-primary btn-lg"
+                            >
+                                <i class="fa-solid fa-rotate"></i>
+                                Cek Status Pembayaran
+                            </button>
 
                         </div>
 
@@ -198,10 +216,12 @@
 
                             <span>Status</span>
 
-                            <span class="badge bg-warning text-dark">
-
-                                PENDING
-
+                            <!-- ── STATUS BADGE DINAMIS ── -->
+                            <span
+                                id="paymentStatus"
+                                class="badge bg-warning text-dark"
+                            >
+                                MENUNGGU PEMBAYARAN
                             </span>
 
                         </div>
@@ -232,20 +252,14 @@
 
                         <div class="mt-4">
 
-                            <form
-                                action="{{ route('payment.onopay',$donasi->id) }}"
-                                method="POST"
+                            <!-- ── TOMBOL CEK STATUS PEMBAYARAN (AJAX) ── -->
+                            <button
+                                onclick="checkPayment()"
+                                class="btn btn-primary w-100 mb-2"
                             >
-                                @csrf
-
-                                <button
-                                    type="submit"
-                                    class="btn btn-primary w-100 mb-2"
-                                >
-                                    <i class="fa-solid fa-wallet me-2"></i>
-                                    Cek Pembayaran
-                                </button>
-                            </form>
+                                <i class="fa-solid fa-rotate me-2"></i>
+                                Cek Status Pembayaran
+                            </button>
 
                             <a
                                 href="/riwayat-donasi"
@@ -269,6 +283,105 @@
     </div>
 
 </div>
+
+<!-- ── SCRIPTS ── -->
+<script>
+// ── CEK STATUS PEMBAYARAN ──
+let checking = false;
+
+async function checkPayment() {
+    if (checking) return;
+    checking = true;
+
+    try {
+        const response = await fetch(
+            '/check-payment/{{ $donasi->id }}'
+        );
+
+        const result = await response.json();
+
+        console.log('Check Payment Result:', result);
+
+        // ── UPDATE STATUS BADGE ──
+        const statusEl = document.getElementById('paymentStatus');
+        const statusText = document.getElementById('statusText');
+
+        if (
+            result.data &&
+            (result.data.status === 'success' || result.data.status === 'paid')
+        ) {
+            // ── STATUS BERHASIL ──
+            if (statusEl) {
+                statusEl.className = 'badge bg-success';
+                statusEl.innerText = 'PEMBAYARAN BERHASIL';
+            }
+
+            if (statusText) {
+                statusText.innerText = 'PEMBAYARAN BERHASIL';
+            }
+
+            // ── REDIRECT KE HALAMAN SUKSES ──
+            window.location.href =
+                '/payment-success/{{ $donasi->id }}';
+
+            return;
+        } else {
+            // ── STATUS PENDING ──
+            if (statusEl) {
+                statusEl.className = 'badge bg-warning text-dark';
+                statusEl.innerText = 'MENUNGGU PEMBAYARAN';
+            }
+
+            if (statusText) {
+                statusText.innerText = 'MENUNGGU PEMBAYARAN';
+            }
+        }
+
+    } catch (e) {
+        console.error('Error checking payment:', e);
+    }
+
+    checking = false;
+}
+
+// ── AUTO CHECK SETIAP 5 DETIK ──
+setInterval(checkPayment, 5000);
+
+// ── PANGGIL PERTAMA KALI ──
+checkPayment();
+
+// ── COUNTDOWN EXPIRED ──
+let time = 900; // 15 menit
+
+setInterval(() => {
+    let minutes = Math.floor(time / 60);
+    let seconds = time % 60;
+
+    const countdownEl = document.getElementById('countdown');
+
+    if (countdownEl) {
+        countdownEl.innerText =
+            `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+        if (time > 0) {
+            time--;
+        }
+
+        // ── PERINGATAN SAAT WAKTU HAMPIR HABIS ──
+        if (time <= 60) {
+            countdownEl.style.color = '#dc3545';
+            countdownEl.style.fontWeight = 'bold';
+        }
+
+        // ── SAAT WAKTU HABIS ──
+        if (time <= 0) {
+            countdownEl.innerText = 'Kedaluwarsa!';
+            countdownEl.style.color = '#dc3545';
+            countdownEl.style.fontWeight = 'bold';
+        }
+    }
+}, 1000);
+</script>
 
 </body>
 </html>
