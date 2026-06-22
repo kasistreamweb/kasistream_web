@@ -87,15 +87,6 @@
 
                         </div>
 
-                        <!-- ── COUNTDOWN EXPIRED ── -->
-                        <div class="alert alert-warning mt-3">
-
-                            QRIS akan kedaluwarsa dalam
-                            <span id="countdown">15:00</span>
-
-                        </div>
-
-                        <!-- ── TOMBOL CEK STATUS MANUAL ── -->
                         <div class="mt-4 text-center">
 
                             <button
@@ -106,30 +97,6 @@
                                 <i class="fa-solid fa-rotate"></i>
                                 Cek Status Pembayaran
                             </button>
-
-                        </div>
-
-                        <div class="payment-apps">
-
-                            <div>
-                                <i class="fa-solid fa-wallet"></i>
-                                DANA
-                            </div>
-
-                            <div>
-                                <i class="fa-solid fa-wallet"></i>
-                                OVO
-                            </div>
-
-                            <div>
-                                <i class="fa-solid fa-wallet"></i>
-                                GoPay
-                            </div>
-
-                            <div>
-                                <i class="fa-solid fa-building-columns"></i>
-                                M-Banking
-                            </div>
 
                         </div>
 
@@ -298,9 +265,8 @@
 <!-- ── SCRIPTS ── -->
 <script>
 // ── ONOPAY BALANCE CHECK ──
-// ── PERUBAHAN: Baseline langsung dari server ──
+// ── Baseline langsung dari server ──
 let baselineBalance = {{ $baselineBalance ?? 0 }};
-let isExpired = false;
 
 const total = {{ $donasi->grand_total }};
 
@@ -325,11 +291,8 @@ async function getBalance() {
     }
 }
 
-// ── HAPUS: initBaseline() ──
-// ── HAPUS: initBaseline() dipanggil ──
-
 async function checkPaymentAuto() {
-    if (baselineBalance === 0 || isExpired) return;
+    if (baselineBalance === 0) return;
 
     const result = await getBalance();
 
@@ -338,7 +301,7 @@ async function checkPaymentAuto() {
     const current = parseInt(result.data.balance);
     const diff = baselineBalance - current;
 
-    // ── TAMBAHKAN DEBUG ──
+    // ── DEBUG ──
     console.log('TOTAL:', total);
     console.log('BASELINE:', baselineBalance);
     console.log('CURRENT:', current);
@@ -381,7 +344,6 @@ async function checkInitialStatus() {
 }
 
 // ── INISIALISASI ──
-// ── HAPUS: initBaseline() ──
 checkInitialStatus();
 
 // ── AUTO CHECK SETIAP 5 DETIK ──
@@ -391,7 +353,7 @@ setInterval(checkPaymentAuto, 5000);
 let checking = false;
 
 async function checkPayment() {
-    if (checking || isExpired) return;
+    if (checking) return;
     checking = true;
 
     try {
@@ -450,58 +412,6 @@ setInterval(checkPayment, 5000);
 
 // ── PANGGIL PERTAMA KALI ──
 checkPayment();
-
-// ── COUNTDOWN EXPIRED ──
-let time = 900; // 15 menit
-
-setInterval(() => {
-    let minutes = Math.floor(time / 60);
-    let seconds = time % 60;
-
-    const countdownEl = document.getElementById('countdown');
-
-    if (countdownEl) {
-        countdownEl.innerText =
-            `${minutes}:${seconds.toString().padStart(2, '0')}`;
-
-        if (time > 0) {
-            time--;
-        }
-
-        // ── PERINGATAN SAAT WAKTU HAMPIR HABIS ──
-        if (time <= 60 && time > 0) {
-            countdownEl.style.color = '#dc3545';
-            countdownEl.style.fontWeight = 'bold';
-        }
-
-        // ── SAAT WAKTU HABIS ──
-        if (time <= 0) {
-            isExpired = true;
-            countdownEl.innerText = 'Kedaluwarsa!';
-            countdownEl.style.color = '#dc3545';
-            countdownEl.style.fontWeight = 'bold';
-            
-            // ── NONAKTIFKAN TOMBOL ──
-            document.querySelectorAll('#btnCheckPayment, #btnCheckPaymentBottom').forEach(btn => {
-                btn.disabled = true;
-                btn.innerHTML = '<i class="fa-solid fa-hourglass-end me-2"></i>Kedaluwarsa';
-                btn.className = 'btn btn-secondary w-100 mb-2';
-            });
-            
-            // ── TAMPILKAN ALERT ──
-            const alertHtml = `
-                <div class="alert alert-danger mt-3">
-                    <i class="fa-solid fa-triangle-exclamation me-2"></i>
-                    QRIS telah kedaluwarsa. Silakan lakukan donasi ulang.
-                </div>
-            `;
-            const qrCard = document.querySelector('.qr-card');
-            if (!qrCard.querySelector('.alert-danger')) {
-                qrCard.insertAdjacentHTML('beforeend', alertHtml);
-            }
-        }
-    }
-}, 1000);
 </script>
 
 </body>
