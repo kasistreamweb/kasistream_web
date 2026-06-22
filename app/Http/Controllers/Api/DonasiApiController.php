@@ -162,11 +162,15 @@ class DonasiApiController extends Controller
             ]
         );
 
+        // ── PERUBAHAN: Tambahkan debug detail ──
         if (!$response->successful()) {
-
             return response()->json([
-                'success' => false
-            ],500);
+                'success' => false,
+                'status_code' => $response->status(),
+                'onopay_response' => $response->json(),
+                'streamer_phone' => $streamer->onopay_phone,
+                'amount' => $grandTotal,
+            ], 500);
         }
 
         $result = $response->json();
@@ -372,9 +376,14 @@ class DonasiApiController extends Controller
             ]
         );
 
+        // ── PERUBAHAN: Tambahkan debug detail ──
         if (!$response->successful()) {
             return response()->json([
-                'success' => false
+                'success' => false,
+                'status_code' => $response->status(),
+                'onopay_response' => $response->json(),
+                'streamer_phone' => $streamer->onopay_phone,
+                'amount' => $grandTotal,
             ], 500);
         }
 
@@ -563,7 +572,7 @@ class DonasiApiController extends Controller
         ]);
     }
 
-    // ── TAMBAHKAN METHOD INI: CONFIRM PAYMENT ──
+    // ── CONFIRM PAYMENT ──
     public function confirmPayment($id)
     {
         $donasi = Donasi::findOrFail($id);
