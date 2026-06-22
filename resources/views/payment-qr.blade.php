@@ -87,18 +87,7 @@
 
                         </div>
 
-                        <div class="mt-4 text-center">
-
-                            <button
-                                onclick="checkPayment()"
-                                id="btnCheckPayment"
-                                class="btn btn-primary btn-lg"
-                            >
-                                <i class="fa-solid fa-rotate"></i>
-                                Cek Status Pembayaran
-                            </button>
-
-                        </div>
+                        <!-- ── TOMBOL DI BAWAH QR DIHAPUS ── -->
 
                     </div>
 
