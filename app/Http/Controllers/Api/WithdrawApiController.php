@@ -71,33 +71,30 @@ class WithdrawApiController extends Controller
         ]);
     }
 
+    // ── METHOD SUMMARY (DIPERBAIKI) ──
     public function summary(Request $request)
     {
         $user = $request->user();
 
-        $totalDonasi =
-            \App\Models\Donasi::where(
-                'streamer_id',
-                $user->id
-            )
-            ->where('status', 'paid')
-            ->sum('nominal');
+        // ── PERUBAHAN: Hapus filter status 'paid' ──
+        $totalDonasi = \App\Models\Donasi::where(
+            'streamer_id',
+            $user->id
+        )->sum('nominal');
 
-        $totalWithdraw =
-            \App\Models\Withdraw::where(
-                'user_id',
-                $user->id
-            )
-            ->where('status', 'approved')
-            ->sum('nominal');
+        $totalWithdraw = \App\Models\Withdraw::where(
+            'user_id',
+            $user->id
+        )
+        ->where('status', 'approved')
+        ->sum('nominal');
 
-        $pendingWithdraw =
-            \App\Models\Withdraw::where(
-                'user_id',
-                $user->id
-            )
-            ->where('status', 'pending')
-            ->sum('nominal');
+        $pendingWithdraw = \App\Models\Withdraw::where(
+            'user_id',
+            $user->id
+        )
+        ->where('status', 'pending')
+        ->sum('nominal');
 
         return response()->json([
             'balance' => $user->balance,
