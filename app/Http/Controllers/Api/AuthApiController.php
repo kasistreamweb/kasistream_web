@@ -127,12 +127,15 @@ class AuthApiController extends Controller
         ]);
     }
 
+    // ── UPDATE PROFILE (DIPERBAIKI DENGAN ONOPAY_PHONE) ──
     public function updateProfile(Request $request)
     {
         $user = $request->user();
 
+        // ── PERUBAHAN: Tambahkan onopay_phone ke validasi ──
         $request->validate([
             'name' => 'nullable|max:100',
+            'onopay_phone' => 'nullable|max:20', // ── TAMBAHKAN INI ──
             'bio' => 'nullable|max:500',
             'game' => 'nullable|max:100',
             'instagram' => 'nullable|max:100',
@@ -145,6 +148,11 @@ class AuthApiController extends Controller
         // Update fields
         if ($request->has('name')) {
             $user->name = $request->name;
+        }
+
+        // ── TAMBAHKAN: UPDATE ONOPAY PHONE ──
+        if ($request->has('onopay_phone')) {
+            $user->onopay_phone = $request->onopay_phone;
         }
 
         if ($request->has('bio')) {
@@ -199,29 +207,29 @@ class AuthApiController extends Controller
     }
 
     public function becomeStreamer(Request $request)
-{
-    $request->validate([
-        'bio'  => 'required',
-        'game' => 'required',
-    ]);
+    {
+        $request->validate([
+            'bio'  => 'required',
+            'game' => 'required',
+        ]);
 
-    $user = $request->user();
+        $user = $request->user();
 
-    $user->bio = $request->bio;
-    $user->game = $request->game;
-    $user->instagram = $request->instagram;
-    $user->youtube = $request->youtube;
-    $user->tiktok = $request->tiktok;
-    $user->discord = $request->discord;
+        $user->bio = $request->bio;
+        $user->game = $request->game;
+        $user->instagram = $request->instagram;
+        $user->youtube = $request->youtube;
+        $user->tiktok = $request->tiktok;
+        $user->discord = $request->discord;
 
-    $user->is_streamer = true;
+        $user->is_streamer = true;
 
-    $user->save();
+        $user->save();
 
-    return response()->json([
-        'success' => true,
-        'message' => 'Berhasil menjadi streamer',
-        'user' => $user,
-    ]);
-}
+        return response()->json([
+            'success' => true,
+            'message' => 'Berhasil menjadi streamer',
+            'user' => $user,
+        ]);
+    }
 }
